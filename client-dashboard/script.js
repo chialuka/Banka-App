@@ -21,5 +21,10 @@ function loadUser() {
     account.appendChild(link);
   } else {
     account.innerHTML = "Your account: " + findUser.accNumber;
+    const history = document.getElementById("history");
+    const link = document.createElement("a");
+    link.setAttribute("href", "../account-history/index.html");
+    link.innerHTML = "View history"
+    history.appendChild(link)
   }
 }
