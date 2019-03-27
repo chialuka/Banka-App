@@ -25,6 +25,7 @@ function validateForm() {
   staff.email = email;
   staff.role = role;
   staffToken.push("staffToken", JSON.stringify(staffToken));
+  localStorage.setItem("loggedInStaff", email)
   if (role = "admin"){
     window.location.href = "../admin/index.html"
   }

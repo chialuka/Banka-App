@@ -10,14 +10,18 @@
       name="description"
       content="The Client Bank Account Creation page of the Banka App houses a form that allows Clients create bank accounts"
     />
-    <script src="script.js"></script>
   </head>
   <body>
     <header>
       <h1 id="logo">Banka</h1>
     </header>
     <main>
-      <form id="createAccount" name="form" onsubmit="return validateForm()" method="POST">
+      <form
+        id="createAccount"
+        name="form"
+        onsubmit="return validateForm()"
+        method="POST"
+      >
         <h1>Open Banka Account Up</h1>
         <p>Please fill in your details correctly</p>
         <hr />
@@ -28,7 +32,7 @@
               <label for="name"><b>Name:</b></label>
             </div>
             <div class="col-75">
-              <input type="text" name="name" placeholder="Your full name" />
+              <input type="text" name="name" placeholder="Your full name" disabled/>
             </div>
           </div>
           <div class="row">
@@ -40,6 +44,7 @@
                 type="text"
                 name="email"
                 placeholder="Your email address"
+                disabled
               />
             </div>
           </div>
@@ -111,5 +116,6 @@
       <div><a href="#privacy">Privacy Policy</a></div>
       <div><a href="logo">Back To Top</a></div>
     </footer>
+    <script src="script.js"></script>
   </body>
 </html>
