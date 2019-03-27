@@ -21,6 +21,7 @@ function validateForm() {
       const client = clientToken.find(x => x.email === email)
       const token = Math.floor(Math.random() * 100);
       client.token = token;
+      localStorage.setItem("loggedInUser", email)
       localStorage.setItem("clientToken", JSON.stringify(clientToken));
       window.location.href = "../client-dashboard/index.html";
     } else {

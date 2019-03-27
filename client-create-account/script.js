@@ -1,7 +1,18 @@
+loadPage();
+
+function loadPage() {
+  const email = localStorage.getItem("loggedInUser");
+  if (!email) {
+    window.location.href = "../landingPage/index.html";
+  }
+  const clientArr = JSON.parse(localStorage.getItem("clientToken"));
+  const client = clientArr.find(item => item.email === email);
+  document.forms["createAccount"]["email"].value = email;
+  document.forms["createAccount"]["name"].value = client.name;
+}
+
 function validateForm() {
   event.preventDefault();
-  const name = document.forms["createAccount"]["name"].value;
-  const email = document.forms["createAccount"]["email"].value;
   const address = document.forms["createAccount"]["address"].value;
   const phone = document.forms["createAccount"]["phone"].value;
   const account = document.forms["createAccount"]["account"].value;
@@ -13,17 +24,6 @@ function validateForm() {
 
   const clientToken = JSON.parse(localStorage.getItem("clientToken")) || [];
 
-  if (name === "") {
-    error.innerHTML = "Name is required";
-    return null;
-  }
-  if (email === "") {
-    error.innerHTML = "Email is required";
-    return null;
-  }
-  if (!clientToken.some(item => item.email === email)) {
-    error.innerHTML = "Email is not registered";
-  }
   if (address === "") {
     error.innerHTML = "Address is required";
     return null;
@@ -45,6 +45,7 @@ function validateForm() {
     return null;
   }
 
+  const email = localStorage.getItem("loggedInUser");
   const client = clientToken.find(x => x.email === email);
 
   let accountNumber = "";
@@ -56,5 +57,5 @@ function validateForm() {
       localStorage.setItem("clientToken", JSON.stringify(clientToken));
     }
   }
-  window.location.href = "../clientDashboard/index.html";
+  window.location.href = "../client-dashboard/index.html";
 }
