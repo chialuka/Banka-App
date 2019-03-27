@@ -1,25 +1,23 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Client Dashboard</title>
+    <title>Account History</title>
     <link rel="stylesheet" href="styles.css" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="Chukwualuka Chiama" />
     <meta
       name="description"
-      content="The Client Dashboard serves as a landing page for those logged in. From here, client can perform any allowed transaction."
+      content="The account history page shows history of transactions performed on client's account."
     />
   </head>
   <body>
     <header>
-      <h1 id="logo">Banka</h1>
-      <h2 id="user"></h2>
-      <h4 class="edit-profile">Edit Profile</h4>
+      <h1 class="logo" onclick="goHome()">Banka</h1>
     </header>
     <main>
-      <div id="account"></div>
-      <h5 id="history"></h5>
+      <h3 id="account"></h3>
+      <div id="history"></div>
     </main>
     <footer class="footer">
       <div>&copy;Banka Nig Plc</div>

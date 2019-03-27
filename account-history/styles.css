@@ -1,0 +1,49 @@
+html {
+  margin: 0
+}
+
+.logo {
+  cursor: pointer
+}
+
+.logo:hover {
+  color: #1558e7
+}
+
+main {
+  padding-bottom: 50px;
+}
+
+@media screen and (min-width: 500px) {
+  .footer {
+    font-size: 10px
+  }
+}
+
+@media screen and (min-width: 650px) {
+  .footer {
+    font-size: 12px
+  }
+}
+
+.history:nth-child(even) {
+  background-color: white
+}
+
+.history:nth-child(odd) {
+  background-color: gray;
+}
+
+footer {
+  display: flex;
+  justify-content: center;
+  padding: 5px;
+  bottom: 0;
+  height: 50px;
+  box-shadow: 16px 0px 8px 0px rgba(0, 0, 0, 0.2);
+  font-size: 7px
+}
+
+footer a {
+  padding: 10px;
+}
