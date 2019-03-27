@@ -83,3 +83,8 @@ input {
   background: #f1f1f1;
   width: 350px;
 }
+
+#form-error {
+  font-size: 20px;
+  color: red;
+}
