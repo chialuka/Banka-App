@@ -15,6 +15,15 @@ main {
   padding-bottom: 50px;
 }
 
+.edit-profile {
+  float: right;
+  cursor: pointer;
+}
+
+.edit-profile:hover {
+  color: #3a45e2
+}
+
 footer {
   display: flex;
   justify-content: center;
