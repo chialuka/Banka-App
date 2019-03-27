@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Banka Client Login</title>
+    <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Chukwualuka Chiama" />
+    <meta
+      name="description"
+      content="The Client Login page of the Banka App houses a form that allows Clients login to their accounts"
+    />
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <div class="content-wrapper">
+      <form id="loginClient" onsubmit="return validateForm()" method="POST">
+        <h1>Login</h1>
+        <hr />
+        <div class="row">
+          <div class="col-25">
+            <label for="email"><b>Email Address:</b></label>
+          </div>
+          <div class="col-75">
+            <input type="text" name="email" placeholder="Your email address" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-25">
+            <label for="password"><b>Password:</b></label>
+          </div>
+          <div class="col-75">
+            <input type="password" name="password" />
+          </div>
+        </div>
+        <div id="form-error"></div>
+        <div class="row">
+          <button type="submit" class="submit">Login</button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
