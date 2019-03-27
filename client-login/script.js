@@ -14,5 +14,19 @@ function validateForm() {
     error.innerHTML = "Please enter a password";
     return null;
   }
-  window.location.href = "../client-dashboard/index.html";
+
+  const clientToken = JSON.parse(localStorage.getItem("clientToken")) || [];
+  if (clientToken.some(item => item.email === email)) {
+    if (clientToken.find(item => item.password === password)) {
+      const client = clientToken.find(x => x.email === email)
+      const token = Math.floor(Math.random() * 100);
+      client.token = token;
+      localStorage.setItem("clientToken", JSON.stringify(clientToken));
+      window.location.href = "../client-dashboard/index.html";
+    } else {
+      error.innerHTML = "Incorrect password"
+    }
+  } else {
+    error.innerHTML = "User does not exist";
+  }
 }
