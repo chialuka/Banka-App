@@ -36,4 +36,6 @@ function validateForm() {
     error.innerHTML = "Password must be longer than six characters";
     return null
   }
+
+  window.location.href = "../client-dashboard/index.html"
 }

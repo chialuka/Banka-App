@@ -11,10 +11,22 @@ body {
   box-sizing: border-box;
 }
 
+main {
+  padding-bottom: 50px;
+}
+
 .col-25 {
   float: left;
   width: 100%;
   margin-top: 6px;
+}
+
+div .role {
+  width: 100%;
+}
+
+div select {
+  width: 100%
 }
 
 .col-75 {
@@ -31,7 +43,7 @@ body {
 
 @media screen and (min-width: 350px) {
   div .role {
-    width: 25%;
+    width: 30%;
   }
   div select {
     margin-left: 15%;
@@ -68,6 +80,9 @@ body {
   form label {
     width: 150px;
   }
+  div select {
+    margin-left: -22px;
+  }
 }
 
 button {
@@ -99,10 +114,26 @@ input {
 
 select {
   padding: 10px;
-  width: 120px;
+  width: 100px;
+  display: inline-block;
+  margin: 5px 0 5px 0
 }
 
 #form-error {
   font-size: 20px;
   color: red;
+}
+
+footer {
+  display: flex;
+  justify-content: center;
+  padding: 5px;
+  bottom: 0;
+  height: 50px;
+  box-shadow: 16px 0px 8px 0px rgba(0, 0, 0, 0.2);
+  font-size: 7px
+}
+
+footer a {
+  padding: 10px;
 }
