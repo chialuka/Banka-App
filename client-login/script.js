@@ -14,4 +14,5 @@ function validateForm() {
     error.innerHTML = "Please enter a password";
     return null;
   }
+  window.location.href = "../client-dashboard/index.html";
 }
