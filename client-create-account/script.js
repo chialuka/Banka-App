@@ -11,7 +11,7 @@ function validateForm() {
 
   const error = document.getElementById("form-error");
 
-  const token = {};
+  const userAccount = JSON.parse(localStorage.getItem("accountNumber")) || [];
 
   if (name === "") {
     error.innerHTML = "Name is required";
@@ -41,14 +41,14 @@ function validateForm() {
     error.innerHTML = "Select ATM Card type";
     return null;
   }
-  
+
   let accountNumber = "";
   while (accountNumber.length < 10) {
     const accNum = Math.floor(Math.random() * 10);
     accountNumber += accNum;
     if (accountNumber.length === 10) {
-      token.accNumber = accountNumber
-      localStorage.setItem("user", JSON.stringify(token))
+      userAccount.push(accountNumber)
+      localStorage.setItem("accountNumber", JSON.stringify(userAccount))
       return accountNumber
     }
   }
