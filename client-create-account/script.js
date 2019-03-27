@@ -11,7 +11,7 @@ function validateForm() {
 
   const error = document.getElementById("form-error");
 
-  const userAccount = JSON.parse(localStorage.getItem("accountNumber")) || [];
+  const clientToken = JSON.parse(localStorage.getItem("clientToken")) || [];
 
   if (name === "") {
     error.innerHTML = "Name is required";
@@ -20,6 +20,9 @@ function validateForm() {
   if (email === "") {
     error.innerHTML = "Email is required";
     return null;
+  }
+  if (!clientToken.some(item => item.email === email)) {
+    error.innerHTML = "Email is not registered";
   }
   if (address === "") {
     error.innerHTML = "Address is required";
@@ -42,16 +45,16 @@ function validateForm() {
     return null;
   }
 
+  const client = clientToken.find(x => x.email === email);
+
   let accountNumber = "";
   while (accountNumber.length < 10) {
     const accNum = Math.floor(Math.random() * 10);
     accountNumber += accNum;
     if (accountNumber.length === 10) {
-      userAccount.push(accountNumber)
-      localStorage.setItem("accountNumber", JSON.stringify(userAccount))
-      return accountNumber
+      client.accNumber = accountNumber;
+      localStorage.setItem("clientToken", JSON.stringify(clientToken));
     }
   }
-
   window.location.href = "../clientDashboard/index.html";
 }

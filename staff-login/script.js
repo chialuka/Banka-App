@@ -19,4 +19,14 @@ function validateForm() {
   if (role === "") {
     error.innerHTML = "Please select your role"
   }
+
+  const staffToken = JSON.parse(localStorage.getItem("staffToken")) || [];
+  const staff = {};
+  staff.email = email;
+  staff.role = role;
+  staffToken.push("staffToken", JSON.stringify(staffToken));
+  if (role = "admin"){
+    window.location.href = "../admin/index.html"
+  }
+  window.location.href = "../staff/index.html"
 }
