@@ -11,18 +11,35 @@
 
   const history = document.getElementById("history");
 
-  accHistory.map(function(item) {
+  //remove mock data when data has been saved to local storage
+  const mockData = [
+    {
+      accNumber: "1820689736",
+      type: "credit",
+      amount: 5000,
+      balance: 25000
+    },
+    {
+      accNumber: "1820689736",
+      type: "debit",
+      amount: 7000,
+      balance: 18000
+    }
+  ];
+  mockData.map(function(item) {
     const ul = document.createElement("ul");
+    history.appendChild(ul);
     if (item.accNumber === accNumber) {
-      ul.setAttribute("class", "history")
-      const li = document.createElement("li");
-      li.innerHTML = item;
-      ul.appendChild(li);
-      history.appendChild(ul);
+      Object.entries(item).forEach(function([key, value]) {
+        ul.setAttribute("class", "history");
+        const li = document.createElement("li");
+        li.innerHTML = `${key}: ${value}`;
+        ul.appendChild(li);
+      });
     }
   });
 })();
 
 function goHome() {
-  window.location.href = "../client-dashboard/index.html"
+  window.location.href = "../client-dashboard/index.html";
 }
