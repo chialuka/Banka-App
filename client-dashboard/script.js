@@ -11,7 +11,7 @@ function loadUser() {
   }
   const findUser = users.find(item => item.email === email);
   user.innerHTML = "Welcome " + findUser.name;
-  if (!findUser.accNumber) {
+  if (!findUser.accountNumber) {
     const link = document.createElement("a");
     link.setAttribute("href", "../client-create-account/index.html");
     link.setAttribute("class", "link");
@@ -20,7 +20,7 @@ function loadUser() {
       "You haven't opened a bank account yet.";
     account.appendChild(link);
   } else {
-    account.innerHTML = "Your account: " + findUser.accNumber;
+    account.innerHTML = "Your account: " + findUser.accountNumber;
     const history = document.getElementById("history");
     const link = document.createElement("a");
     link.setAttribute("href", "../account-history/index.html");

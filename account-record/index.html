@@ -13,12 +13,21 @@
   </head>
   <body>
     <header>
-      <h1 class="logo" onclick=goHome()>Banka</h1>
+      <h1 class="logo" onclick="goHome()">Banka</h1>
       <h2 id="user"></h2>
     </header>
     <main>
       <h5 id="account"></h5>
       <div id="accountDetails"></div>
+      <div>
+        <label for="amount">Amount:</label>
+        <input type="number" name="amount" id="amount"/>
+        <div id="error"></div>
+      </div>
+      <div>
+        <button class="credit" onclick=creditAccount()>Credit Account</button>
+        <button class="debit" onclick=debitAccount()>Debit Account</button>
+      </div>
     </main>
     <footer class="footer">
       <div>&copy;Banka Nig Plc</div>
