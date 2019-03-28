@@ -1,3 +1,10 @@
+(function(){
+  const email = localStorage.getItem("loggedInUser");
+  if (email) {
+    window.location.href = "../client-dashboard/index.html"
+  }
+})();
+
 function validateForm() {
   event.preventDefault();
   const email = document.forms["login-client"]["email"].value;

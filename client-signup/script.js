@@ -1,3 +1,9 @@
+(function() {
+  const email = localStorage.getItem("loggedInUser");
+  if (email) {
+    window.location.href = "../client-dashboard/index.html"
+  }
+})()
 function validateForm() {
   event.preventDefault();
   const name = document.forms["register-client"]["name"].value;
@@ -19,10 +25,10 @@ function validateForm() {
   }
   const client = {};
   const token = Math.floor(Math.random() * 100);
-  client.name = name;
-  client.email = email;
-  client.password = password;
-  client.token = token;
+  client["Name"] = name;
+  client["Email"] = email;
+  client["Password"] = password;
+  client["Token"] = token;
   clientToken.push(client);
   localStorage.setItem("loggedInUser", email)
   localStorage.setItem("clientToken", JSON.stringify(clientToken));
