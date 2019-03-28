@@ -1,8 +1,8 @@
 function validateForm() {
   event.preventDefault();
-  const email = document.forms["loginStaff"]["email"].value;
-  const password = document.forms["loginStaff"]["password"].value;
-  const role = document.forms["loginStaff"]["roles"].value;
+  const email = document.forms["login-staff"]["email"].value;
+  const password = document.forms["login-staff"]["password"].value;
+  const role = document.forms["login-staff"]["roles"].value;
 
   const error = document.getElementById("form-error");
 

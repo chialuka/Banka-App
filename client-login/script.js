@@ -1,7 +1,7 @@
 function validateForm() {
   event.preventDefault();
-  const email = document.forms["loginClient"]["email"].value;
-  const password = document.forms["loginClient"]["password"].value;
+  const email = document.forms["login-client"]["email"].value;
+  const password = document.forms["login-client"]["password"].value;
 
   const error = document.getElementById("form-error");
 

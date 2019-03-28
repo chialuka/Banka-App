@@ -28,7 +28,7 @@ let debitButton
     }
   }
 
-  const accountDetails = document.getElementById("accountDetails");
+  const accountDetails = document.getElementById("account-details");
   const ul = document.createElement("ul");
   ul.setAttribute("class", "list");
   accountDetails.appendChild(ul);
@@ -40,9 +40,6 @@ let debitButton
   });
 })();
 
-function goHome() {
-  window.location.href = "../staff-dashboard/index.html";
-}
 /**
  * @name creditAccount
  * @returns {}

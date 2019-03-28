@@ -1,1 +1,0 @@
-This is a web app for Banka. It supports online banking transactions and provides services for clients, staff and admin.

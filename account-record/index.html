@@ -13,16 +13,16 @@
   </head>
   <body>
     <header>
-      <h1 class="logo" onclick="goHome()">Banka</h1>
+      <h1 class="logo"><a href="../staff-dashboard/index.html">Banka</a></h1>
       <h2 id="user"></h2>
     </header>
     <main>
-      <div class="topButtons">
-        <button id="activate" onclick="activateAccount()"></button>
-        <button class="delete" onclick="deleteAccount()">Delete Account</button>
+      <div class="top-buttons">
+        <button id="activate" onclick=activateAccount()></button>
+        <button class="delete" onclick=deleteAccount()>Delete Account</button>
       </div>
       <h5 id="account"></h5>
-      <div id="accountDetails"></div>
+      <div id="account-details"></div>
       <hr />
       <div>
         <label for="amount">Amount:</label>
@@ -30,8 +30,8 @@
         <div id="error"></div>
       </div>
       <div>
-        <button class="credit" onclick="creditAccount()">Credit Account</button>
-        <button class="debit" onclick="debitAccount()">Debit Account</button>
+        <button class="credit" onclick=creditAccount()>Credit Account</button>
+        <button class="debit" onclick=debitAccount()>Debit Account</button>
       </div>
     </main>
     <footer class="footer">

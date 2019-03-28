@@ -32,7 +32,7 @@ main {
   min-height: calc(100vh - 160px)
 }
 
-.topButtons {
+.top-buttons {
   display: flex;
   flex-direction: row
 }

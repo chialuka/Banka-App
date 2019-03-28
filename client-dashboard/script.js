@@ -7,7 +7,7 @@ function loadUser() {
   const account = document.getElementById("account");
 
   if (!email) {
-    window.location.href = "../landingPage/index.html";
+    window.location.href = "../landing-page/index.html";
   }
   const findUser = users.find(item => item.email === email);
   user.innerHTML = "Welcome " + findUser.name;
