@@ -29,6 +29,10 @@ header {
   height: 80px
 }
 
+.buttons-class {
+  display: flex;
+}
+
 @media screen and (min-width: 650px) {
   footer p {
     font-size: 12px
@@ -43,11 +47,17 @@ button {
   border: none;
   border-radius: 4px;
   background-color: rgba(176, 181, 243, 0.5);
-  margin: 5px
+  margin: 5px;
+  width: 100px;
+  color: black
 }
 
 a {
   text-decoration: none;
+}
+
+#history {
+  display: none
 }
 
 footer {
@@ -55,7 +65,7 @@ footer {
   justify-content: center;
   padding: 5px;
   height: 60px;
-  box-shadow: 5px 0px 5px 0px rgba(0, 0, 0, 0.2);
+  border-top: 1px solid gray;
   font-size: 10px
 }
 

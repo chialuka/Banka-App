@@ -9,11 +9,11 @@
   }
   
   const user = staff.find(x => x.email === email)
-  if (user.role !== "Admin") {
+  if (user.role === "Admin") {
     admin.style.display = "block"
   }
 
-  const clients = JSON.parse(localStorage.getItem("clientToken"));
+  const clients = JSON.parse(localStorage.getItem("clientToken")) || [];
 
   clients.map(function(item) {
     const ul = document.createElement("ul");

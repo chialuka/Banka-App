@@ -19,6 +19,7 @@
   } else {
     account.innerHTML = "Your account: " + findUser.accountNumber;
     const history = document.getElementById("history");
+    history.style.display = "block"
     const link = document.createElement("a");
     link.setAttribute("href", "../account-history/index.html");
     link.innerHTML = "View history";

@@ -105,8 +105,8 @@ a:hover {
 .logo {
   float: right;
   padding: 15px 15px;
-  font-size: 20px;
-  color: #3d1dee;
+  font-size: 22px;
+  color: rgb(143, 176, 245);
   background-color: white;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
