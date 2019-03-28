@@ -2,7 +2,7 @@ const record = JSON.parse(localStorage.getItem("acc"));
 const clientsArray = JSON.parse(localStorage.getItem("clientToken")) || [];
 const staffArray = JSON.parse(localStorage.getItem("staffToken")) || [];
 const staffEmail = localStorage.getItem("loggedInStaff");
-const client = clientsArray.find(x => x.accountNumber === record);
+const client = clientsArray.find(x => x["Account Number"] === record);
 const staff = staffArray.find(x => x.email === staffEmail);
 const activateAccountButton = document.getElementById("activate");
 let creditButton
@@ -17,7 +17,7 @@ let debitButton
     
   if (staff.role === "Admin") {
     activateAccountButton.style.display = "block";
-    if (client.activationStatus === false) {
+    if (client["Activation Status"] === false) {
       creditButton.disabled = true;
       debitButton.disabled = true;
       activateAccountButton.innerHTML = "Activate Account";
@@ -47,14 +47,14 @@ let debitButton
 function creditAccount() {
   const amount = document.getElementById("amount").value;
 
-  client.accountBalance = Number(client.accountBalance) + Number(amount);
-  let balance = client.accountBalance;
+  client["Account Balance"] = Number(client["Account Balance"]) + Number(amount);
+  let balance = client["Account Balance"];
   const transacts = JSON.parse(localStorage.getItem("accountHistory")) || [];
   const history = {};
-  history.accountNumber = record;
-  history.type = "credit";
-  history.amount = amount;
-  history.balance = balance;
+  history["Account Number"] = record;
+  history["Type"] = "credit";
+  history["Amount"] = amount;
+  history["Balance"] = balance;
   transacts.push(history);
   localStorage.setItem("accountHistory", JSON.stringify(transacts));
   localStorage.setItem("clientToken", JSON.stringify(clientsArray));
@@ -67,18 +67,18 @@ function debitAccount() {
 
   const amount = document.getElementById("amount").value;
 
-  if (client.accountBalance <= 0 || client.accountBalance < amount) {
+  if (client["Account Balance"] <= 0 || client["Account Balance"] < amount) {
     error.innerHTML = "Balance is too small. Ask customer to credit account";
     return null;
   }
-  client.accountBalance = Number(client.accountBalance) - Number(amount);
-  let balance = client.accountBalance;
+  client["Account Balance"] = Number(client["Account Balance"]) - Number(amount);
+  let balance = client["Account Balance"];
   const transacts = JSON.parse(localStorage.getItem("accountHistory")) || [];
   const history = {};
-  history.accountNumber = record;
-  history.type = "dedit";
-  history.amount = amount;
-  history.balance = balance;
+  history["Account Number"] = record;
+  history["Type"] = "debit";
+  history["Amount"] = amount;
+  history["Balance"] = balance;
   transacts.push(history);
   localStorage.setItem("accountHistory", JSON.stringify(transacts));
   localStorage.setItem("clientToken", JSON.stringify(clientsArray));
@@ -93,10 +93,10 @@ function deleteAccount() {
 }
 
 function activateAccount() {
-  if (client.activationStatus === true) {
-    client.activationStatus = false;
+  if (client["Activation Status"] === true) {
+    client["Activation Status"] = false;
   } else {
-    client.activationStatus = true
+    client["Activation Status"] = true
   }
   localStorage.setItem("clientToken", JSON.stringify(clientsArray));
   location.reload();

@@ -19,7 +19,7 @@ function validateForm() {
   }
 
   const clientToken = JSON.parse(localStorage.getItem("clientToken")) || [];
-  if (clientToken.some(item => item.email === email)) {
+  if (clientToken.some(item => item["Email"] === email)) {
     error.innerHTML = "Email is already registered";
     return null
   }
