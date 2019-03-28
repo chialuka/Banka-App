@@ -1,9 +1,9 @@
 function validateForm() {
   event.preventDefault();
-  const name = document.forms["registerClient"]["name"].value;
-  const email = document.forms["registerClient"]["email"].value;
-  const password = document.forms["registerClient"]["password"].value;
-  const password2 = document.forms["registerClient"]["password2"].value;
+  const name = document.forms["register-client"]["name"].value;
+  const email = document.forms["register-client"]["email"].value;
+  const password = document.forms["register-client"]["password"].value;
+  const password2 = document.forms["register-client"]["password2"].value;
 
   const error = document.getElementById("form-error");
 

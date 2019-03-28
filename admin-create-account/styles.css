@@ -3,10 +3,13 @@ html {
 }
 
 body {
-  margin: 10px;
+  margin: 0;
   font-family: Arial, Helvetica, sans-serif;
   background-color: rgba(15, 8, 8, 0.9);
   color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 * {
@@ -14,17 +17,34 @@ body {
 }
 
 header {
-  height: 80px
+  height: 80px;
 }
 
-main {
+.content-wrapper {
   padding-bottom: 20px;
-  min-height: calc(100vh - 160px)
+  min-height: calc(100vh - 160px);
+  max-width: 70%;
 }
 
-h1 a {
-  float: right;
-  color: rgb(207, 233, 231);
+#login-staff {
+  display: flex;
+  flex-direction: column;
+  align-items: center
+}
+
+.form-header {
+  font-size: 60%
+}
+
+h1 {
+  font-size: 1.3em;
+}
+
+.logo a {
+  color: rgb(180, 201, 245);
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  text-decoration: none;
+  font-weight: 800;
 }
 
 .col-75 {
@@ -39,50 +59,21 @@ h1 a {
   clear: both;
 }
 
-@media screen and (min-width: 350px) {
-  div .role {
-    width: 25%;
-  }
-  div select {
-    margin-left: 1px;
-    width: 50%;
-  }
-}
-
-@media screen and (min-width: 520px) {
-  div select {
-    margin-left: 1px;
-  }
-}
-
 @media screen and (min-width: 650px) {
-  body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  .content-wrapper {
+    max-width: 550px;
   }
-  .col-75 {
-    width: 75%;
+  h1 {
+    font-size: 1.6em;
   }
-  form button {
-    width: 25%;
-    margin-top: 10px;
-    float: right;
+  .details {
+    font-size: 16px;
   }
-  form input {
-    width: 450px;
+  .terms {
+    font-size: 16px;
   }
-  form label {
-    width: 150px;
-  }
-  div select {
-    margin-left: 1px
-  }
-  a {
-    float: right;
-  }
-  footer div {
-    font-size: 12px
+  footer .footer-item {
+    font-size: 12px;
   }
 }
 
@@ -97,25 +88,11 @@ button {
   margin-top: 10px;
 }
 
-label {
-  display: inline-block;
-  padding-top: 5px;
-  text-align: right;
-  width: 130px;
-}
-
-input {
+input, select {
   padding: 15px;
   margin: 5px 0 5px 0;
-  display: inline-block;
   border: none;
   background: #f1f1f1;
-  width: 100%;
-}
-
-select {
-  margin: 5px 0 5px 0;
-  padding: 15px;
   width: 100%;
 }
 
@@ -124,20 +101,21 @@ select {
   color: red;
 }
 
-h1 {
-  font-size: 16px;
+p {
+  font-size: 13px;
 }
 
 footer {
   display: flex;
   justify-content: center;
+  flex-direction: row;
   padding: 10px;
   bottom: 0;
   height: 60px;
   box-shadow: 16px 0px 8px 0px rgba(0, 0, 0, 0.2);
-  font-size: 8px;
 }
 
-footer div {
-  padding: 5px
+footer p {
+  padding: 3px;
+  font-size: 9px;
 }
