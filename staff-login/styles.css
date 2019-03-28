@@ -3,18 +3,48 @@ html {
 }
 
 body {
-  margin: 10px;
+  margin: 0;
   font-family: Arial, Helvetica, sans-serif;
+  background-color: rgba(15, 8, 8, 0.9);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 * {
   box-sizing: border-box;
 }
 
-.col-25 {
-  float: left;
-  width: 100%;
-  margin-top: 6px;
+header {
+  height: 80px;
+}
+
+.content-wrapper {
+  padding-bottom: 20px;
+  min-height: calc(100vh - 160px);
+  max-width: 70%;
+}
+
+#login-staff {
+  display: flex;
+  flex-direction: column;
+  align-items: center
+}
+
+.form-header {
+  font-size: 60%
+}
+
+h1 {
+  font-size: 1.3em;
+}
+
+.logo a {
+  color: rgb(180, 201, 245);
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  text-decoration: none;
+  font-weight: 800;
 }
 
 .col-75 {
@@ -29,44 +59,21 @@ body {
   clear: both;
 }
 
-@media screen and (min-width: 350px) {
-  div .role {
-    width: 25%;
-  }
-  div select {
-    margin-left: 15%;
-    width: 50%;
-  }
-}
-
-@media screen and (min-width: 520px) {
-  div select {
-    margin-left: 5px;
-  }
-}
-
 @media screen and (min-width: 650px) {
-  body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  .content-wrapper {
+    max-width: 550px;
   }
-  .col-25 {
-    width: 25%;
+  h1 {
+    font-size: 1.6em;
   }
-  .col-75 {
-    width: 75%;
+  .details {
+    font-size: 16px;
   }
-  form button {
-    width: 25%;
-    margin-top: 10px;
-    float: right;
+  .terms {
+    font-size: 16px;
   }
-  form input {
-    width: 450px;
-  }
-  form label {
-    width: 150px;
+  footer .footer-item {
+    font-size: 12px;
   }
 }
 
@@ -81,28 +88,34 @@ button {
   margin-top: 10px;
 }
 
-label {
-  display: inline-block;
-  padding-top: 5px;
-  text-align: right;
-  width: 130px;
-}
-
-input {
+input, select {
   padding: 15px;
   margin: 5px 0 5px 0;
-  display: inline-block;
   border: none;
   background: #f1f1f1;
   width: 100%;
 }
 
-select {
-  padding: 10px;
-  width: 120px;
-}
-
 #form-error {
   font-size: 20px;
   color: red;
+}
+
+p {
+  font-size: 13px;
+}
+
+footer {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  padding: 10px;
+  bottom: 0;
+  height: 60px;
+  box-shadow: 16px 0px 8px 0px rgba(0, 0, 0, 0.2);
+}
+
+footer p {
+  padding: 3px;
+  font-size: 9px;
 }

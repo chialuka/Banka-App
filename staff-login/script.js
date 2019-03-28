@@ -1,23 +1,14 @@
 function validateForm() {
   event.preventDefault();
   const email = document.forms["login-staff"]["email"].value;
-  const password = document.forms["login-staff"]["password"].value;
   const role = document.forms["login-staff"]["roles"].value;
 
   const error = document.getElementById("form-error");
 
-  if (email === "") {
-    error.innerHTML = "Please enter your email address";
-    return null;
-  }
 
-  if (password === "") {
-    error.innerHTML = "Please enter a password";
-    return null;
-  }
-
-  if (role === "") {
-    error.innerHTML = "Please select your role"
+  if (role === "Select Role") {
+    error.innerHTML = "Please select your role";
+    return null
   }
 
   const staffToken = JSON.parse(localStorage.getItem("staffToken")) || [];
