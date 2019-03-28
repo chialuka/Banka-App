@@ -2,6 +2,14 @@ html {
   margin: 0;
 }
 
+body {
+  margin: 0;
+}
+
+header {
+  height: 80px
+}
+
 .logo {
   cursor: pointer;
 }
@@ -12,10 +20,16 @@ html {
 }
 
 main {
-  padding-bottom: 50px;
+  padding-bottom: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: calc(100vh - 160px)
+}
+
+.topButtons {
+  display: flex;
+  flex-direction: row
 }
 
 @media screen and (min-width: 500px) {
@@ -42,13 +56,20 @@ main {
   }
 }
 
+#activate {
+  display: none;
+  background-color: #3d1dee;
+}
+
 .list {
   padding: 10px;
   margin: 10px;
   display: flex;
   flex-direction: column;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  list-style-type: none
 }
+
 
 .item {
   font-size: 13px;
@@ -65,39 +86,44 @@ input {
   margin: 10px 0 10px 0;
   display: inline-block;
   border: none;
-  background: #d1cece;
+  background: #f1f1f1;
   width: 40%;
 }
 
 button {
-  width: 40%;
+  width: 100px;
   padding: 10px;
   margin: 5px;
   border: none;
   border-radius: 4px;
   font-weight: bold;
+  color: white;
 }
 
-button:hover {
-  cursor: pointer;
+button:hover, 
+button:focus {
+  cursor: pointer
+}
+
+button:disabled {
+  background-color: #ccc
 }
 
 .delete {
-  background-color: #e41818;
+  background-color: red;
 }
 
 .credit {
-  background-color: #0bec61;
+  background-color: #3d1dee;
 }
 
 .debit {
-  background-color: #f70808;
+  background-color: red;
 }
 
 #error {
-  background-color: #ca001b;
-  font-weight: bold;
-  font-size: 20px;
+  background-color: red;
+  font-size: 15px;
   color: white;
 }
 
@@ -106,9 +132,9 @@ footer {
   justify-content: center;
   padding: 5px;
   bottom: 0;
-  height: 50px;
-  box-shadow: 16px 0px 8px 0px rgba(0, 0, 0, 0.2);
-  font-size: 7px;
+  height: 60px;
+  border-top: 1px solid gray;
+  font-size: 8px;
 }
 
 footer a {

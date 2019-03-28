@@ -1,11 +1,33 @@
-(function() {
-  const record = JSON.parse(localStorage.getItem("acc"));
-  const clientsArray = JSON.parse(localStorage.getItem("clientToken")) || [];
+const record = JSON.parse(localStorage.getItem("acc"));
+const clientsArray = JSON.parse(localStorage.getItem("clientToken")) || [];
+const staffArray = JSON.parse(localStorage.getItem("staffToken")) || [];
+const staffEmail = localStorage.getItem("loggedInStaff");
+const client = clientsArray.find(x => x.accountNumber === record);
+const staff = staffArray.find(x => x.email === staffEmail);
+const activateAccountButton = document.getElementById("activate");
+let creditButton
+let debitButton
 
+(function() {
   const account = document.getElementById("account");
   account.innerHTML = "Account record for client account number: " + record;
+  const activateAccountButton = document.getElementById("activate");
+  creditButton = document.getElementsByClassName("credit")[0]
+  debitButton = document.getElementsByClassName("debit")[0]
+    
+  if (staff.role === "Admin") {
+    activateAccountButton.style.display = "block";
+    if (client.activationStatus === false) {
+      creditButton.disabled = true;
+      debitButton.disabled = true;
+      activateAccountButton.innerHTML = "Activate Account";
+    } else {
+      creditButton.disabled = false;
+      debitButton.disabled = false;
+      activateAccountButton.innerHTML = "Deactivate Account";
+    }
+  }
 
-  const client = clientsArray.find(x => x.accountNumber === record);
   const accountDetails = document.getElementById("accountDetails");
   const ul = document.createElement("ul");
   ul.setAttribute("class", "list");
@@ -21,13 +43,15 @@
 function goHome() {
   window.location.href = "../staff-dashboard/index.html";
 }
-
+/**
+ * @name creditAccount
+ * @returns {}
+ */
 function creditAccount() {
+  const error = document.getElementById("error");
+
   const amount = document.getElementById("amount").value;
 
-  const record = JSON.parse(localStorage.getItem("acc"));
-  const clientsArray = JSON.parse(localStorage.getItem("clientToken")) || [];
-  const client = clientsArray.find(x => x.accountNumber === record);
   let balance = client.accountBalance;
   client.accountBalance = Number(balance) + Number(amount);
   const transacts = JSON.parse(localStorage.getItem("accountHistory")) || [];
@@ -45,11 +69,9 @@ function creditAccount() {
 
 function debitAccount() {
   const error = document.getElementById("error");
+
   const amount = document.getElementById("amount").value;
 
-  const record = JSON.parse(localStorage.getItem("acc"));
-  const clientsArray = JSON.parse(localStorage.getItem("clientToken")) || [];
-  const client = clientsArray.find(x => x.accountNumber === record);
   let balance = client.accountBalance;
   if (balance <= 0 || balance < amount) {
     error.innerHTML = "Balance is too small. Ask customer to credit account";
@@ -70,10 +92,17 @@ function debitAccount() {
 }
 
 function deleteAccount() {
-  const record = JSON.parse(localStorage.getItem("acc"));
-  const clientsArray = JSON.parse(localStorage.getItem("clientToken")) || [];
-  const client = clientsArray.find(x => x.accountNumber === record);
   client.accountNumber = "";
   localStorage.setItem("clientToken", JSON.stringify(clientsArray));
-  window.location.href = "../staff-dashboard/index.html"
+  window.location.href = "../staff-dashboard/index.html";
+}
+
+function activateAccount() {
+  if (client.activationStatus === true) {
+    client.activationStatus = false;
+  } else {
+    client.activationStatus = true
+  }
+  localStorage.setItem("clientToken", JSON.stringify(clientsArray));
+  location.reload();
 }
