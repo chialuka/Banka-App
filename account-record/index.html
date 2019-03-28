@@ -17,25 +17,29 @@
       <h2 id="user"></h2>
     </header>
     <main>
-      <button class="delete" onclick=deleteAccount()>Delete Account</button>
+      <div class="topButtons">
+        <button id="activate" onclick="activateAccount()"></button>
+        <button class="delete" onclick="deleteAccount()">Delete Account</button>
+      </div>
       <h5 id="account"></h5>
       <div id="accountDetails"></div>
+      <hr />
       <div>
         <label for="amount">Amount:</label>
-        <input type="number" name="amount" id="amount"/>
+        <input type="number" name="amount" id="amount" />
         <div id="error"></div>
       </div>
       <div>
-        <button class="credit" onclick=creditAccount()>Credit Account</button>
-        <button class="debit" onclick=debitAccount()>Debit Account</button>
+        <button class="credit" onclick="creditAccount()">Credit Account</button>
+        <button class="debit" onclick="debitAccount()">Debit Account</button>
       </div>
     </main>
     <footer class="footer">
-      <div>&copy;Banka Nig Plc</div>
-      <div><a href="#terms">Terms of Service</a></div>
-      <div><a href="#sitemap">Sitemap</a></div>
-      <div><a href="#privacy">Privacy Policy</a></div>
-      <div><a href="logo">Back To Top</a></div>
+      <p class="footer-item">&copy;Banka Nig Plc</p>
+      <p class="footer-item"><a href="#terms">Terms of Service</a></p>
+      <p class="footer-item"><a href="#sitemap">Sitemap</a></p>
+      <p class="footer-item"><a href="#privacy">Privacy Policy</a></p>
+      <p class="footer-item"><a href="logo">Back To Top</a></p>
     </footer>
     <script src="script.js"></script>
   </body>

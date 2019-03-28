@@ -55,6 +55,7 @@ function validateForm() {
     if (accountNumber.length === 10) {
       client.accountNumber = accountNumber;
       client.accountBalance = 0;
+      client.activationStatus = false;
       localStorage.setItem("clientToken", JSON.stringify(clientToken));
     }
   }
