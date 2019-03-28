@@ -1,8 +1,8 @@
 (function() {
   const email = localStorage.getItem("loggedInUser");
   const userArray = JSON.parse(localStorage.getItem("clientToken")) || [];
-  const user = userArray.find(item => item.email === email);
-  const accNumber = user.accountNumber;
+  const user = userArray.find(item => item["Email"] === email);
+  const accNumber = user["Account Number"];
 
   const accHistory = JSON.parse(localStorage.getItem("accountHistory")) || [];
 
@@ -14,7 +14,7 @@
   accHistory.map(function(item) {
     const ul = document.createElement("ul");
     history.appendChild(ul);
-    if (item.accountNumber === accNumber) {
+    if (item["Account Number"] === accNumber) {
       Object.entries(item).forEach(function([key, value]) {
         ul.setAttribute("class", "history");
         const li = document.createElement("li");

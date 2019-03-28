@@ -4,9 +4,9 @@
     window.location.href = "../landing-page/index.html";
   }
   const clientArr = JSON.parse(localStorage.getItem("clientToken"));
-  const client = clientArr.find(item => item.email === email);
+  const client = clientArr.find(item => item["Email"] === email);
   document.forms["create-account"]["email"].value = email;
-  document.forms["create-account"]["name"].value = client.name;
+  document.forms["create-account"]["name"].value = client["Name"];
 }) ()
 
 
@@ -38,16 +38,16 @@ function validateForm() {
   }
 
   const email = localStorage.getItem("loggedInUser");
-  const client = clientToken.find(x => x.email === email);
+  const client = clientToken.find(x => x["Email"] === email);
 
   let accountNumber = "";
   while (accountNumber.length < 10) {
     const accNum = Math.floor(Math.random() * 10);
     accountNumber += accNum;
     if (accountNumber.length === 10) {
-      client.accountNumber = accountNumber;
-      client.accountBalance = 0;
-      client.activationStatus = false;
+      client["Account Number"] = accountNumber;
+      client["Account Balance"] = 0;
+      client["Activation Status"] = false;
       localStorage.setItem("clientToken", JSON.stringify(clientToken));
     }
   }

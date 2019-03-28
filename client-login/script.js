@@ -1,3 +1,10 @@
+(function(){
+  const email = localStorage.getItem("loggedInUser");
+  if (email) {
+    window.location.href = "../client-dashboard/index.html"
+  }
+})();
+
 function validateForm() {
   event.preventDefault();
   const email = document.forms["login-client"]["email"].value;
@@ -6,11 +13,11 @@ function validateForm() {
   const error = document.getElementById("form-error");
 
   const clientToken = JSON.parse(localStorage.getItem("clientToken")) || [];
-  if (clientToken.some(item => item.email === email)) {
-    if (clientToken.find(item => item.password === password)) {
-      const client = clientToken.find(x => x.email === email)
+  if (clientToken.some(item => item["Email"] === email)) {
+    if (clientToken.find(item => item["Password"] === password)) {
+      const client = clientToken.find(x => x["Email"] === email)
       const token = Math.floor(Math.random() * 100);
-      client.token = token;
+      client["Token"] = token;
       localStorage.setItem("loggedInUser", email)
       localStorage.setItem("clientToken", JSON.stringify(clientToken));
       window.location.href = "../client-dashboard/index.html";
