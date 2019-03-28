@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin Create Account</title>
+    <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Chukwualuka Chiama" />
+    <meta
+      name="description"
+      content="The Admin/Staff creation page of the Banka App houses a form that allows Admin open new admin and staff account."
+    />
+  </head>
+  <body>
+    <header>
+      <h1 class="logo"><a href="../staff-dashboard/index.html">Banka</a></h1>
+    </header>
+    <main class="content-wrapper">
+      <form id="loginStaff" onsubmit="return validateForm()" method="POST">
+        <h1>Create New Account- Admin/Staff</h1>
+        <hr />
+        <div class="row">
+          <div class="col-75">
+            <input type="text" name="name" placeholder="Enter Name" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-75">
+            <input type="text" name="email" placeholder="Enter Email" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-75">
+            <input type="password" name="password" placeholder="Password" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <select name="roles">
+              <option selected name disabled> Select Role </option>
+              <option> Staff </option>
+              <option> Admin </option>
+            </select>
+          </div>
+        </div>
+        <div id="form-error"></div>
+        <div class="row">
+          <button type="submit" class="submit">Login</button>
+        </div>
+      </form>
+    </main>
+    <footer class="footer">
+      <div>&copy;Banka Nig Plc</div>
+      <div><a href="#terms">Terms of Service</a></div>
+      <div><a href="#sitemap">Sitemap</a></div>
+      <div><a href="#privacy">Privacy Policy</a></div>
+      <div><a href="logo">Back To Top</a></div>
+    </footer>
+    <script src="script.js"></script>
+  </body>
+</html>
