@@ -13,8 +13,13 @@ body {
   box-sizing: border-box;
 }
 
+header {
+  height: 80px
+}
+
 main {
-  padding-bottom: 50px;
+  padding-bottom: 20px;
+  min-height: calc(100vh - 160px)
 }
 
 h1 a {
@@ -128,7 +133,7 @@ footer {
   justify-content: center;
   padding: 10px;
   bottom: 0;
-  height: 50px;
+  height: 60px;
   box-shadow: 16px 0px 8px 0px rgba(0, 0, 0, 0.2);
   font-size: 8px;
 }
