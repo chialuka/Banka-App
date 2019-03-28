@@ -87,7 +87,7 @@ function debitAccount() {
 }
 
 function deleteAccount() {
-  client.accountNumber = "";
+  client["Account Number"] = "";
   localStorage.setItem("clientToken", JSON.stringify(clientsArray));
   window.location.href = "../staff-dashboard/index.html";
 }

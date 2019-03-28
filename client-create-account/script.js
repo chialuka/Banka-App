@@ -1,10 +1,11 @@
+const clientToken = JSON.parse(localStorage.getItem("clientToken")) || [];
+
 (function() {
   const email = localStorage.getItem("loggedInUser");
   if (!email) {
     window.location.href = "../landing-page/index.html";
   }
-  const clientArr = JSON.parse(localStorage.getItem("clientToken"));
-  const client = clientArr.find(item => item["Email"] === email);
+  const client = clientToken.find(item => item["Email"] === email);
   document.forms["create-account"]["email"].value = email;
   document.forms["create-account"]["name"].value = client["Name"];
 }) ()
@@ -19,9 +20,6 @@ function validateForm() {
   const regex = /[^0-9]/g;
 
   const error = document.getElementById("form-error");
-
-  const clientToken = JSON.parse(localStorage.getItem("clientToken")) || [];
-
  
   if (!!phone.match(regex)) {
     error.innerHTML = "Enter valid phone number";
@@ -47,6 +45,8 @@ function validateForm() {
     if (accountNumber.length === 10) {
       client["Account Number"] = accountNumber;
       client["Account Balance"] = 0;
+      client["Account Type"] = account;
+      client["Card Type"] = atm
       client["Activation Status"] = false;
       localStorage.setItem("clientToken", JSON.stringify(clientToken));
     }
