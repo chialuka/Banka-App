@@ -1,22 +1,20 @@
-loadPage();
-
-function loadPage() {
+(function() {
   const email = localStorage.getItem("loggedInUser");
   if (!email) {
-    window.location.href = "../landingPage/index.html";
+    window.location.href = "../landing-page/index.html";
   }
   const clientArr = JSON.parse(localStorage.getItem("clientToken"));
   const client = clientArr.find(item => item.email === email);
-  document.forms["createAccount"]["email"].value = email;
-  document.forms["createAccount"]["name"].value = client.name;
-}
+  document.forms["create-account"]["email"].value = email;
+  document.forms["create-account"]["name"].value = client.name;
+}) ()
+
 
 function validateForm() {
   event.preventDefault();
-  const address = document.forms["createAccount"]["address"].value;
-  const phone = document.forms["createAccount"]["phone"].value;
-  const account = document.forms["createAccount"]["account"].value;
-  const atm = document.forms["createAccount"]["atm"].value;
+  const phone = document.forms["create-account"]["phone"].value;
+  const account = document.forms["create-account"]["account"].value;
+  const atm = document.forms["create-account"]["atm"].value;
 
   const regex = /[^0-9]/g;
 
@@ -24,18 +22,12 @@ function validateForm() {
 
   const clientToken = JSON.parse(localStorage.getItem("clientToken")) || [];
 
-  if (address === "") {
-    error.innerHTML = "Address is required";
-    return null;
-  }
-  if (phone === "") {
-    error.innerHTML = "Phone number is required";
-    return null;
-  }
-  if (!!phone.match(regex) || phone.length < 9) {
+ 
+  if (!!phone.match(regex)) {
     error.innerHTML = "Enter valid phone number";
     return null;
   }
+
   if (account === "Select Account Type") {
     error.innerHTML = "Select account type";
     return null;

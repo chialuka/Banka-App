@@ -28,7 +28,7 @@ let debitButton
     }
   }
 
-  const accountDetails = document.getElementById("accountDetails");
+  const accountDetails = document.getElementById("account-details");
   const ul = document.createElement("ul");
   ul.setAttribute("class", "list");
   accountDetails.appendChild(ul);
@@ -40,20 +40,15 @@ let debitButton
   });
 })();
 
-function goHome() {
-  window.location.href = "../staff-dashboard/index.html";
-}
 /**
  * @name creditAccount
  * @returns {}
  */
 function creditAccount() {
-  const error = document.getElementById("error");
-
   const amount = document.getElementById("amount").value;
 
+  client.accountBalance = Number(client.accountBalance) + Number(amount);
   let balance = client.accountBalance;
-  client.accountBalance = Number(balance) + Number(amount);
   const transacts = JSON.parse(localStorage.getItem("accountHistory")) || [];
   const history = {};
   history.accountNumber = record;
@@ -72,12 +67,12 @@ function debitAccount() {
 
   const amount = document.getElementById("amount").value;
 
-  let balance = client.accountBalance;
-  if (balance <= 0 || balance < amount) {
+  if (client.accountBalance <= 0 || client.accountBalance < amount) {
     error.innerHTML = "Balance is too small. Ask customer to credit account";
     return null;
   }
-  client.accountBalance = balance - amount;
+  client.accountBalance = Number(client.accountBalance) - Number(amount);
+  let balance = client.accountBalance;
   const transacts = JSON.parse(localStorage.getItem("accountHistory")) || [];
   const history = {};
   history.accountNumber = record;

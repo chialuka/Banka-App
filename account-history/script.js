@@ -24,7 +24,3 @@
     }
   });
 })();
-
-function goHome() {
-  window.location.href = "../client-dashboard/index.html";
-}

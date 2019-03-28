@@ -1,37 +1,55 @@
 html {
-  margin: 0
+  margin: 0;
 }
 
-.logo {
-  cursor: pointer
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.logo:hover {
-  color: #1558e7
+#logo {
+  cursor: pointer;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: rgb(180, 201, 245);
+}
+
+header {
+  height: 80px
 }
 
 main {
-  padding-bottom: 50px;
+  min-height: calc(100vh - 180px)
 }
 
 @media screen and (min-width: 500px) {
   .footer {
-    font-size: 10px
+    font-size: 10px;
   }
 }
 
 @media screen and (min-width: 650px) {
   .footer {
-    font-size: 12px
+    font-size: 12px;
   }
 }
 
+.history {
+  list-style-type: none;
+  padding: 10px;
+}
+
 .history:nth-child(even) {
-  background-color: white
+  background-color: rgb(228, 222, 222);
 }
 
 .history:nth-child(odd) {
-  background-color: gray;
+  background-color: rgb(192, 189, 189);
 }
 
 footer {
@@ -39,9 +57,9 @@ footer {
   justify-content: center;
   padding: 5px;
   bottom: 0;
-  height: 50px;
-  box-shadow: 16px 0px 8px 0px rgba(0, 0, 0, 0.2);
-  font-size: 7px
+  height: 80px;
+  border-top: 1px solid gray;
+  font-size: 7px;
 }
 
 footer a {

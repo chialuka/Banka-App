@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>Banka Staff Login</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="../public-css/styles.css" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="Chukwualuka Chiama" />
@@ -10,32 +10,33 @@
       name="description"
       content="The Staff Login page of the Banka App houses a form that allows Staff and Admin to login to their accounts"
     />
-    <script src="script.js"></script>
   </head>
   <body>
-    <div class="content-wrapper">
-      <form id="loginStaff" onsubmit="return validateForm()" method="POST">
-        <h1>Staff/Admin Login</h1>
-        <hr />
-        <div class="row">
-          <div class="col-25">
-            <label for="email"><b>Email Address:</b></label>
+    <header>
+      <h1 class="logo"><a href="../staff-dashboard/index.html">Banka</a></h1>
+    </header>
+    <main class="content-wrapper">
+      <form id="login-staff" onsubmit="return validateForm()" method="POST">
+        <div class="form-header">
+          <h1>Staff/Admin Login</h1>
+        </div>
+        <div class="form-body">
+          <div class="col-75">
+            <input
+              type="text"
+              name="email"
+              placeholder="Enter Email"
+              required
+            />
           </div>
           <div class="col-75">
-            <input type="text" name="email" placeholder="Your email address" />
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-25">
-            <label for="password"><b>Password:</b></label>
-          </div>
-          <div class="col-75">
-            <input type="password" name="password" />
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-25 role">
-            <label for="role"><b>Roles:</b></label>
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              required
+              minlength="6"
+            />
           </div>
           <div>
             <select name="roles">
@@ -44,12 +45,17 @@
               <option> Admin </option>
             </select>
           </div>
-        </div>
-        <div id="form-error"></div>
-        <div class="row">
-          <button type="submit" class="submit">Login</button>
+          <div id="form-error"></div>
+          <div class="submit-button">
+            <button type="submit" class="submit">Login</button>
+          </div>
         </div>
       </form>
-    </div>
+    </main>
+    <footer class="footer">
+      <p class="footer-item">&copy;Banka Nig Plc 2019</p>
+      <p class="footer-item"><a href="logo">Back To Top</a></p>
+    </footer>
+    <script src="script.js"></script>
   </body>
 </html>
