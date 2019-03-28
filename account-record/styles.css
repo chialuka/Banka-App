@@ -60,6 +60,40 @@ main {
   font-weight: bold;
 }
 
+input {
+  padding: 15px;
+  margin: 10px 0 10px 0;
+  display: inline-block;
+  border: none;
+  background: #d1cece;
+  width: 40%;
+}
+
+button {
+  width: 40%;
+  padding: 10px;
+  margin: 5px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold
+}
+
+.credit {
+  background-color: #0bec61
+}
+
+.debit {
+  background-color: #f70808
+}
+
+#error {
+  background-color: #ca001b;
+  font-weight: bold;
+  font-size: 20px;
+  color: white;
+}
+
 footer {
   display: flex;
   justify-content: center;

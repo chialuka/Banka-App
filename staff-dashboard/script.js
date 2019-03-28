@@ -12,14 +12,14 @@
     const ul = document.createElement("ul");
     ul.setAttribute("class", "list")
     accounts.appendChild(ul)
-    if (item.accNumber) {
+    if (item.accountNumber) {
       const li = document.createElement("li");
       li.setAttribute("class", "item")
-      li.innerHTML = item.accNumber;
+      li.innerHTML = item.accountNumber;
       ul.appendChild(li);
 
       li.onclick = function() {
-        localStorage.setItem("acc", JSON.stringify(item.accNumber));
+        localStorage.setItem("acc", JSON.stringify(item.accountNumber));
         window.location.href = "../account-record/index.html"
       }
     }
