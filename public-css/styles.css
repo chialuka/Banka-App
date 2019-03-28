@@ -73,6 +73,10 @@ h1 {
   }
 }
 
+.terms {
+  border: 10px;
+}
+
 button {
   background-color: #3d1dee;
   color: white;
