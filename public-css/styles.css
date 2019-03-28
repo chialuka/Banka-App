@@ -26,14 +26,10 @@ header {
   max-width: 70%;
 }
 
-#login-staff {
+.form-header {
   display: flex;
   flex-direction: column;
-  align-items: center
-}
-
-.form-header {
-  font-size: 60%
+  align-items: center;
 }
 
 h1 {
@@ -108,7 +104,6 @@ p {
 footer {
   display: flex;
   justify-content: center;
-  flex-direction: row;
   padding: 10px;
   bottom: 0;
   height: 60px;
