@@ -16,7 +16,12 @@
       const li = document.createElement("li");
       li.setAttribute("class", "item")
       li.innerHTML = item.accNumber;
-      ul.appendChild(li)
+      ul.appendChild(li);
+
+      li.onclick = function() {
+        localStorage.setItem("acc", JSON.stringify(item.accNumber));
+        window.location.href = "../account-record/index.html"
+      }
     }
   })
 })();
