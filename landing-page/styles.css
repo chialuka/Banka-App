@@ -16,33 +16,11 @@ body {
 }
 
 @media only screen and (min-width: 600px) {
-  .col-s-1 {width: 8.33%;}
-  .col-s-2 {width: 16.66%;}
-  .col-s-3 {width: 25%;}
   .col-s-4 {width: 33.33%;}
-  .col-s-5 {width: 41.66%;}
-  .col-s-6 {width: 50%;}
-  .col-s-7 {width: 58.33%;}
-  .col-s-8 {width: 66.66%;}
-  .col-s-9 {width: 75%;}
-  .col-s-10 {width: 83.33%;}
-  .col-s-11 {width: 91.66%;}
-  .col-s-12 {width: 100%;}
 }
 
 @media only screen and (min-width: 775px) {
-  .col-1 {width: 8.33%;}
   .col-2 {width: 16.66%;}
-  .col-3 {width: 25%;}
-  .col-4 {width: 33.33%;}
-  .col-5 {width: 41.66%;}
-  .col-6 {width: 50%;}
-  .col-7 {width: 58.33%;}
-  .col-8 {width: 66.66%;}
-  .col-9 {width: 75%;}
-  .col-10 {width: 83.33%;}
-  .col-11 {width: 91.66%;}
-  .col-12 {width: 100%;}
   div .motto {
     font-size: 28px;
     font-weight: 700;
@@ -65,14 +43,14 @@ body {
 }
 
 .navbar {
-  background-color: #022e64;
+  background-color: rgba(15, 8, 8, 0.9);
   overflow: hidden;
 }
 
 .navbar a {
   float: left;
   text-align: center;
-  color: #d3d3da;
+  color: white;
   padding: 15px 15px;
   text-decoration: none;
   font-size: 20px;
@@ -91,7 +69,7 @@ a:hover {
 .dropdown .dropdown-title {
   padding: 15px 15px;
   text-align: center;
-  color: #d3d3da;
+  color: white;
   font-size: 20px;
 }
 
@@ -113,17 +91,13 @@ a:hover {
   display: block;
   text-decoration: none;
   float: none;
-  text-align: left;
+  text-align: center;
   padding: 12px 12px;
-}
-
-.dropdown-content a:hover {
-  text-decoration: underline;
 }
 
 .dropdown:hover .dropdown-content {
   display: block;
-  background-color: #243852;
+  background-color: rgba(15, 8, 8, 0.9);
   opacity: 1;
   z-index: 10;
 }
@@ -132,10 +106,14 @@ a:hover {
   float: right;
   padding: 15px 15px;
   font-size: 20px;
-  color: rgb(18, 18, 131);
+  color: #3d1dee;
   background-color: white;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
+}
+
+.logo:hover {
+  cursor: pointer
 }
 
 #slider {
@@ -186,17 +164,11 @@ img {
   font-size: 15px;
   font-weight: 250;
   padding: 5px;
-  background-color: #022e64;
+  background-color: #3d1dee;
   color: #cad4e2;
 }
 
-.account-pitch a:hover {
-  text-decoration: underline;
-  color: #eef0f1;
-  background-color: #11141a;
-}
-
-.copyright {
+footer {
   display: flex;
   justify-content: center;
   padding: 5px;
@@ -206,6 +178,6 @@ img {
   font-size: 12px
 }
 
-.copyright a {
+footer  a {
   padding: 10px;
 }
