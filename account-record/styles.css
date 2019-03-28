@@ -8,7 +8,7 @@ html {
 
 .logo:hover {
   color: #1558e7;
-  transform: scaleY(1.3)
+  transform: scaleY(1.3);
 }
 
 main {
@@ -23,10 +23,10 @@ main {
     font-size: 10px;
   }
   .list .item {
-    font-size: 17px
+    font-size: 17px;
   }
   #account {
-    font-size: 18px
+    font-size: 18px;
   }
 }
 
@@ -35,10 +35,10 @@ main {
     font-size: 12px;
   }
   .list .item {
-    font-size: 19px
+    font-size: 19px;
   }
   #account {
-    font-size: 21px
+    font-size: 21px;
   }
 }
 
@@ -58,6 +58,47 @@ main {
 
 .item:hover {
   font-weight: bold;
+}
+
+input {
+  padding: 15px;
+  margin: 10px 0 10px 0;
+  display: inline-block;
+  border: none;
+  background: #d1cece;
+  width: 40%;
+}
+
+button {
+  width: 40%;
+  padding: 10px;
+  margin: 5px;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+.delete {
+  background-color: #e41818;
+}
+
+.credit {
+  background-color: #0bec61;
+}
+
+.debit {
+  background-color: #f70808;
+}
+
+#error {
+  background-color: #ca001b;
+  font-weight: bold;
+  font-size: 20px;
+  color: white;
 }
 
 footer {

@@ -53,7 +53,8 @@ function validateForm() {
     const accNum = Math.floor(Math.random() * 10);
     accountNumber += accNum;
     if (accountNumber.length === 10) {
-      client.accNumber = accountNumber;
+      client.accountNumber = accountNumber;
+      client.accountBalance = 0;
       localStorage.setItem("clientToken", JSON.stringify(clientToken));
     }
   }
