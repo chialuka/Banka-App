@@ -65,7 +65,15 @@ function debitAccount() {
   transacts.push(history);
   localStorage.setItem("accountHistory", JSON.stringify(transacts));
   localStorage.setItem("clientToken", JSON.stringify(clientsArray));
-  localStorage.setItem("clientToken", JSON.stringify(clientsArray));
   amount.value = "";
   location.reload();
+}
+
+function deleteAccount() {
+  const record = JSON.parse(localStorage.getItem("acc"));
+  const clientsArray = JSON.parse(localStorage.getItem("clientToken")) || [];
+  const client = clientsArray.find(x => x.accountNumber === record);
+  client.accountNumber = "";
+  localStorage.setItem("clientToken", JSON.stringify(clientsArray));
+  window.location.href = "../staff-dashboard/index.html"
 }
