@@ -3,35 +3,60 @@ html {
 }
 
 body {
-  margin: 10px;
+  margin: 0;
   font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center
 }
 
 * {
   box-sizing: border-box;
 }
 
+#logo {
+  color: rgb(180, 201, 245);
+  font-family: Verdana, Geneva, Tahoma, sans-serif
+}
+
 main {
-  padding-bottom: 50px;
+  min-height: calc(100vh - 160px);
+  padding-bottom: 20px;
+  max-width: 70%;
 }
 
-.edit-profile {
-  float: right;
-  cursor: pointer;
+header {
+  height: 80px
 }
 
-.edit-profile:hover {
-  color: #3a45e2
+@media screen and (min-width: 650px) {
+  footer p {
+    font-size: 12px
+  }
+  p {
+    font-size: 18px
+  }
+}
+
+button {
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: rgba(176, 181, 243, 0.5);
+  margin: 5px
+}
+
+a {
+  text-decoration: none;
 }
 
 footer {
   display: flex;
   justify-content: center;
   padding: 5px;
-  bottom: 0;
-  height: 50px;
-  box-shadow: 16px 0px 8px 0px rgba(0, 0, 0, 0.2);
-  font-size: 7px
+  height: 60px;
+  box-shadow: 5px 0px 5px 0px rgba(0, 0, 0, 0.2);
+  font-size: 10px
 }
 
 footer a {

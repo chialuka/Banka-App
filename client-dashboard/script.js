@@ -1,6 +1,4 @@
-loadUser();
-
-function loadUser() {
+(function() {
   const user = document.getElementById("user");
   const email = localStorage.getItem("loggedInUser");
   const users = JSON.parse(localStorage.getItem("clientToken"));
@@ -15,16 +13,15 @@ function loadUser() {
     const link = document.createElement("a");
     link.setAttribute("href", "../client-create-account/index.html");
     link.setAttribute("class", "link");
-    link.innerHTML = " Click here to open one."
-    account.innerHTML =
-      "You haven't opened a bank account yet.";
+    link.innerHTML = " Click here to open one.";
+    account.innerHTML = "You haven't opened a bank account yet.";
     account.appendChild(link);
   } else {
     account.innerHTML = "Your account: " + findUser.accountNumber;
     const history = document.getElementById("history");
     const link = document.createElement("a");
     link.setAttribute("href", "../account-history/index.html");
-    link.innerHTML = "View history"
-    history.appendChild(link)
+    link.innerHTML = "View history";
+    history.appendChild(link);
   }
-}
+})();
