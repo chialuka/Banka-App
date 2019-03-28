@@ -27,6 +27,11 @@ main {
   }
 }
 
+#admin {
+  display: none;
+  cursor: pointer;
+}
+
 .list {
   padding: 10px;
 }
