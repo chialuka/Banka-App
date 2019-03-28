@@ -60,6 +60,15 @@ a {
   display: none
 }
 
+.list {
+  list-style-type: none;
+  padding: 10px
+}
+
+.item {
+  padding: 5px
+}
+
 footer {
   display: flex;
   justify-content: center;
