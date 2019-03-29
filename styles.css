@@ -58,7 +58,7 @@ body {
 .navbar {
   background-color: white;
   overflow: hidden;
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid rgb(168, 166, 166);
 }
 
 .navbar a {
@@ -294,7 +294,7 @@ footer a {
 }
 
 @media (min-width: 1024px) {
-  #content-wrapper {
+  #content-wrapper, .navbar {
     max-width: 1080px;
     margin: auto;
   }
