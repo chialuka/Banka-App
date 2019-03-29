@@ -8,7 +8,7 @@ const findUser = users.find(item => item["Email"] === email);
   const accountHeading = document.getElementById("accountHeading")
 
   if (!email) {
-    window.location.href = "../landing-page/index.html";
+    window.location.href = "../index.html";
   }
 
   const date = new Date();

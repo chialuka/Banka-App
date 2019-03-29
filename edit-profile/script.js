@@ -6,7 +6,7 @@ const success = document.querySelectorAll(".form-success");
 
 (function() {
   if (!email) {
-    window.location.href = "../landing-page/index.html";
+    window.location.href = "../index.html";
   }
   document.forms["edit-details"]["email"].value = email;
   document.forms["edit-details"]["name"].value = client["Name"];

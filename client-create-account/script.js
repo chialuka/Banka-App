@@ -3,7 +3,7 @@ const clientToken = JSON.parse(localStorage.getItem("clientToken")) || [];
 (function() {
   const email = localStorage.getItem("loggedInUser");
   if (!email) {
-    window.location.href = "../landing-page/index.html";
+    window.location.href = "../index.html";
   }
   const client = clientToken.find(item => item["Email"] === email);
   document.forms["create-account"]["email"].value = email;
