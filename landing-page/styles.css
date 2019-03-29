@@ -1,3 +1,6 @@
+:root {
+  --main-bg-color: #333333;
+}
 html {
   margin: 0;
 }
@@ -23,13 +26,13 @@ body {
 .bar3 {
   width: 30px;
   height: 5px;
-  background-color: #333;
+  background-color: var(--main-bg-color);
   margin: 6px 0;
   transition: 0.4s;
 }
 
 .change .bar1 {
-  transform: rotate(-45deg) translate(-9px, 6px);
+  transform: rotate(-45deg) translate(-7px, 7px);
 }
 
 .change .bar2 {
@@ -48,7 +51,7 @@ body {
   width: 50%;
 }
 
-@media only screen and (min-width: 600px) {
+@media(min-width: 600px) {
   .menu-icon {
     display: none;
   }
@@ -77,16 +80,31 @@ body {
   }
 }
 
-@media only screen and (min-width: 775px) {
+@media(min-width: 768px) {
   div .motto {
     font-size: 28px;
     font-weight: 700;
   }
-  div .pitch {
-    max-width: 50%;
-    font-size: 20px;
-    font-weight: 350;
-    line-height: 25px
+  .account-pitch {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .pitch {
+    font-size: var(--sm-font-size);
+    font-weight: 400;
+    line-height: 25px;
+  }
+
+  .pitch-text {
+    width: 60%;
+  }
+
+  div .pitch-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0;
   }
   div #about {
     font-size: 22px;
@@ -104,7 +122,7 @@ body {
   }
 }
 
-@media only screen and (min-width: 1024px) {
+@media(min-width: 1024px) {
   #content-wrapper {
     max-width: 1080px;
     margin: auto;
@@ -118,6 +136,7 @@ body {
 .navbar {
   background-color: white;
   overflow: hidden;
+  border-bottom: 1px solid black
 }
 
 .navbar a {
@@ -206,9 +225,9 @@ a:hover {
 }
 
 .account-pitch {
-  margin: 10px 10px;
+  min-height: 300px;
+  margin-bottom: 30px;
   padding: 10px;
-  line-height: 16px;
   background: linear-gradient(90deg, rgb(255, 255, 255) 40%, #c7c7cf 50%);
 }
 
@@ -222,22 +241,28 @@ a:hover {
 .pitch {
   font-family: Roboto, Arial, Helvetica, sans-serif;
   font-size: 15px;
-  font-weight: 250;
-  font-style: normal;
-  margin: 25px;
+  font-weight: 300;
+  line-height: 22px;
 }
 
 .account-pitch a {
   text-decoration: none;
   font-size: 15px;
-  font-weight: 250;
-  padding: 15px;
+  font-weight: 300;
+  padding: 15px 44px;
   border: none;
   border-radius: 4px;
   background-color: #3d1dee;
   color: white;
-  margin: 25px;
-  width: 25%;
+  box-shadow: 2px 2px 4px 0 rgba(125, 152, 189, 0.1);
+}
+
+.account-pitch a:hover {
+  box-shadow: 5px 5px 15px 0 rgba(137,154,177, 0.6);
+}
+
+.pitch-button {
+  margin-top: 20px;
 }
 
 footer {
