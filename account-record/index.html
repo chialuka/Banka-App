@@ -18,25 +18,28 @@
     </header>
     <main>
       <div class="top-buttons">
-        <button id="activate" onclick=activateAccount()></button>
-        <button class="delete" onclick=deleteAccount()>Delete Account</button>
+        <button id="activate" onclick="activateAccount()"></button>
+        <button class="delete" onclick="deleteAccount()">Delete Account</button>
       </div>
       <h5 id="account"></h5>
       <div id="account-details"></div>
       <hr />
       <div>
-        <label for="amount">Amount:</label>
-        <input type="number" name="amount" id="amount" />
+        <div class="amount-inputs">
+          <label for="amount">Amount:</label>
+          <input type="number" name="amount" id="amount" />
+          <label for="description">Description:</label>
+          <input type="text" name="description" id="description" />
+        </div>
         <div id="error"></div>
       </div>
       <div>
-        <button class="credit" onclick=creditAccount()>Credit Account</button>
-        <button class="debit" onclick=debitAccount()>Debit Account</button>
+        <button class="credit" onclick="creditAccount()">Credit Account</button>
+        <button class="debit" onclick="debitAccount()">Debit Account</button>
       </div>
     </main>
     <footer class="footer">
       <p class="footer-item">&copy;Banka Nig Plc 2019</p>
-      <p class="footer-item"><a href="#user">Back To Top</a></p>
     </footer>
     <script src="script.js"></script>
   </body>

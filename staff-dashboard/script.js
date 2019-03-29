@@ -29,6 +29,11 @@
         localStorage.setItem("acc", JSON.stringify(item["Account Number"]));
         window.location.href = "../account-record/index.html"
       }
+    } else {
+      const noUser = document.querySelector(".list");
+      if (noUser) {
+        noUser.parentNode.removeChild(noUser)
+      }
     }
   })
 })();
