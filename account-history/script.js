@@ -10,11 +10,13 @@
   accHead.innerHTML = accNumber;
 
   const history = document.getElementById("history");
+  let count = 0;
 
   accHistory.map(function(item) {
     const ul = document.createElement("ul");
     history.appendChild(ul);
     if (item["Account Number"] === accNumber) {
+      count += 1;
       Object.entries(item).forEach(function([key, value]) {
         ul.setAttribute("class", "history");
         const li = document.createElement("li");
@@ -23,4 +25,8 @@
       });
     }
   });
+  if (count === 0) {
+    const noHistory = document.getElementById("no-history");
+    noHistory.innerHTML = "You don't have any transactions yet.";
+  }
 })();
