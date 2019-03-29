@@ -21,6 +21,9 @@
         li.innerHTML = `${key}: ${value}`;
         ul.appendChild(li);
       });
-    }
+    } else {
+      const noHistory = document.getElementById("no-history")
+      noHistory.innerHTML = "You don't have any transactions yet."
+    } 
   });
 })();

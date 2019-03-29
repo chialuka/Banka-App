@@ -104,8 +104,8 @@ footer {
   justify-content: center;
   padding: 5px;
   bottom: 0;
-  height: 60px;
-  box-shadow: 5px 0px 5px 0px rgba(94, 92, 92, 0.2);
+  height: 80px;
+  border-top: 1px solid rgb(216, 214, 214);
   font-size: 10px
 }
 
