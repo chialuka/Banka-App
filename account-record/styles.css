@@ -10,7 +10,12 @@ body {
 }
 
 header {
-  height: 80px
+  height: 80px;
+  text-align: center
+}
+
+#header{
+  text-align: center
 }
 
 .logo {
@@ -30,7 +35,7 @@ main {
   flex-direction: column;
   align-items: center;
   padding-bottom: 20px;
-  min-height: calc(100vh - 160px)
+  min-height: calc(100vh - 160px);
 }
 
 .top-buttons {
