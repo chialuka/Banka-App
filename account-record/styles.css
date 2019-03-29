@@ -90,6 +90,13 @@ input {
   width: 40%;
 }
 
+.amount-inputs {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  align-items: center;
+}
+
 button {
   width: 100px;
   padding: 10px;
