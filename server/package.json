@@ -4,12 +4,15 @@
   "description": "Server for the Banka App",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "eslint": "eslint ."
   },
   "author": "Chukwualuka Chiama",
   "license": "ISC",
   "devDependencies": {
-    "eslint": "^5.16.0"
+    "chai": "^4.2.0",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0"
   },
   "dependencies": {
     "eslint-config-airbnb": "^17.1.0",

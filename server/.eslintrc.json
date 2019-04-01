@@ -1,16 +1,13 @@
 {
     "env": {
         "browser": true,
-        "commonjs": true,
+        "commonjs": true
     },
-    "extends": "eslint:recommended",
-    "globals": {
-        "Atomics": "readonly",
-        "SharedArrayBuffer": "readonly"
-    },
+    "extends":[ "eslint:recommended", "airbnb"],
     "parserOptions": {
         "ecmaVersion": 2018
     },
     "rules": {
+        "eqeqeq": 1
     }
 }
