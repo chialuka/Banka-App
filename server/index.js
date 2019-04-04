@@ -24,3 +24,5 @@ app.use(function(req, res, next) {
 app.listen(2800, () => {
   console.log("We make magic on port 2800");
 });
+
+module.exports = app
