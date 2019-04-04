@@ -29,6 +29,7 @@ class Model {
     open(path.resolve(baseDir, this.file), "w").then(fd => {
       append(fd, JSON.stringify(users)).then(() => close(fd));
     });
+    return data;
   }
 
   findAll() {
