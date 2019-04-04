@@ -15,15 +15,15 @@ const findUser = users.find(item => item["Email"] === email);
   const time = date.getHours();
 
   if (time < 12) {
-    user.innerHTML = "Good morning " + findUser["Name"];
+    user.innerHTML = "Good morning, " + findUser["Name"];
   }
 
   if (time > 11 && time < 17) {
-    user.innerHTML = "Good afternoon " + findUser["Name"];
+    user.innerHTML = "Good afternoon, " + findUser["Name"];
   }
 
   if (time > 16) {
-    user.innerHTML = "Good evening " + findUser["Name"];
+    user.innerHTML = "Good evening, " + findUser["Name"];
   }
 
   if (!findUser["Account Number"]) {

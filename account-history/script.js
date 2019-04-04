@@ -7,7 +7,7 @@
   const accHistory = JSON.parse(localStorage.getItem("accountHistory")) || [];
 
   const accHead = document.getElementById("account");
-  accHead.innerHTML = accNumber;
+  accHead.innerHTML = "Account History for: " + accNumber;
 
   const history = document.getElementById("history");
   let count = 0;
