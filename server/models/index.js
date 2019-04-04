@@ -1,22 +1,34 @@
 const fs = require("fs");
 const path = require("path");
 const util = require("util");
-const { capitalize } = require("../utils");
 
+const { capitalize } = require("../utils");
+const { getId } = require("../utils");
+
+const open = util.promisify(fs.open);
 const read = util.promisify(fs.readFile);
 const write = util.promisify(fs.writeFile);
-const unlink = util.promisify(fs.unlink);
+const append = util.promisify(fs.appendFile);
 const close = util.promisify(fs.close);
+
+const baseDir = path.resolve(__dirname, "..", "data");
 
 class Model {
   constructor(file) {
     this.file = file;
-    this.results = read(path.resolve(__dirname, "..", "data", file))
+    this.results = read(path.resolve(baseDir, file))
       .then(data => JSON.parse(data))
       .catch(console.error);
   }
 
-  create(data) {
+  async create(data) {
+    const users = await this.results;
+    const id = users.length > 0 ? getId(users[users.length - 1].id) : 1;
+    data.id = id;
+    users.push(data);
+    open(path.resolve(baseDir, this.file), "w").then(fd => {
+      append(fd, JSON.stringify(users)).then(() => close(fd));
+    });
   }
 
   findAll() {
@@ -24,27 +36,29 @@ class Model {
   }
 
   async findOne(id) {
-    const user = await this.results;
-    return user.find(items => items.id === parseInt(id));
+    const users = await this.results;
+    if (id.includes("@")) return users.find(items => items.email === id);
+    return users.find(items => items.id === parseInt(id));
   }
 
-  findOneAndUpdate() {
-
+  async findOneAndUpdate(data) {
+    const users = await this.results;
+    const usersArray = users.filter(items => items.id !== parseInt(data.id));
+    usersArray.push(data);
+    return open(path.resolve(baseDir, this.file), "w+").then(fd => {
+      write(fd, JSON.stringify(usersArray)).then(() => close(fd));
+    });
   }
 
   async findOneAndDelete(id) {
-    const user = await this.results;
-    const usersArray = user.filter(items => items.id !== parseInt(id));
-    const userString = JSON.stringify(usersArray);
-    return write(
-      path.resolve(__dirname, "..", "data", this.file),
-      userString
-    );
+    const users = await this.results;
+    const usersArray = users.filter(items => items.id !== parseInt(id));
+    return write(path.resolve(baseDir, this.file), JSON.stringify(usersArray));
   }
 }
 
 const models = fs
-  .readdirSync(path.resolve(__dirname, "..", "data"))
+  .readdirSync(baseDir)
   .filter(file => file.endsWith(".json"))
   .reduce((acc, file) => {
     const model = new Model(file);

@@ -1,1 +1,35 @@
-[{"id":2,"email":"adimoranjojideofor.com","name":"Adimora Njo"}]
+[
+  {
+    "email": "ninja002@jideofor.com",
+    "firstname": "Alu",
+    "lastname": "Ninja",
+    "password": "$2b$10$Z3QYJxwi8QIF./X5I5HZFezs741gLlRAMRVuuRFG1IUQ3De65Tc0q",
+    "type": "client",
+    "id": 1
+  },
+  {
+    "email": "ninja007@jideofor.com",
+    "firstname": "Alu",
+    "lastname": "Ninja",
+    "password": "$2b$10$EuBopM58eCb/o7wawz7S.ekTpyXtOwTEnsohmnDh2n8n42ZjFncs2",
+    "type": "client",
+    "id": 2
+  },
+  {
+    "email": "ninja0007@jideofor.com",
+    "firstname": "Alu",
+    "lastname": "Ninja",
+    "password": "$2b$10$F5BicWV9Hmg/FEu20htvb.oDHXx4UaKSpKf8ntdWlkrZIN1h7Z4hy",
+    "type": "client",
+    "id": 3
+  },
+  {
+    "email": "ninja00007@jideofor.com",
+    "firstname": "Alu",
+    "lastname": "Ninja",
+    "password": "$2b$10$OakwedNmrWelbApsABrlXuWawf/icOzPdOK5Md4Ce6RVlEYDo7Veq",
+    "type": "staff",
+    "isAdmin": true,
+    "id": 4
+  }
+]

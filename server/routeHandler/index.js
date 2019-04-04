@@ -1,12 +1,20 @@
-const { getUsers, getUser, deleteUser } = require("../controllers/users");
+const {
+  createUser,
+  getUsers,
+  getUser,
+  updateUser,
+  deleteUser
+} = require("../controllers/users");
 
 module.exports = router => {
-  router.route("/users").get(getUsers);
-  //.post(createUser);
+  router
+    .route("/users")
+    .get(getUsers)
+    .post(createUser);
 
   router
     .route("/users/:user_id")
     .get(getUser)
-    // .put(updateUser)
+    .put(updateUser)
     .delete(deleteUser);
 };
