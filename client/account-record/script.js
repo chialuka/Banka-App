@@ -75,7 +75,7 @@ function debitAccount() {
   const date = new Date();
 
   if (client["Account Balance"] <= 0 || client["Account Balance"] < amount) {
-    error.innerHTML = "Balance is too small. Ask customer to credit account";
+    error.innerHTML = "Balance is too small for this. Ask customer to credit account";
     return null;
   }
   client["Account Balance"] =

@@ -135,9 +135,8 @@ button:disabled {
 }
 
 #error {
-  background-color: red;
+  color: red;
   font-size: 15px;
-  color: white;
 }
 
 footer {

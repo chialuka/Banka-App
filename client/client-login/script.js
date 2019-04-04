@@ -25,6 +25,6 @@ function validateForm() {
       error.innerHTML = "Incorrect password"
     }
   } else {
-    error.innerHTML = "User does not exist";
+    error.innerHTML = "User does not exist. Do you mean to sign up?";
   }
 }
