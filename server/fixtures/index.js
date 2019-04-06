@@ -11,7 +11,7 @@ const wrongEmailDetail = {
   firstname: faker.name.firstName(),
   lastname: faker.name.lastName(),
   email: faker.name.firstName(),
-  password: faker.internet.password()
+  password: faker.internet.password(),
 };
 
 const existingEmailDetail = {
@@ -21,17 +21,12 @@ const existingEmailDetail = {
   password: faker.internet.password(),
 };
 
-const staffUser = {
-  firstname: faker.name.firstName(),
-  lastname: faker.name.lastName(),
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-  isAdmin: true,
-  type: 'staff',
+const deleteUser = {
+  email: 'ninja0007@jideofor.com',
 };
 
 const loginUserDetails = {
-  email: 'ninja007@jideofor.com',
+  email: 'ninja0007@jideofor.com',
   password: 'monkey',
 };
 
@@ -42,7 +37,7 @@ export default normalUser;
 export {
   wrongEmailDetail,
   existingEmailDetail,
-  staffUser,
+  deleteUser,
   adminUser,
   loginUserDetails,
 };

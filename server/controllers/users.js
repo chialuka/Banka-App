@@ -1,5 +1,7 @@
 import models from '../models';
-import { hashPassword, comparePassword, generateToken } from '../utils';
+import {
+  hashPassword, comparePassword, generateToken, setErrorResponse,
+} from '../utils';
 
 const { Users } = models;
 
@@ -13,10 +15,7 @@ const createUser = async (req, res) => {
   try {
     const existingUser = await Users.findOne(req.body.email);
     if (existingUser) {
-      return res.status(409).json({
-        status: 409,
-        error: 'User with provided email already exists.',
-      });
+      return setErrorResponse(res, 409, 'User with provided email already exists.');
     }
     const { password, isAdmin } = req.body;
     const hashedPassword = await hashPassword(password);
@@ -36,10 +35,7 @@ const createUser = async (req, res) => {
       status: 201,
     });
   } catch (error) {
-    res.status(500).json({
-      status: 500,
-      error: 'We\'re sorry about this. We\'re working to fix the problem.',
-    });
+    setErrorResponse(res, 500, 'We\'re sorry about this. We\'re working to fix the problem.');
   }
 };
 
@@ -74,13 +70,11 @@ const loginUser = async (req, res) => {
   try {
     const user = await Users.findOne(req.body.email);
     if (!user) {
-      return res.status(401).json({
-        status: 401, error: 'Incorrect user details',
-      });
+      return setErrorResponse(res, 404, 'User not found');
     }
     const isValid = await comparePassword(req.body.password, user.password);
     if (!isValid) {
-      return res.status(401).json({ status: 401, error: 'Incorrect user details' });
+      return setErrorResponse(res, 401, 'Incorrect user details');
     }
     const token = generateToken(user.id);
     const userObj = { ...user };
@@ -93,10 +87,7 @@ const loginUser = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({
-      status: 500,
-      error: 'We\'re sorry about this. We\'re working to fix the problem.',
-    });
+    setErrorResponse(res, 500, 'We\'re sorry about this. We\'re working to fix the problem.');
   }
 };
 
@@ -104,14 +95,11 @@ const updateUser = async (req, res) => {
   try {
     const user = await Users.findOne(req.params.user_id);
     if (!user) {
-      return res.status(401).json({
-        status: 401,
-        error: 'User with specified id does not exist',
-      });
+      return setErrorResponse(res, 404, 'User requested does not exist');
     }
-    const hashedPassword = await hashPassword(req.body.password);
-    user.password = hashedPassword;
-    user.firstname = req.body.firstname;
+    // const hashedPassword = await hashPassword(req.body.password);
+    // user.password = hashedPassword;
+    // user.firstname = req.body.firstname;
     const updatedUser = Users.findOneAndUpdate(user);
     delete updatedUser.password;
     res.status(200).json({
@@ -121,26 +109,29 @@ const updateUser = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({
-      status: 500,
-      error: 'We\'re sorry about this. We\'re working to fix the problem.',
-    });
+    setErrorResponse(res, 500, 'We\'re sorry about this. We\'re working to fix the problem.');
   }
 };
 
+/**
+ * @name deleteUser
+ * @param {Object} req,
+ * @param {Object} res,
+ * @returns {}
+ */
 const deleteUser = async (req, res) => {
   try {
     const user = await Users.findOne(req.params.user_id);
     const deletedUser = await Users.findOneAndDelete(req.params.user_id);
     if (!user || !deletedUser) {
-      return res.status(400).json({ status: 400, message: 'User not found' });
+      return setErrorResponse(res, 404, 'User not found');
     }
-    return res.status(200).json({ status: 200, message: 'User deleted successfully' });
-  } catch (error) {
-    res.status(500).json({
-      status: 500,
-      error: 'We\'re sorry about this. We\'re working to fix the problem.',
+    return res.status(200).json({
+      status: 200,
+      message: 'User deleted successfully',
     });
+  } catch (error) {
+    setErrorResponse(res, 500, 'We\'re sorry about this. We\'re working to fix the problem.');
   }
 };
 
