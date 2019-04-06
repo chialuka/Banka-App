@@ -1,22 +1,24 @@
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const secret = require("../config");
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import config from '../config';
+
+const { secret } = config;
 
 const capitalize = str => str.charAt(0).toUpperCase() + str.substr(1);
 
-const getId = len => {
-  const newId = len + 1;
-  return newId;
-};
+const getNewId = len => len += 1;
 
-const hashPassword = password =>
-  bcrypt.hash(password, 10).then(hash => {
-    return hash;
-  });
+const hashPassword = async password => bcrypt.hash(password, 10);
 
-const generateToken = data => {
-  const token = jwt.sign({ payload: data }, secret.secret, { expiresIn: "1h" });
+const comparePassword = async (password, hashedPassword) => bcrypt.compare(password, hashedPassword);
+
+const generateToken = (data) => {
+  const token = jwt.sign({ payload: data }, secret, { expiresIn: '1h' });
   return token;
 };
 
-module.exports = { capitalize, getId, hashPassword, generateToken };
+export {
+  capitalize, hashPassword, generateToken, comparePassword,
+};
+
+export default getNewId;
