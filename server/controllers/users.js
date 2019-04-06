@@ -38,7 +38,7 @@ const createUser = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       status: 500,
-      error: 'We\'re sorry about this. We\'re working to fix the problem.'
+      error: 'We\'re sorry about this. We\'re working to fix the problem.',
     });
   }
 };
@@ -74,7 +74,9 @@ const loginUser = async (req, res) => {
   try {
     const user = await Users.findOne(req.body.email);
     if (!user) {
-      return res.status(401).json({ status: 401, error: 'Incorrect user details' });
+      return res.status(401).json({
+        status: 401, error: 'Incorrect user details',
+      });
     }
     const isValid = await comparePassword(req.body.password, user.password);
     if (!isValid) {
@@ -102,12 +104,12 @@ const updateUser = async (req, res) => {
   try {
     const user = await Users.findOne(req.params.user_id);
     if (!user) {
-      return res.json({
+      return res.status(401).json({
+        status: 401,
         error: 'User with specified id does not exist',
       });
     }
-    const { password } = req.body;
-    const hashedPassword = await hashPassword(password);
+    const hashedPassword = await hashPassword(req.body.password);
     user.password = hashedPassword;
     user.firstname = req.body.firstname;
     const updatedUser = Users.findOneAndUpdate(user);
