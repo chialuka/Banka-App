@@ -1,14 +1,18 @@
 {
-    "env": {
-        "browser": true,
-        "commonjs": true
-    },
-    "extends":[ "eslint:recommended", "airbnb"],
-    "parserOptions": {
-        "ecmaVersion": 6
-    },
-    "rules": {
-        "eqeqeq": 1,
-        "jsx-quotes": ["error", "prefer-single"]
-    }
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "extends": "airbnb-base",
+  "plugins": ["import"],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "rules": {}
 }
