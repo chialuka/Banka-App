@@ -1,27 +1,27 @@
-/* eslint-disable no-useless-escape */
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
 /* eslint-disable import/no-extraneous-dependencies */
 import '@babel/polyfill';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../index';
 import normalUser, {
-  wrongEmailDetail, existingEmailDetail, loginUserDetails,
+  wrongEmailDetail, existingEmailDetail, loginUserDetails, createUser,
 } from '../fixtures';
+import models from '../models';
 
 chai.use(chaiHttp);
 
 const { expect } = chai;
 
+const { Users } = models;
+
 
 describe('POST User', () => {
-  // should create user succesffully(201)
+  // should create user succesfully(201)
   it('should create a user successfully', (done) => {
     chai
       .request(server)
       .post('/api/users/auth/signup')
-      .send(normalUser)
+      .send(createUser)
       .end((err, res) => {
         expect(res).to.have.status(201);
         expect(res).to.be.json;
@@ -36,6 +36,7 @@ describe('POST User', () => {
         done();
       });
   });
+
   // should not create user if req body is invalid(400)
   it('should not create a user if email is invalid', (done) => {
     chai
@@ -88,8 +89,76 @@ it('should create token for user to log in', (done) => {
     });
 });
 
+// should not login user with wrong details
+it('should not login user with wrong details', (done) => {
+  Users.create({ ...normalUser }).then((newUser) => {
+    chai
+      .request(server)
+      .post('/api/users/auth/signin')
+      .send(newUser)
+      .end((err, res) => {
+        expect(res).to.have.status(401);
+        expect(res.body).to.include.key('error');
+        expect(res.body).to.not.include.key('token');
+        done();
+      });
+  });
+});
+
 describe('GET/ User', () => {});
 
-describe('PUT/ User', () => {});
+describe('PUT/ User', () => {
+  // should test for updating user's names
+  it('should update user\'s names.', (done) => {
+    Users.create({ ...normalUser }).then((newUser) => {
+      chai
+        .request(server)
+        .put(`/api/users/${newUser.id}`)
+        .send({ firstname: 'Rihanna', lastname: 'Okonkwo' })
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.include.key('data');
+          expect(res.body.data.firstname).to.equal('Rihanna');
+          expect(res.body.data.lastname).to.equal('Okonkwo');
+          expect(err).to.be.null;
+          done();
+        });
+    });
+  });
 
-describe('DELETE/ User', () => {});
+  // should test to ensure user email cannot be updated
+  it('should not update user email', (done) => {
+    Users.create({ ...normalUser }).then((newUser) => {
+      chai
+        .request(server)
+        .put(`/api/users/${newUser.id}`)
+        .send({ lastname: 'Udara', email: 'otakagu.dikagu@gmail.com' })
+        .end((err, res) => {
+          expect(res.body.data.firstname).to.equal(newUser.firstname);
+          expect(res.body.data.lastname).to.equal('Udara');
+          expect(res.body.data.email).to.equal(newUser.email);
+          expect(err).to.be.null;
+          done();
+        });
+    });
+  });
+});
+
+describe('DELETE/ User', () => {
+  // should test to see that user is successfully deleted
+  it('should delete user', (done) => {
+    Users.create({ ...normalUser }).then((newUser) => {
+      chai
+        .request(server)
+        .delete(`/api/users/${newUser.id}`)
+        .send(newUser)
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          expect(res.body).to.include.key('message');
+          expect(err).to.be.null;
+          done();
+        });
+    });
+  });
+});

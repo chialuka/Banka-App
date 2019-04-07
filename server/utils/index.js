@@ -17,8 +17,15 @@ const generateToken = (data) => {
   return token;
 };
 
+const setErrorResponse = (res, status, error) => {
+  res.status(status).json({
+    status,
+    error,
+  });
+};
+
 export {
-  capitalize, hashPassword, generateToken, comparePassword,
+  capitalize, hashPassword, generateToken, comparePassword, setErrorResponse,
 };
 
 export default getNewId;
