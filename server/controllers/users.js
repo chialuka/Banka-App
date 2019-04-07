@@ -45,23 +45,42 @@ const createUser = async (req, res) => {
   }
 };
 
+/**
+ * @name getUsers
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {Object}
+ */
 const getUsers = async (_, res) => {
   try {
     const users = await Users.findAll();
     users.map(item => delete item.password);
     return res.status(200).json({ status: 200, users });
   } catch (error) {
-    res.json({ error });
+    setErrorResponse(
+      res, 500, 'We\'re sorry about this. We\'re working to fix the problem.',
+    );
   }
 };
 
+/**
+ * @name getUser
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {Object}
+ */
 const getUser = async (req, res) => {
   try {
     const user = await Users.findOne(req.params.user_id);
+    if (!user) {
+      return setErrorResponse(res, 404, 'User not found');
+    }
     delete user.password;
     return res.status(200).json({ status: 200, user });
   } catch (error) {
-    res.status(500).json({ error });
+    setErrorResponse(
+      res, 500, 'We\'re sorry about this. We\'re working to fix the problem.',
+    );
   }
 };
 

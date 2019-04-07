@@ -105,7 +105,43 @@ it('should not login user with wrong details', (done) => {
   });
 });
 
-describe('GET/ User', () => {});
+describe('GET/ User', () => {
+  // should return user with specified id or email
+  it('should return specified user', (done) => {
+    Users.create({ ...normalUser }).then((newUser) => {
+      chai
+        .request(server)
+        .get(`/api/users/${newUser.id}`)
+        .send(newUser)
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          expect(res.body).to.be.a('object');
+          expect(res.body).to.include.key('user');
+          expect(res.body.user).to.be.an('object');
+          expect(res.body.user).to.include.key('email');
+          expect(res.body.user).to.include.key('firstname');
+          expect(res.body.user).to.include.key('lastname');
+          expect(err).to.be.null;
+          done();
+        });
+    });
+  });
+
+  // should fail to return when wrong details are passed
+  it('should not return user on entering wrong credentials', (done) => {
+    chai
+      .request(server)
+      .get(`/api/users/${normalUser.firstname}`)
+      .send(normalUser)
+      .end((_, res) => {
+        expect(res).to.have.status(404);
+        expect(res).to.not.include.key('data');
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('User not found');
+        done();
+      });
+  });
+});
 
 describe('PUT/ User', () => {
   // should test for updating user's names
