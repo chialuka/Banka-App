@@ -16,9 +16,9 @@ export default (router) => {
       validateBodyPayload({
         firstname: Joi.string().required(),
         lastname: Joi.string().required(),
-        email: Joi.string().email({ minDomainAtoms: 2 }),
-        password: Joi.string().min(6),
-        type: Joi.string(),
+        email: Joi.string().email({ minDomainAtoms: 2 }).required(),
+        password: Joi.string().min(6).required(),
+        type: Joi.string().required(),
         isAdmin: Joi.boolean(),
       }),
       createUser,
@@ -27,8 +27,8 @@ export default (router) => {
   router.route('/users/auth/signin')
     .post(
       validateBodyPayload({
-        email: Joi.string().email({ minDomainAtoms: 2 }),
-        password: Joi.string().min(6),
+        email: Joi.string().email({ minDomainAtoms: 2 }).required(),
+        password: Joi.string().min(6).required(),
       }),
       loginUser,
     );
@@ -38,8 +38,8 @@ export default (router) => {
     .get(getUser)
     .put(
       validateBodyPayload({
-        firstname: Joi.string().required(),
-        lastname: Joi.string().required(),
+        firstname: Joi.string(),
+        lastname: Joi.string(),
         password: Joi.string().min(6),
       }),
       updateUser,

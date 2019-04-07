@@ -45,7 +45,7 @@ class Model {
     const users = await this.results;
     const usersArray = users.filter(items => items.id !== Number(data.id));
     usersArray.push(data);
-    const fd = open(getBaseDir(this.file), 'w+');
+    const fd = await open(getBaseDir(this.file), 'w+');
     await write(fd, JSON.stringify(usersArray));
     await close(fd);
     return data;

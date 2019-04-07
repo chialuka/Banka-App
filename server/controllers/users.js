@@ -15,17 +15,21 @@ const createUser = async (req, res) => {
   try {
     const existingUser = await Users.findOne(req.body.email);
     if (existingUser) {
-      return setErrorResponse(res, 409, 'User with provided email already exists.');
+      return setErrorResponse(
+        res, 409, 'User with provided email already exists.',
+      );
     }
-    const { password, isAdmin } = req.body;
+    const { password, type } = req.body;
     const hashedPassword = await hashPassword(password);
     const newUserObj = {
       ...req.body,
       password: hashedPassword,
     };
+    if (type === 'client') {
+      delete newUserObj.isAdmin;
+    }
     // Another solution in the real world would be to have a user
     // table that staff and client will inherit from
-    if (req.body.type === 'staff') newUserObj.isAdmin = isAdmin;
     const user = await Users.create({ ...newUserObj });
 
     const token = generateToken(user.id);
@@ -35,7 +39,9 @@ const createUser = async (req, res) => {
       status: 201,
     });
   } catch (error) {
-    setErrorResponse(res, 500, 'We\'re sorry about this. We\'re working to fix the problem.');
+    setErrorResponse(
+      res, 500, 'We\'re sorry about this. We\'re working to fix the problem.',
+    );
   }
 };
 
@@ -91,16 +97,35 @@ const loginUser = async (req, res) => {
   }
 };
 
+/**
+ * @name updateUser
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {Object}
+ */
 const updateUser = async (req, res) => {
   try {
+    let hashedPassword = '';
     const user = await Users.findOne(req.params.user_id);
     if (!user) {
       return setErrorResponse(res, 404, 'User requested does not exist');
     }
-    // const hashedPassword = await hashPassword(req.body.password);
-    // user.password = hashedPassword;
-    // user.firstname = req.body.firstname;
-    const updatedUser = Users.findOneAndUpdate(user);
+    const {
+      password, firstname, lastname,
+    } = req.body;
+    if (password) {
+      hashedPassword = await hashPassword(password);
+    }
+    const data = {
+      ...(hashedPassword && { password: hashedPassword }),
+      ...(firstname && { firstname }),
+      ...(lastname && { lastname }),
+    };
+    const newUserObj = {
+      ...user,
+      ...data,
+    };
+    const updatedUser = await Users.findOneAndUpdate(newUserObj);
     delete updatedUser.password;
     res.status(200).json({
       status: 200,
@@ -109,7 +134,9 @@ const updateUser = async (req, res) => {
       },
     });
   } catch (error) {
-    setErrorResponse(res, 500, 'We\'re sorry about this. We\'re working to fix the problem.');
+    setErrorResponse(
+      res, 500, 'We\'re sorry about this. We\'re working to fix the problem.',
+    );
   }
 };
 
@@ -117,7 +144,7 @@ const updateUser = async (req, res) => {
  * @name deleteUser
  * @param {Object} req,
  * @param {Object} res,
- * @returns {}
+ * @returns {Object}
  */
 const deleteUser = async (req, res) => {
   try {
@@ -131,7 +158,9 @@ const deleteUser = async (req, res) => {
       message: 'User deleted successfully',
     });
   } catch (error) {
-    setErrorResponse(res, 500, 'We\'re sorry about this. We\'re working to fix the problem.');
+    setErrorResponse(
+      res, 500, 'We\'re sorry about this. We\'re working to fix the problem.',
+    );
   }
 };
 
