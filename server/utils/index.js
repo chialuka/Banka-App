@@ -6,7 +6,7 @@ const { secret } = config;
 
 const capitalize = str => str.charAt(0).toUpperCase() + str.substr(1);
 
-const getNewId = len => len += 1;
+const getNewId = len => (len + 1);
 
 const hashPassword = async password => bcrypt.hash(password, 10);
 
@@ -17,15 +17,25 @@ const generateToken = (data) => {
   return token;
 };
 
-const setErrorResponse = (res, status, error) => {
+const generateAccountNumber = () => {
+  const accNum = `5${Math.floor(Math.random() * (10 ** 9))}`;
+  return accNum;
+};
+
+const setServerResponse = (res, status, data) => {
   res.status(status).json({
     status,
-    error,
+    ...data,
   });
 };
 
 export {
-  capitalize, hashPassword, generateToken, comparePassword, setErrorResponse,
+  capitalize,
+  hashPassword,
+  generateToken,
+  comparePassword,
+  setServerResponse,
+  generateAccountNumber,
 };
 
 export default getNewId;
