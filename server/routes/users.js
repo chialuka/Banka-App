@@ -7,7 +7,7 @@ import createUser, {
   loginUser,
 } from '../controllers/users';
 import validateBodyPayload from '../middlewares/validators';
-import { authorizeClient, authorizeStaff } from '../middlewares/authorization';
+import { authorizeClient, authorizeStaff } from '../middlewares/auth';
 
 export default (router) => {
   // Todo: Fix this.  have two middlewares

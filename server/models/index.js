@@ -26,7 +26,7 @@ class Model {
     const newItem = { ...data, id };
     const newData = oldData.concat(newItem);
     const fd = await open(getBaseDir(this.file), 'w+');
-    await write(fd, JSON.stringify(newData));
+    await append(fd, JSON.stringify(newData));
     await close(fd);
     return newItem;
   }

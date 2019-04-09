@@ -23,7 +23,7 @@ const verifyJwt = async (req, res) => {
     return user;
   } catch (error) {
     return setServerResponse(res, 403, {
-      error: 'Token expired. Please login',
+      error: 'Invalid Token. Please login',
     });
   }
 };
@@ -40,6 +40,9 @@ const getUserFromToken = async (req, res) => {
 
 const authorizeClient = async (req, res, next) => {
   const user = await getUserFromToken(req, res);
+  if (!user) {
+    return null;
+  }
   if (user.type !== 'client') {
     return setServerResponse(res, 403, { error: 'User not authorized' });
   }
@@ -48,6 +51,9 @@ const authorizeClient = async (req, res, next) => {
 
 const authorizeStaff = async (req, res, next) => {
   const user = await getUserFromToken(req, res);
+  if (!user) {
+    return null;
+  }
   if (user.type !== 'staff') {
     return setServerResponse(res, 403, { error: 'User not authorized' });
   }

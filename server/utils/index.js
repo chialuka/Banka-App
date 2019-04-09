@@ -13,7 +13,7 @@ const hashPassword = async password => bcrypt.hash(password, 10);
 const comparePassword = async (password, hashedPassword) => bcrypt.compare(password, hashedPassword);
 
 const generateToken = (data) => {
-  const token = jwt.sign(data, secret, { expiresIn: '1m' });
+  const token = jwt.sign(data, secret, { expiresIn: '1h' });
   return token;
 };
 

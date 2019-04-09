@@ -39,6 +39,6 @@
     "nodemailer": "^6.1.0"
   },
   "nodemonConfig": {
-    "ignore": ["data/*.json"]
+    "ignore": ["data/accounts.json"]
   }
 }

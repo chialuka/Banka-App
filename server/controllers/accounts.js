@@ -26,14 +26,14 @@ const createAccount = async (req, res) => {
     };
     const newAccount = await Accounts.create(accObj);
 
-    const { type, openingBalance } = accObj;
+    const { accountType, openingBalance } = accObj;
     const composeEmail = {
       to: email,
       subject: 'New Banka Account',
       text: 'You have opened a new Banka account',
       message: `<h1>New Banka Account</h1>
       <p>Hi ${firstname},</p>
-      <p>This is to inform you that your new ${type} account with
+      <p>This is to inform you that your new ${accountType} account with
       account number: ${Number(accountNumber)}
       and opening balance: N${openingBalance}
       has been successfully opened with Banka.
@@ -44,7 +44,7 @@ const createAccount = async (req, res) => {
       setServerResponse(res, 201, {
         data: { ...newAccount },
       }),
-      sendMail(composeEmail),
+      // sendMail(composeEmail),
     ]);
   } catch (error) {
     return setServerResponse(res, 500, {

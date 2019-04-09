@@ -53,10 +53,11 @@ const createUser = async (req, res) => {
 const getUsers = async (_, res) => {
   try {
     const users = await Users.findAll();
+    if (!users) {
+      return setServerResponse(res, 404, { error: 'No users yet.' });
+    }
     return setServerResponse(res, 200, { data: users });
   } catch (error) {
-    // Todo 404
-    
     return setServerResponse(res, 500, {
       error: "We're sorry about this. We're working to fix the problem.",
     });
@@ -73,7 +74,7 @@ const getUser = async (req, res) => {
   try {
     const user = await Users.findOne(req.params.user_id);
     if (!user) {
-      return setServerResponse(res, 404, 'User not found');
+      return setServerResponse(res, 404, { error: 'User not found' });
     }
     delete user.password;
     return setServerResponse(res, 200, { data: user });

@@ -1,14 +1,14 @@
 import Joi from 'joi';
 import createAccount from '../controllers/accounts';
 import validateBodyPayload from '../middlewares/validators';
-import {authorizeClient} from '../middlewares/authorization';
+import { authorizeClient } from '../middlewares/auth';
 
 export default (router) => {
   router.route('/accounts').post(
     validateBodyPayload({
-      type: Joi.string().required(),
+      accountType: Joi.string().valid('savings', 'current').required(),
       email: Joi.string().email({ minDomainAtoms: 2 }).required(),
-      openingBalance: Joi.string().required(),
+      openingBalance: Joi.number().required(),
     }),
     authorizeClient,
     createAccount,
