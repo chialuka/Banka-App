@@ -21,14 +21,14 @@ class Model {
   }
 
   async create(data) {
-    const users = await this.results;
-    const id = users.length > 0 ? getNewId(users[users.length - 1].id) : 1;
-    data.id = id;
-    users.push(data);
-    const fd = await open(getBaseDir(this.file), 'w');
-    await append(fd, JSON.stringify(users));
+    const oldData = await this.results;
+    const id = oldData.length > 0 ? getNewId(oldData[oldData.length - 1].id) : 1;
+    const newItem = { ...data, id };
+    const newData = oldData.concat(newItem);
+    const fd = await open(getBaseDir(this.file), 'w+');
+    await write(fd, JSON.stringify(newData));
     await close(fd);
-    return data;
+    return newItem;
   }
 
   findAll() {

@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import createAccount from '../controllers/accounts';
 import validateBodyPayload from '../middlewares/validators';
-import authorizeClient from '../middlewares/authorization';
+import {authorizeClient} from '../middlewares/authorization';
 
 export default (router) => {
   router.route('/accounts').post(

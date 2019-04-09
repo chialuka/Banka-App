@@ -7,9 +7,10 @@ import createUser, {
   loginUser,
 } from '../controllers/users';
 import validateBodyPayload from '../middlewares/validators';
-import authorizeUser, { authorizeStaff } from '../middlewares/authorization';
+import { authorizeClient, authorizeStaff } from '../middlewares/authorization';
 
 export default (router) => {
+  // Todo: Fix this.  have two middlewares
   router.route('/users').get(authorizeStaff, getUsers);
 
   router.route('/users/auth/signup')
@@ -43,7 +44,7 @@ export default (router) => {
         lastname: Joi.string(),
         password: Joi.string().min(6),
       }),
-      authorizeUser,
+      authorizeClient,
       updateUser,
     )
     .delete(authorizeStaff, deleteUser);

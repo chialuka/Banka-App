@@ -12,13 +12,12 @@ const { Users, Accounts } = models;
  */
 const createAccount = async (req, res) => {
   try {
-    const { email, type, openingBalance } = req.body;
-    const user = await Users.findOne(email);
+    const user = await Users.findOne(req.body.email);
     if (!user) {
       return setServerResponse(res, 404, { error: 'User not found' });
     }
     const accountNumber = Number(generateAccountNumber());
-    const { firstname, lastname } = user;
+    const { firstname, lastname, email } = user;
     const accObj = {
       accountNumber,
       firstname,
@@ -26,12 +25,27 @@ const createAccount = async (req, res) => {
       ...req.body,
     };
     const newAccount = await Accounts.create(accObj);
-    const transporter = await sendMail(firstname, accountNumber, email, type, openingBalance);
 
-    console.log(transporter, 'transp');
-    
+    const { type, openingBalance } = accObj;
+    const composeEmail = {
+      to: email,
+      subject: 'New Banka Account',
+      text: 'You have opened a new Banka account',
+      message: `<h1>New Banka Account</h1>
+      <p>Hi ${firstname},</p>
+      <p>This is to inform you that your new ${type} account with
+      account number: ${Number(accountNumber)}
+      and opening balance: N${openingBalance}
+      has been successfully opened with Banka.
+      Thank you for banking with us.</p>`,
+    };
 
-    return setServerResponse(res, 201, { data: { ...newAccount } });
+    return Promise.all([
+      setServerResponse(res, 201, {
+        data: { ...newAccount },
+      }),
+      sendMail(composeEmail),
+    ]);
   } catch (error) {
     return setServerResponse(res, 500, {
       error: "We're sorry about this. We're working to fix the problem.",

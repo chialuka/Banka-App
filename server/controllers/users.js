@@ -1,6 +1,9 @@
 import models from '../models';
 import {
-  hashPassword, comparePassword, generateToken, setServerResponse,
+  hashPassword,
+  comparePassword,
+  generateToken,
+  setServerResponse,
 } from '../utils';
 
 const { Users } = models;
@@ -15,9 +18,9 @@ const createUser = async (req, res) => {
   try {
     const existingUser = await Users.findOne(req.body.email);
     if (existingUser) {
-      return setServerResponse(
-        res, 409, { error: 'User with provided email already exists.' },
-      );
+      return setServerResponse(res, 409, {
+        error: 'User with provided email already exists.',
+      });
     }
     const { password, type } = req.body;
     const hashedPassword = await hashPassword(password);
@@ -31,16 +34,13 @@ const createUser = async (req, res) => {
     // Another solution in the real world would be to have a user
     // table that staff and client will inherit from
     const user = await Users.create({ ...newUserObj });
-
-    const token = generateToken(user.id);
+    const token = generateToken({ id: user.id });
     delete user.password;
     return setServerResponse(res, 201, { data: { ...user, token } });
   } catch (error) {
-    return setServerResponse(
-      res,
-      500,
-      { error: 'We\'re sorry about this. We\'re working to fix the problem.' },
-    );
+    return setServerResponse(res, 500, {
+      error: "We're sorry about this. We're working to fix the problem.",
+    });
   }
 };
 
@@ -55,11 +55,11 @@ const getUsers = async (_, res) => {
     const users = await Users.findAll();
     return setServerResponse(res, 200, { data: users });
   } catch (error) {
-    return setServerResponse(
-      res,
-      500,
-      { error: 'We\'re sorry about this. We\'re working to fix the problem.' },
-    );
+    // Todo 404
+    
+    return setServerResponse(res, 500, {
+      error: "We're sorry about this. We're working to fix the problem.",
+    });
   }
 };
 
@@ -78,11 +78,9 @@ const getUser = async (req, res) => {
     delete user.password;
     return setServerResponse(res, 200, { data: user });
   } catch (error) {
-    return setServerResponse(
-      res,
-      500,
-      { error: 'We\'re sorry about this. We\'re working to fix the problem.' },
-    );
+    return setServerResponse(res, 500, {
+      error: "We're sorry about this. We're working to fix the problem.",
+    });
   }
 };
 
@@ -103,16 +101,15 @@ const loginUser = async (req, res) => {
     if (!isValid) {
       return setServerResponse(res, 401, { error: 'Incorrect user details' });
     }
-    const token = generateToken(user.id);
+
+    const token = generateToken({ id: user.id });
     const userObj = { ...user };
     delete userObj.password;
     return setServerResponse(res, 200, { data: { ...userObj, token } });
   } catch (error) {
-    return setServerResponse(
-      res,
-      500,
-      { error: 'We\'re sorry about this. We\'re working to fix the problem.' },
-    );
+    return setServerResponse(res, 500, {
+      error: "We're sorry about this. We're working to fix the problem.",
+    });
   }
 };
 
@@ -129,9 +126,7 @@ const updateUser = async (req, res) => {
     if (!user) {
       return setServerResponse(res, 404, { error: 'User does not exist' });
     }
-    const {
-      password, firstname, lastname,
-    } = req.body;
+    const { password, firstname, lastname } = req.body;
     if (password) {
       hashedPassword = await hashPassword(password);
     }
@@ -148,11 +143,9 @@ const updateUser = async (req, res) => {
     delete updatedUser.password;
     return setServerResponse(res, 200, { data: { ...updatedUser } });
   } catch (error) {
-    return setServerResponse(
-      res,
-      500,
-      { error: 'We\'re sorry about this. We\'re working to fix the problem.' },
-    );
+    return setServerResponse(res, 500, {
+      error: "We're sorry about this. We're working to fix the problem.",
+    });
   }
 };
 
@@ -171,20 +164,14 @@ const deleteUser = async (req, res) => {
     }
     return setServerResponse(res, 200, { message: 'User delete successful' });
   } catch (error) {
-    return setServerResponse(
-      res,
-      500,
-      { error: 'We\'re sorry about this. We\'re working to fix the problem.' },
-    );
+    return setServerResponse(res, 500, {
+      error: "We're sorry about this. We're working to fix the problem.",
+    });
   }
 };
 
 export {
-  getUsers,
-  getUser,
-  updateUser,
-  deleteUser,
-  loginUser,
+  getUsers, getUser, updateUser, deleteUser, loginUser,
 };
 
 export default createUser;
