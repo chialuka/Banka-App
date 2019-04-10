@@ -14,13 +14,13 @@ const verifyJwt = async (req, res) => {
     }
     const [, token] = header.split(' ');
     const { id } = jwt.verify(token, secret);
-    const user = await Users.findOne(id);
-    if (!user) {
+    const tokenOwner = await Users.findOne(id);
+    if (!tokenOwner) {
       return setServerResponse(res, 404, {
         error: 'User with provided token not found',
       });
     }
-    return user;
+    return tokenOwner;
   } catch (error) {
     return setServerResponse(res, 403, {
       error: 'Invalid Token. Please login',
@@ -39,11 +39,13 @@ const getUserFromToken = async (req, res) => {
 };
 
 const authorizeClient = async (req, res, next) => {
-  const user = await getUserFromToken(req, res);
-  if (!user) {
-    return null;
+  const tokenOwner = await getUserFromToken(req, res);
+  const requestOwner = await Users.findOne(req.body.email);
+  if (!tokenOwner) return null;
+  if (!requestOwner) {
+    return setServerResponse(res, 404, { error: 'User not found' });
   }
-  if (user.type !== 'client') {
+  if (tokenOwner.type !== 'client' || tokenOwner.email !== requestOwner.email) {
     return setServerResponse(res, 403, { error: 'User not authorized' });
   }
   return next();
@@ -51,13 +53,20 @@ const authorizeClient = async (req, res, next) => {
 
 const authorizeStaff = async (req, res, next) => {
   const user = await getUserFromToken(req, res);
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
   if (user.type !== 'staff') {
     return setServerResponse(res, 403, { error: 'User not authorized' });
   }
   return next();
 };
 
-export { authorizeStaff, authorizeClient };
+const authorizeAdmin = async (req, res, next) => {
+  const user = await getUserFromToken(req, res);
+  if (!user) return null;
+  if (!user.isAdmin || user.type === 'client') {
+    return setServerResponse(res, 403, { error: 'User not authorized' });
+  }
+  return next();
+};
+
+export { authorizeStaff, authorizeClient, authorizeAdmin };

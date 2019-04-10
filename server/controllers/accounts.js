@@ -6,6 +6,7 @@ const { Users, Accounts } = models;
 
 /**
  * @name createAccount
+ * @async
  * @param {Object} req
  * @param {Object} res
  * @returns {JSON Object}
@@ -17,11 +18,17 @@ const createAccount = async (req, res) => {
       return setServerResponse(res, 404, { error: 'User not found' });
     }
     const accountNumber = Number(generateAccountNumber());
-    const { firstname, lastname, email } = user;
+    const {
+      firstname, email, id,
+    } = user;
+
+    const currentDate = new Date();
+    const createdOn = currentDate.toGMTString();
     const accObj = {
       accountNumber,
-      firstname,
-      lastname,
+      createdOn,
+      status: 'draft',
+      owner: id,
       ...req.body,
     };
     const newAccount = await Accounts.create(accObj);
@@ -36,8 +43,9 @@ const createAccount = async (req, res) => {
       <p>This is to inform you that your new ${accountType} account with
       account number: ${Number(accountNumber)}
       and opening balance: N${openingBalance}
-      has been successfully opened with Banka.
-      Thank you for banking with us.</p>`,
+      has been successfully opened with Banka.</p>
+      <p>Thank you for choosing Banka.</p>
+      <p> Best wishes.</p>`,
     };
 
     return Promise.all([
@@ -53,4 +61,65 @@ const createAccount = async (req, res) => {
   }
 };
 
-export default createAccount;
+
+/**
+ * @name patchAccount
+ * @async
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {JSON Object}
+ */
+const patchAccount = async (req, res) => {
+  try {
+    const account = await Accounts.findOne(req.params.account_id);
+    if (!account) {
+      return setServerResponse(res, 404, { error: 'Account not found' });
+    }
+    const user = await Users.findOne(account.email);
+    if (!user) {
+      return setServerResponse(res, 404, { error: 'Account owner not found' });
+    }
+    const { status } = req.body;
+    const data = {
+      ...account,
+      status,
+    };
+    const patchedUser = await Accounts.findOneAndUpdate(data);
+    const { email, accountType, accountNumber } = account;
+    let composeEmail;
+    if (status === 'dormant') {
+      composeEmail = {
+        to: email,
+        subject: 'Account Deactivation',
+        message: `<h1>Account Deactivation</h1>
+        <p>We regret to inform you that your ${accountType} account 
+        with account number ${accountNumber} has been deactivated.</p>
+        <p>Please note that you cannot make transactions until 
+        your account is activated again. 
+        Contact our nearest branch or reply this email for more information.</p>
+        <p>Thank you for choosing Banka.</p>
+        <p> Best wishes.</p>`,
+      };
+    } else {
+      composeEmail = {
+        to: email,
+        subject: 'Account Activation',
+        message: `<h1>Account Activation</h1>
+        <p>We are pleased to inform you that your ${accountType} account 
+        with account number ${accountNumber} has been activated.</p>
+        <p>You can now make transactions with your account 
+        and with your issued ATM card.</p>
+        <p>Thank you for choosing Banka.</p>
+        <p> Best wishes.</p>`,
+      };
+    }
+    return Promise.all([
+      setServerResponse(res, 200, { data: { ...patchedUser } }),
+      // sendMail(composeEmail),
+    ]);
+  } catch (error) {
+    return setServerResponse(res, error.status, { error });
+  }
+};
+
+export { createAccount, patchAccount };

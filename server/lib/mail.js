@@ -22,7 +22,7 @@ function sendMail({
   ...rest
 }) {
   const newEmail = {
-    from: '"Banka" chialukachiama@gmail.com',
+    from: '"Banka Plc" bankanigeriaplc@gmail.com',
     to: email,
     subject,
     html: message,
