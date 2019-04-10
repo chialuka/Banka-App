@@ -18,9 +18,7 @@ const createAccount = async (req, res) => {
       return setServerResponse(res, 404, { error: 'User not found' });
     }
     const accountNumber = Number(generateAccountNumber());
-    const {
-      firstname, email, id,
-    } = user;
+    const { firstname, email, id } = user;
 
     const currentDate = new Date();
     const createdOn = currentDate.toGMTString();
@@ -60,7 +58,6 @@ const createAccount = async (req, res) => {
     });
   }
 };
-
 
 /**
  * @name patchAccount
@@ -122,4 +119,41 @@ const patchAccount = async (req, res) => {
   }
 };
 
-export { createAccount, patchAccount };
+const deleteAccount = async (req, res) => {
+  try {
+    const id = req.params.account_id;
+    const account = await Accounts.findOne(id);
+    if (!account) {
+      return setServerResponse(res, 404, { error: 'Account not found' });
+    }
+    const deletedAccount = await Accounts.findOneAndDelete(id);
+    if (!deletedAccount) {
+      return setServerResponse(res, 500, { error: 'Error deleting account' });
+    }
+    const { email, accountType, accountNumber } = account;
+    const composeEmail = {
+      to: email,
+      subject: 'New Banka Account',
+      text: 'You have opened a new Banka account',
+      message: `<h1>New Banka Account</h1>
+      <p>Dear esteemed customer,</p>
+      <p>This is to inform you that your ${accountType} account with
+      account number: ${Number(accountNumber)}
+      has been deleted from Banka.</p>
+      <p>Please visit a branch nearest to you 
+      or reply this email for more details.</p>
+      <p>Thank you for choosing Banka.</p>
+      <p> Best wishes.</p>`,
+    };
+    return Promise.all([
+      setServerResponse(res, 200, {
+        message: 'Account deleted successfully',
+      }),
+      // sendMail(composeEmail),
+    ]);
+  } catch (error) {
+    return setServerResponse(res, error.status, { error });
+  }
+};
+
+export { createAccount, patchAccount, deleteAccount };

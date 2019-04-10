@@ -1,7 +1,15 @@
 import Joi from 'joi';
-import { createAccount, patchAccount } from '../controllers/accounts';
+import {
+  createAccount,
+  patchAccount,
+  deleteAccount,
+} from '../controllers/accounts';
 import validateBodyPayload from '../middlewares/validators';
-import { authorizeClient, authorizeAdmin } from '../middlewares/auth';
+import {
+  authorizeClient,
+  authorizeAdmin,
+  authorizeStaff,
+} from '../middlewares/auth';
 
 export default (router) => {
   router.route('/accounts').post(
@@ -18,13 +26,16 @@ export default (router) => {
     createAccount,
   );
 
-  router.route('/accounts/:account_id').patch(
-    validateBodyPayload({
-      status: Joi.string()
-        .valid('dormant', 'active')
-        .required(),
-    }),
-    authorizeAdmin,
-    patchAccount,
-  );
+  router
+    .route('/accounts/:account_id')
+    .patch(
+      validateBodyPayload({
+        status: Joi.string()
+          .valid('dormant', 'active')
+          .required(),
+      }),
+      authorizeAdmin,
+      patchAccount,
+    )
+    .delete(authorizeStaff, deleteAccount);
 };
