@@ -43,6 +43,8 @@ const staffUser = {
   email: faker.internet.email(),
   password: faker.internet.password(),
   type: 'staff',
+  accountType: 'current',
+  openingBalance: 8000,
 };
 
 const accountUser = {
@@ -78,7 +80,49 @@ const invalidAccountType = {
   openingBalance: '8000',
 };
 
-const validAccount = {
+const clientAccount = {
+  firstname: faker.name.firstName(),
+  lastname: faker.name.lastName(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+  type: 'client',
+  accountType: 'current',
+  openingBalance: 8000,
+};
+
+const adminAccount = {
+  firstname: faker.name.firstName(),
+  lastname: faker.name.lastName(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+  type: 'staff',
+  isAdmin: true,
+  accountType: 'current',
+  openingBalance: 8000,
+};
+
+const adminAccount2 = {
+  firstname: faker.name.firstName(),
+  lastname: faker.name.lastName(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+  type: 'staff',
+  isAdmin: true,
+  accountType: 'current',
+  openingBalance: 8000,
+};
+
+const staffToken = {
+  firstname: faker.name.firstName(),
+  lastname: faker.name.lastName(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+  type: 'staff',
+  accountType: 'current',
+  openingBalance: 8000,
+};
+
+const clientToken = {
   firstname: faker.name.firstName(),
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
@@ -101,5 +145,9 @@ export {
   noBalanceAccount,
   stringOpeningBalance,
   invalidAccountType,
-  validAccount,
+  clientAccount,
+  adminAccount,
+  staffToken,
+  clientToken,
+  adminAccount2,
 };

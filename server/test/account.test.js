@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable import/no-extraneous-dependencies */
 import '@babel/polyfill';
@@ -12,7 +13,12 @@ import {
   noTypeAccount,
   stringOpeningBalance,
   invalidAccountType,
-  validAccount,
+  clientAccount,
+  staffUser,
+  adminAccount,
+  staffToken,
+  clientToken,
+  adminAccount2,
 } from '../fixtures';
 
 chai.use(chaiHttp);
@@ -21,8 +27,6 @@ const { Accounts, Users } = models;
 
 const { expect } = chai;
 
-// let user;
-// let token;
 
 describe('POST accounts', () => {
   // before((done) => {
@@ -120,7 +124,7 @@ describe('POST accounts', () => {
     chai
       .request(server)
       .post('/api/users/auth/signup')
-      .send(validAccount)
+      .send(clientAccount)
       .end((err, res) => {
         expect(res).to.have.status(201);
         expect(res.body.data).to.include.key('token');
@@ -136,13 +140,191 @@ describe('POST accounts', () => {
               accountType: user.accountType,
               openingBalance: user.openingBalance,
             })
-            .set('authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTYsImlhdCI6MTU1NDg1Mzg2MSwiZXhwIjoxNTU0ODU3NDYxfQ.3-bqQc4-vbqYml09rE7n_RJl_8JH4C9qe1YinZqgBug')
+            .set('authorization', `Bearer ${token}`)
             .end((err, res) => {
               expect(res).to.have.status(201);
               expect(res.body).to.include.key('data');
               expect(res.body.data).to.include.key('accountNumber');
               expect(res.body.data).to.include.key('openingBalance');
               expect(res.body.data).to.include.key('accountType');
+              expect(res.body.data).to.include.key('status');
+              expect(res.body.data).to.include.key('owner');
+              expect(res.body.data).to.include.key('createdOn');
+              expect(err).to.be.null;
+              done();
+            });
+        });
+      });
+  });
+
+  it('should not create account if token provided is not for client', (done) => {
+    chai
+      .request(server)
+      .post('/api/users/auth/signup')
+      .send(staffUser)
+      .end((err, res) => {
+        expect(res).to.have.status(201);
+        expect(res.body.data).to.include.key('token');
+        expect(err).to.be.null;
+        const { token } = res.body.data;
+        Users.findAll().then((users) => {
+          const user = users[users.length - 1];
+          chai
+            .request(server)
+            .post('/api/accounts/')
+            .send({
+              email: user.email,
+              accountType: user.accountType,
+              openingBalance: user.openingBalance,
+            })
+            .set('authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              expect(res).to.have.status(403);
+              expect(res.body).to.include.key('error');
+              expect(res.body.error).to.equal('User not authorized');
+              expect(err).to.be.null;
+              done();
+            });
+        });
+      });
+  });
+});
+
+describe('PATCH accounts', () => {
+  it('should return an error if account ID params is not given', (done) => {
+    chai
+      .request(server)
+      .patch('/api/accounts/')
+      .send({ status: 'active' })
+      .end((_, res) => {
+        expect(res).to.have.status(404);
+        expect(res.body).to.include.key('message');
+        expect(res.body.message).to.equal('Route /api/accounts/ Not found.');
+        done();
+      });
+  });
+
+  it('should return an error if status is not provided', (done) => {
+    chai
+      .request(server)
+      .patch('/api/accounts/1')
+      .send({ name: 'active' })
+      .end((_, res) => {
+        expect(res).to.have.status(400);
+        expect(res.body).to.include.key('errors');
+        expect(res.body.errors)
+          .to.be.an('array')
+          .that.includes('"status" is required');
+        done();
+      });
+  });
+
+  it('should fail if client token is used to make request', (done) => {
+    chai
+      .request(server)
+      .post('/api/users/auth/signup')
+      .send(clientToken)
+      .end((err, res) => {
+        expect(res).to.have.status(201);
+        expect(res.body.data).to.include.key('token');
+        expect(err).to.be.null;
+        const { token } = res.body.data;
+        Accounts.findAll().then((accounts) => {
+          const account = accounts[1];
+          chai
+            .request(server)
+            .patch(`/api/accounts/${account.id}`)
+            .send({ status: 'active' })
+            .set('authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              expect(res).to.have.status(403);
+              expect(res.body).to.include.key('error');
+              expect(res.body.error).to.equal('User not authorized');
+              expect(err).to.be.null;
+              done();
+            });
+        });
+      });
+  });
+
+  it('should fail if non-admin staff token is used to make request', (done) => {
+    chai
+      .request(server)
+      .post('/api/users/auth/signup')
+      .send(staffToken)
+      .end((err, res) => {
+        expect(res).to.have.status(201);
+        expect(res.body.data).to.include.key('token');
+        expect(err).to.be.null;
+        const { token } = res.body.data;
+        Accounts.findAll().then((accounts) => {
+          const account = accounts[1];
+          chai
+            .request(server)
+            .patch(`/api/accounts/${account.id}`)
+            .send({ status: 'dormant' })
+            .set('authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              expect(res).to.have.status(403);
+              expect(res.body).to.include.key('error');
+              expect(res.body.error).to.equal('User not authorized');
+              expect(err).to.be.null;
+              done();
+            });
+        });
+      });
+  });
+
+  it('should fail if wrong account id is provided', (done) => {
+    chai
+      .request(server)
+      .post('/api/users/auth/signup')
+      .send(adminAccount2)
+      .end((err, res) => {
+        expect(res).to.have.status(201);
+        expect(res.body.data).to.include.key('token');
+        expect(err).to.be.null;
+        const { token } = res.body.data;
+        Accounts.findAll().then((accounts) => {
+          const account = accounts[1];
+          chai
+            .request(server)
+            .patch(`/api/accounts/${account.id}`)
+            .send({ status: 'active' })
+            .set('authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              expect(res).to.have.status(404);
+              expect(res.body).to.include.key('error');
+              expect(res.body.error).to.equal('Account owner not found');
+              expect(err).to.be.null;
+              done();
+            });
+        });
+      });
+  });
+
+  it('should create account if valid admin token and account id are provided', (done) => {
+    chai
+      .request(server)
+      .post('/api/users/auth/signup')
+      .send(adminAccount)
+      .end((err, res) => {
+        expect(res).to.have.status(201);
+        expect(res.body.data).to.include.key('token');
+        expect(err).to.be.null;
+        const { token } = res.body.data;
+        Accounts.findAll().then((accounts) => {
+          const account = accounts[accounts.length - 1];
+          chai
+            .request(server)
+            .patch(`/api/accounts/${account.id}`)
+            .send({ status: 'active' })
+            .set('authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              expect(res).to.have.status(200);
+              expect(res.body).to.include.key('data');
+              expect(res.body.data).to.include.key('status');
+              expect(res.body.data.status).to.equal('active');
               expect(err).to.be.null;
               done();
             });

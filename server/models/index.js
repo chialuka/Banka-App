@@ -12,16 +12,21 @@ const close = util.promisify(fs.close);
 
 const getBaseDir = file => path.resolve(__dirname, '..', 'data', file);
 
+/**
+ * @class
+ */
 class Model {
   constructor(file) {
     this.file = file;
-    this.results = read(getBaseDir(file))
-      .then(data => JSON.parse(data))
-      .catch(console.error);
+  }
+
+  async getDataFromFile() {
+    const results = await read(getBaseDir(this.file));
+    return JSON.parse(results);
   }
 
   async create(data) {
-    const oldData = await this.results;
+    const oldData = await this.getDataFromFile();
     const id = oldData.length > 0 ? getNewId(oldData[oldData.length - 1].id) : 1;
     const newItem = { ...data, id };
     const newData = oldData.concat(newItem);
@@ -31,29 +36,33 @@ class Model {
     return newItem;
   }
 
-  findAll() {
-    return this.results;
+  async findAll() {
+    const results = await this.getDataFromFile();
+    return results;
   }
 
   async findOne(param) {
-    const users = await this.results;
-    if (/@/.test(param)) return users.find(items => items.email === param);
-    return users.find(items => items.id === Number(param));
+    const results = await this.getDataFromFile();
+    if (/@/.test(param)) {
+      return results.find(items => items.email === param);
+    }
+    return results.find(items => items.id === Number(param));
   }
 
   async findOneAndUpdate(data) {
-    const users = await this.results;
-    const usersArray = users.filter(items => items.id !== Number(data.id));
-    usersArray.push(data);
+    const oldData = await this.getDataFromFile();
+    const usersArray = oldData.filter(items => items.id !== Number(data.id));
+    const newData = usersArray.concat(data);
+    const sortedData = newData.sort((a, b) => a.id - b.id);
     const fd = await open(getBaseDir(this.file), 'w+');
-    await write(fd, JSON.stringify(usersArray));
+    await write(fd, JSON.stringify(sortedData));
     await close(fd);
     return data;
   }
 
   async findOneAndDelete(id) {
-    const users = await this.results;
-    const usersArray = users.filter(items => items.id !== Number(id));
+    const results = await this.getDataFromFile();
+    const usersArray = results.filter(items => items.id !== Number(id));
     write(getBaseDir(this.file), JSON.stringify(usersArray));
     return id;
   }

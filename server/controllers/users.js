@@ -10,9 +10,10 @@ const { Users } = models;
 
 /**
  * @name createUser
+ * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {Object}
+ * @returns {JSON Object}
  */
 const createUser = async (req, res) => {
   try {
@@ -46,9 +47,10 @@ const createUser = async (req, res) => {
 
 /**
  * @name getUsers
+ * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {Object}
+ * @returns {JSON Object}
  */
 const getUsers = async (_, res) => {
   try {
@@ -66,9 +68,10 @@ const getUsers = async (_, res) => {
 
 /**
  * @name getUser
+ * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {Object}
+ * @returns {JSON Object}
  */
 const getUser = async (req, res) => {
   try {
@@ -87,20 +90,23 @@ const getUser = async (req, res) => {
 
 /**
  * @name loginUser
+ * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {Object}
+ * @returns {JSON Object}
  */
 
 const loginUser = async (req, res) => {
   try {
     const user = await Users.findOne(req.body.email);
     if (!user) {
-      return setServerResponse(res, 404, { error: 'User not found' });
+      return setServerResponse(res, 404, {
+        error: 'Incorrect email. User not found',
+      });
     }
     const isValid = await comparePassword(req.body.password, user.password);
     if (!isValid) {
-      return setServerResponse(res, 401, { error: 'Incorrect user details' });
+      return setServerResponse(res, 401, { error: 'Incorrect password' });
     }
 
     const token = generateToken({ id: user.id });
@@ -116,14 +122,15 @@ const loginUser = async (req, res) => {
 
 /**
  * @name updateUser
+ * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {Object}
+ * @returns {JSON Object}
  */
 const updateUser = async (req, res) => {
   try {
     let hashedPassword = '';
-    const user = await Users.findOne(req.params.user_id);
+    const user = await Users.findOne(req.body.email);
     if (!user) {
       return setServerResponse(res, 404, { error: 'User does not exist' });
     }
@@ -152,9 +159,10 @@ const updateUser = async (req, res) => {
 
 /**
  * @name deleteUser
+ * @async
  * @param {Object} req,
  * @param {Object} res,
- * @returns {Object}
+ * @returns {JSON Object}
  */
 const deleteUser = async (req, res) => {
   try {
