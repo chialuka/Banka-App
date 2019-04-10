@@ -19,13 +19,13 @@ const wrongEmailDetail = {
 const existingEmailDetail = {
   firstname: faker.name.firstName(),
   lastname: faker.name.lastName(),
-  email: 'ninja007@jideofor.com',
+  email: normalUser.email,
   password: faker.internet.password(),
   type: faker.name.jobTitle(),
 };
 
 const loginUserDetails = {
-  email: 'ninja007@jideofor.com',
+  email: normalUser.email,
   password: 'monkey',
 };
 
@@ -34,14 +34,72 @@ const createUser = {
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
-  type: faker.name.jobTitle(),
+  type: 'client',
 };
 
-export default normalUser;
+const staffUser = {
+  firstname: faker.name.firstName(),
+  lastname: faker.name.lastName(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+  type: 'staff',
+};
+
+const accountUser = {
+  email: faker.internet.email(),
+  accountType: 'savings',
+  openingBalance: '1000',
+};
+
+const noEmailAccount = {
+  accountType: 'current',
+  openingBalance: '100000',
+};
+
+const noTypeAccount = {
+  email: faker.internet.email(),
+  openingBalance: '568900',
+};
+
+const noBalanceAccount = {
+  email: faker.internet.email(),
+  accountType: 'current',
+};
+
+const stringOpeningBalance = {
+  email: faker.internet.email(),
+  accountType: 'savings',
+  openingBalance: 'hello world',
+};
+
+const invalidAccountType = {
+  email: faker.internet.email(),
+  accountType: faker.name.jobTitle(),
+  openingBalance: '8000',
+};
+
+const validAccount = {
+  firstname: faker.name.firstName(),
+  lastname: faker.name.lastName(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+  type: 'client',
+  accountType: 'current',
+  openingBalance: 8000,
+};
 
 export {
+  normalUser,
   wrongEmailDetail,
   existingEmailDetail,
   createUser,
   loginUserDetails,
+  staffUser,
+  accountUser,
+  noEmailAccount,
+  noTypeAccount,
+  noBalanceAccount,
+  stringOpeningBalance,
+  invalidAccountType,
+  validAccount,
 };

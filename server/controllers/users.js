@@ -1,6 +1,9 @@
 import models from '../models';
 import {
-  hashPassword, comparePassword, generateToken, setErrorResponse,
+  hashPassword,
+  comparePassword,
+  generateToken,
+  setServerResponse,
 } from '../utils';
 
 const { Users } = models;
@@ -15,9 +18,9 @@ const createUser = async (req, res) => {
   try {
     const existingUser = await Users.findOne(req.body.email);
     if (existingUser) {
-      return setErrorResponse(
-        res, 409, 'User with provided email already exists.',
-      );
+      return setServerResponse(res, 409, {
+        error: 'User with provided email already exists.',
+      });
     }
     const { password, type } = req.body;
     const hashedPassword = await hashPassword(password);
@@ -31,17 +34,13 @@ const createUser = async (req, res) => {
     // Another solution in the real world would be to have a user
     // table that staff and client will inherit from
     const user = await Users.create({ ...newUserObj });
-
-    const token = generateToken(user.id);
+    const token = generateToken({ id: user.id });
     delete user.password;
-    return res.status(201).json({
-      data: { ...user, token },
-      status: 201,
-    });
+    return setServerResponse(res, 201, { data: { ...user, token } });
   } catch (error) {
-    setErrorResponse(
-      res, 500, 'We\'re sorry about this. We\'re working to fix the problem.',
-    );
+    return setServerResponse(res, 500, {
+      error: "We're sorry about this. We're working to fix the problem.",
+    });
   }
 };
 
@@ -54,12 +53,14 @@ const createUser = async (req, res) => {
 const getUsers = async (_, res) => {
   try {
     const users = await Users.findAll();
-    users.map(item => delete item.password);
-    return res.status(200).json({ status: 200, users });
+    if (!users) {
+      return setServerResponse(res, 404, { error: 'No users yet.' });
+    }
+    return setServerResponse(res, 200, { data: users });
   } catch (error) {
-    setErrorResponse(
-      res, 500, 'We\'re sorry about this. We\'re working to fix the problem.',
-    );
+    return setServerResponse(res, 500, {
+      error: "We're sorry about this. We're working to fix the problem.",
+    });
   }
 };
 
@@ -73,14 +74,14 @@ const getUser = async (req, res) => {
   try {
     const user = await Users.findOne(req.params.user_id);
     if (!user) {
-      return setErrorResponse(res, 404, 'User not found');
+      return setServerResponse(res, 404, { error: 'User not found' });
     }
     delete user.password;
-    return res.status(200).json({ status: 200, user });
+    return setServerResponse(res, 200, { data: user });
   } catch (error) {
-    setErrorResponse(
-      res, 500, 'We\'re sorry about this. We\'re working to fix the problem.',
-    );
+    return setServerResponse(res, 500, {
+      error: "We're sorry about this. We're working to fix the problem.",
+    });
   }
 };
 
@@ -95,24 +96,21 @@ const loginUser = async (req, res) => {
   try {
     const user = await Users.findOne(req.body.email);
     if (!user) {
-      return setErrorResponse(res, 404, 'User not found');
+      return setServerResponse(res, 404, { error: 'User not found' });
     }
     const isValid = await comparePassword(req.body.password, user.password);
     if (!isValid) {
-      return setErrorResponse(res, 401, 'Incorrect user details');
+      return setServerResponse(res, 401, { error: 'Incorrect user details' });
     }
-    const token = generateToken(user.id);
+
+    const token = generateToken({ id: user.id });
     const userObj = { ...user };
     delete userObj.password;
-    res.status(200).json({
-      status: 200,
-      data: {
-        ...userObj,
-        token,
-      },
-    });
+    return setServerResponse(res, 200, { data: { ...userObj, token } });
   } catch (error) {
-    setErrorResponse(res, 500, 'We\'re sorry about this. We\'re working to fix the problem.');
+    return setServerResponse(res, 500, {
+      error: "We're sorry about this. We're working to fix the problem.",
+    });
   }
 };
 
@@ -127,11 +125,9 @@ const updateUser = async (req, res) => {
     let hashedPassword = '';
     const user = await Users.findOne(req.params.user_id);
     if (!user) {
-      return setErrorResponse(res, 404, 'User requested does not exist');
+      return setServerResponse(res, 404, { error: 'User does not exist' });
     }
-    const {
-      password, firstname, lastname,
-    } = req.body;
+    const { password, firstname, lastname } = req.body;
     if (password) {
       hashedPassword = await hashPassword(password);
     }
@@ -146,16 +142,11 @@ const updateUser = async (req, res) => {
     };
     const updatedUser = await Users.findOneAndUpdate(newUserObj);
     delete updatedUser.password;
-    res.status(200).json({
-      status: 200,
-      data: {
-        ...updatedUser,
-      },
-    });
+    return setServerResponse(res, 200, { data: { ...updatedUser } });
   } catch (error) {
-    setErrorResponse(
-      res, 500, 'We\'re sorry about this. We\'re working to fix the problem.',
-    );
+    return setServerResponse(res, 500, {
+      error: "We're sorry about this. We're working to fix the problem.",
+    });
   }
 };
 
@@ -170,25 +161,18 @@ const deleteUser = async (req, res) => {
     const user = await Users.findOne(req.params.user_id);
     const deletedUser = await Users.findOneAndDelete(req.params.user_id);
     if (!user || !deletedUser) {
-      return setErrorResponse(res, 404, 'User not found');
+      return setServerResponse(res, 404, { error: 'User not found' });
     }
-    return res.status(200).json({
-      status: 200,
-      message: 'User deleted successfully',
-    });
+    return setServerResponse(res, 200, { message: 'User delete successful' });
   } catch (error) {
-    setErrorResponse(
-      res, 500, 'We\'re sorry about this. We\'re working to fix the problem.',
-    );
+    return setServerResponse(res, 500, {
+      error: "We're sorry about this. We're working to fix the problem.",
+    });
   }
 };
 
 export {
-  getUsers,
-  getUser,
-  updateUser,
-  deleteUser,
-  loginUser,
+  getUsers, getUser, updateUser, deleteUser, loginUser,
 };
 
 export default createUser;
