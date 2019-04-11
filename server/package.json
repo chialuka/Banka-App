@@ -4,10 +4,11 @@
   "description": "Server for the Banka App",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --require @babel/register --exit",
+    "test": "nyc --reporter=lcov --reporter=text-lcov mocha --require @babel/register --exit",
     "test:watch": "mocha -w test/",
     "start": "nodemon index.js --exec babel-node",
-    "lint": "eslint --fix"
+    "lint": "eslint --fix",
+    "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
   "author": "Chukwualuka Chiama",
   "license": "ISC",
@@ -27,7 +28,8 @@
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "faker": "^4.1.0",
     "mocha": "^6.0.2",
-    "nodemon": "^1.18.10"
+    "nodemon": "^1.18.10",
+    "nyc": "^13.3.0"
   },
   "dependencies": {
     "bcrypt": "^3.0.5",
@@ -39,6 +41,8 @@
     "nodemailer": "^6.1.0"
   },
   "nodemonConfig": {
-    "ignore": ["data/*.json"]
+    "ignore": [
+      "data/*.json"
+    ]
   }
 }
