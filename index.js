@@ -1,8 +1,10 @@
 import express, { Router } from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
-
+import dotenv from 'dotenv';
 import routes from './routes';
+
+dotenv.config();
 
 const app = express();
 
