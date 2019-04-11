@@ -2,3 +2,4 @@
 /config
 .nyc_output/
 coverage/
+.coveralls.yml
