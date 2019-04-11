@@ -1,4 +1,5 @@
 import faker from 'faker';
+import { truncate } from 'fs';
 
 const normalUser = {
   firstname: faker.name.firstName(),
@@ -29,7 +30,7 @@ const loginUserDetails = {
   password: 'monkey',
 };
 
-const createUser = {
+const clientUser = {
   firstname: faker.name.firstName(),
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
@@ -43,8 +44,15 @@ const staffUser = {
   email: faker.internet.email(),
   password: faker.internet.password(),
   type: 'staff',
-  accountType: 'current',
-  openingBalance: 8000,
+};
+
+const adminUser = {
+  firstname: faker.name.firstName(),
+  lastname: faker.name.lastName(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+  type: 'staff',
+  isAdmin: true,
 };
 
 const accountUser = {
@@ -112,7 +120,7 @@ const adminAccount2 = {
   openingBalance: 8000,
 };
 
-const staffToken = {
+const staffAccount = {
   firstname: faker.name.firstName(),
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
@@ -122,23 +130,51 @@ const staffToken = {
   openingBalance: 8000,
 };
 
-const clientToken = {
+const clientTransaction = {
   firstname: faker.name.firstName(),
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
   type: 'client',
-  accountType: 'current',
-  openingBalance: 8000,
+};
+
+const staffTransaction = {
+  firstname: faker.name.firstName(),
+  lastname: faker.name.lastName(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+  type: 'staff',
+};
+
+const adminTransaction = {
+  firstname: faker.name.firstName(),
+  lastname: faker.name.lastName(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+  type: 'staff',
+  isAdmin: true,
+};
+
+const creditTransaction = {
+  amount: 5000,
+  transactionType: 'credit',
+  cashier: 1,
+};
+
+const debitTransaction = {
+  amount: 5000,
+  transactionType: 'debit',
+  cashier: 1,
 };
 
 export {
   normalUser,
   wrongEmailDetail,
   existingEmailDetail,
-  createUser,
+  clientUser,
   loginUserDetails,
   staffUser,
+  adminUser,
   accountUser,
   noEmailAccount,
   noTypeAccount,
@@ -147,7 +183,11 @@ export {
   invalidAccountType,
   clientAccount,
   adminAccount,
-  staffToken,
-  clientToken,
+  staffAccount,
   adminAccount2,
+  clientTransaction,
+  staffTransaction,
+  adminTransaction,
+  creditTransaction,
+  debitTransaction,
 };

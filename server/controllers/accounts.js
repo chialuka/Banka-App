@@ -119,6 +119,13 @@ const patchAccount = async (req, res) => {
   }
 };
 
+/**
+ * @name deleteAccount
+ * @async
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {JSON Object}
+ */
 const deleteAccount = async (req, res) => {
   try {
     const id = req.params.account_id;

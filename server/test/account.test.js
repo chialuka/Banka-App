@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable import/no-extraneous-dependencies */
 import '@babel/polyfill';
-import chai from 'chai';
+import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../index';
 import models from '../models';
@@ -14,27 +14,21 @@ import {
   stringOpeningBalance,
   invalidAccountType,
   clientAccount,
-  staffUser,
   adminAccount,
-  staffToken,
-  clientToken,
   adminAccount2,
+  staffAccount,
 } from '../fixtures';
 
 chai.use(chaiHttp);
 
 const { Accounts, Users } = models;
 
-const { expect } = chai;
-
-let clientAccountToken;
-let staffAccountToken;
-let adminAccountToken;
+let clientToken;
+let staffToken;
+let adminToken;
+let allAccounts;
 
 describe('POST accounts', () => {
-  // before((done) => {
-
-  // });
   it('should not create an account without authenticating login', (done) => {
     chai
       .request(server)
@@ -132,7 +126,7 @@ describe('POST accounts', () => {
         expect(res).to.have.status(201);
         expect(res.body.data).to.include.key('token');
         expect(err).to.be.null;
-        clientAccountToken = res.body.data.token;
+        clientToken = res.body.data.token;
         Users.findAll().then((users) => {
           const user = users[users.length - 1];
           chai
@@ -143,7 +137,7 @@ describe('POST accounts', () => {
               accountType: user.accountType,
               openingBalance: user.openingBalance,
             })
-            .set('authorization', `Bearer ${clientAccountToken}`)
+            .set('authorization', `Bearer ${clientToken}`)
             .end((err, res) => {
               expect(res).to.have.status(201);
               expect(res.body).to.include.key('data');
@@ -164,12 +158,12 @@ describe('POST accounts', () => {
     chai
       .request(server)
       .post('/api/users/auth/signup')
-      .send(staffUser)
+      .send(staffAccount)
       .end((err, res) => {
         expect(res).to.have.status(201);
         expect(res.body.data).to.include.key('token');
         expect(err).to.be.null;
-        staffAccountToken = res.body.data.token;
+        staffToken = res.body.data.token;
         Users.findAll().then((users) => {
           const user = users[users.length - 1];
           chai
@@ -180,7 +174,7 @@ describe('POST accounts', () => {
               accountType: user.accountType,
               openingBalance: user.openingBalance,
             })
-            .set('authorization', `Bearer ${staffAccountToken}`)
+            .set('authorization', `Bearer ${staffToken}`)
             .end((err, res) => {
               expect(res).to.have.status(403);
               expect(res.body).to.include.key('error');
@@ -224,12 +218,13 @@ describe('PATCH accounts', () => {
 
   it('should fail if client token is used to make request', (done) => {
     Accounts.findAll().then((accounts) => {
-      const account = accounts[1];
+      allAccounts = accounts;
+      const [account, ...rest] = allAccounts;
       chai
         .request(server)
         .patch(`/api/accounts/${account.id}`)
         .send({ status: 'active' })
-        .set('authorization', `Bearer ${clientAccountToken}`)
+        .set('authorization', `Bearer ${clientToken}`)
         .end((err, res) => {
           expect(res).to.have.status(403);
           expect(res.body).to.include.key('error');
@@ -241,21 +236,19 @@ describe('PATCH accounts', () => {
   });
 
   it('should fail if non-admin staff token is used to make request', (done) => {
-    Accounts.findAll().then((accounts) => {
-      const account = accounts[1];
-      chai
-        .request(server)
-        .patch(`/api/accounts/${account.id}`)
-        .send({ status: 'dormant' })
-        .set('authorization', `Bearer ${staffAccountToken}`)
-        .end((err, res) => {
-          expect(res).to.have.status(403);
-          expect(res.body).to.include.key('error');
-          expect(res.body.error).to.equal('User not authorized');
-          expect(err).to.be.null;
-          done();
-        });
-    });
+    const [account, ...rest] = allAccounts;
+    chai
+      .request(server)
+      .patch(`/api/accounts/${account.id}`)
+      .send({ status: 'dormant' })
+      .set('authorization', `Bearer ${staffToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(403);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('User not authorized');
+        expect(err).to.be.null;
+        done();
+      });
   });
 
   it('should fail if wrong account id is provided', (done) => {
@@ -268,25 +261,23 @@ describe('PATCH accounts', () => {
         expect(res.body.data).to.include.key('token');
         expect(err).to.be.null;
         const { token } = res.body.data;
-        Accounts.findAll().then((accounts) => {
-          const account = accounts[1];
-          chai
-            .request(server)
-            .patch(`/api/accounts/${account.id}`)
-            .send({ status: 'active' })
-            .set('authorization', `Bearer ${token}`)
-            .end((err, res) => {
-              expect(res).to.have.status(404);
-              expect(res.body).to.include.key('error');
-              expect(res.body.error).to.equal('Account owner not found');
-              expect(err).to.be.null;
-              done();
-            });
-        });
+        const [account, ...rest] = allAccounts;
+        chai
+          .request(server)
+          .patch(`/api/accounts/${account.id}`)
+          .send({ status: 'active' })
+          .set('authorization', `Bearer ${token}`)
+          .end((err, res) => {
+            expect(res).to.have.status(404);
+            expect(res.body).to.include.key('error');
+            expect(res.body.error).to.equal('Account owner not found');
+            expect(err).to.be.null;
+            done();
+          });
       });
   });
 
-  it('should create account if valid admin token and account id are provided', (done) => {
+  it('should patch account if valid admin token and account id are provided', (done) => {
     chai
       .request(server)
       .post('/api/users/auth/signup')
@@ -295,23 +286,21 @@ describe('PATCH accounts', () => {
         expect(res).to.have.status(201);
         expect(res.body.data).to.include.key('token');
         expect(err).to.be.null;
-        adminAccountToken = res.body.data.token;
-        Accounts.findAll().then((accounts) => {
-          const account = accounts[accounts.length - 1];
-          chai
-            .request(server)
-            .patch(`/api/accounts/${account.id}`)
-            .send({ status: 'active' })
-            .set('authorization', `Bearer ${adminAccountToken}`)
-            .end((err, res) => {
-              expect(res).to.have.status(200);
-              expect(res.body).to.include.key('data');
-              expect(res.body.data).to.include.key('status');
-              expect(res.body.data.status).to.equal('active');
-              expect(err).to.be.null;
-              done();
-            });
-        });
+        adminToken = res.body.data.token;
+        const [account, ...rest] = allAccounts.slice(-1);
+        chai
+          .request(server)
+          .patch(`/api/accounts/${account.id}`)
+          .send({ status: 'active' })
+          .set('authorization', `Bearer ${adminToken}`)
+          .end((err, res) => {
+            expect(res).to.have.status(200);
+            expect(res.body).to.include.key('data');
+            expect(res.body.data).to.include.key('status');
+            expect(res.body.data.status).to.equal('active');
+            expect(err).to.be.null;
+            done();
+          });
       });
   });
 
@@ -320,7 +309,7 @@ describe('PATCH accounts', () => {
       .request(server)
       .patch('/api/accounts/10000000')
       .send({ status: 'dormant' })
-      .set('authorization', `Bearer ${adminAccountToken}`)
+      .set('authorization', `Bearer ${adminToken}`)
       .end((err, res) => {
         expect(res).to.have.status(404);
         expect(res.body).to.include.key('error');
@@ -347,66 +336,60 @@ describe('DELETE Account', () => {
 
   it('should delete account if valid staff token is provided', (done) => {
     let deletedAccount;
-    Accounts.findAll().then((accounts) => {
-      const account = accounts[accounts.length - 1];
-      chai
-        .request(server)
-        .delete(`/api/accounts/${account.id}`)
-        .send()
-        .set('Authorization', `Bearer ${staffAccountToken}`)
-        .end((err, res) => {
-          Accounts.findOne(account.id).then((item) => {
-            deletedAccount = item;
-          });
-          expect(res).to.have.status(200);
-          expect(res.body).to.include.key('message');
-          expect(res.body.message).to.equal('Account successfully deleted');
-          expect(err).to.be.null;
-          expect(deletedAccount).to.be.undefined;
-          done();
+    const [account, ...rest] = allAccounts.slice(-1);
+    chai
+      .request(server)
+      .delete(`/api/accounts/${account.id}`)
+      .send()
+      .set('Authorization', `Bearer ${staffToken}`)
+      .end((err, res) => {
+        Accounts.findOne(account.id).then((item) => {
+          deletedAccount = item;
         });
-    });
+        expect(res).to.have.status(200);
+        expect(res.body).to.include.key('message');
+        expect(res.body.message).to.equal('Account successfully deleted');
+        expect(err).to.be.null;
+        expect(deletedAccount).to.be.undefined;
+        done();
+      });
   });
 
   it('should delete account if valid admin token is provided', (done) => {
     let deletedAccount;
-    Accounts.findAll().then((accounts) => {
-      const account = accounts[accounts.length - 1];
-      chai
-        .request(server)
-        .delete(`/api/accounts/${account.id}`)
-        .send()
-        .set('Authorization', `Bearer ${adminAccountToken}`)
-        .end((err, res) => {
-          Accounts.findOne(account.id).then((item) => {
-            deletedAccount = item;
-          });
-          expect(res).to.have.status(200);
-          expect(res.body).to.include.key('message');
-          expect(res.body.message).to.equal('Account successfully deleted');
-          expect(err).to.be.null;
-          expect(deletedAccount).to.be.undefined;
-          done();
+    const [account, ...rest] = allAccounts.slice(-1);
+    chai
+      .request(server)
+      .delete(`/api/accounts/${account.id}`)
+      .send()
+      .set('Authorization', `Bearer ${adminToken}`)
+      .end((err, res) => {
+        Accounts.findOne(account.id).then((item) => {
+          deletedAccount = item;
         });
-    });
+        expect(res).to.have.status(200);
+        expect(res.body).to.include.key('message');
+        expect(res.body.message).to.equal('Account successfully deleted');
+        expect(err).to.be.null;
+        expect(deletedAccount).to.be.undefined;
+        done();
+      });
   });
 
   it('should return error if client token is provided', (done) => {
-    Accounts.findAll().then((accounts) => {
-      const account = accounts[1];
-      chai
-        .request(server)
-        .delete(`/api/accounts/${account.id}`)
-        .send()
-        .set('Authorization', `Bearer ${clientAccountToken}`)
-        .end((err, res) => {
-          expect(res).to.have.status(403);
-          expect(res.body).to.include.key('error');
-          expect(res.body.error).to.equal('User not authorized');
-          expect(err).to.be.null;
-          done();
-        });
-    });
+    const [account, ...rest] = allAccounts;
+    chai
+      .request(server)
+      .delete(`/api/accounts/${account.id}`)
+      .send()
+      .set('Authorization', `Bearer ${clientToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(403);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('User not authorized');
+        expect(err).to.be.null;
+        done();
+      });
   });
 
   it('should return error if non existent user is provided', (done) => {
@@ -414,7 +397,7 @@ describe('DELETE Account', () => {
       .request(server)
       .delete('/api/accounts/10000000')
       .send()
-      .set('Authorization', `Bearer ${staffAccountToken}`)
+      .set('Authorization', `Bearer ${staffToken}`)
       .end((err, res) => {
         expect(res).to.have.status(404);
         expect(res.body).to.include.key('error');
