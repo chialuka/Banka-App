@@ -1,4 +1,4 @@
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt-nodejs';
 import jwt from 'jsonwebtoken';
 import config from '../config';
 
@@ -8,9 +8,9 @@ const capitalize = str => str.charAt(0).toUpperCase() + str.substr(1);
 
 const getNewId = len => (parseInt(len, 10) + 1);
 
-const hashPassword = async password => bcrypt.hash(password, 10);
+const hashPassword = password => bcrypt.hashSync(password);
 
-const comparePassword = async (password, hashedPassword) => bcrypt.compare(password, hashedPassword);
+const comparePassword = (password, hashedPassword) => bcrypt.compareSync(password, hashedPassword);
 
 const generateToken = (data) => {
   const token = jwt.sign(data, secret, { expiresIn: '1h' });

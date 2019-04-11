@@ -24,7 +24,7 @@ const createUser = async (req, res) => {
       });
     }
     const { password, type } = req.body;
-    const hashedPassword = await hashPassword(password);
+    const hashedPassword = hashPassword(password);
     const newUserObj = {
       ...req.body,
       password: hashedPassword,
@@ -104,7 +104,7 @@ const loginUser = async (req, res) => {
         error: 'Incorrect email. User not found',
       });
     }
-    const isValid = await comparePassword(req.body.password, user.password);
+    const isValid = comparePassword(req.body.password, user.password);
     if (!isValid) {
       return setServerResponse(res, 401, { error: 'Incorrect password' });
     }
