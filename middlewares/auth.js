@@ -1,9 +1,11 @@
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 import { setServerResponse } from '../utils';
-import config from '../config';
 import models from '../models';
 
-const { secret } = config;
+dotenv.config();
+
+const { SECRET } = process.env;
 const { Users } = models;
 
 const verifyJwt = async (req, res) => {
@@ -13,7 +15,7 @@ const verifyJwt = async (req, res) => {
       return setServerResponse(res, 403, { error: 'Auth token not provided' });
     }
     const [, token] = header.split(' ');
-    const { id } = jwt.verify(token, secret);
+    const { id } = jwt.verify(token, SECRET);
     const tokenOwner = await Users.findOne(id);
     if (!tokenOwner) {
       return setServerResponse(res, 404, {

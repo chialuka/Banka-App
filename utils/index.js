@@ -1,19 +1,20 @@
-import bcrypt from 'bcrypt-nodejs';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import config from '../config';
+import dotenv from 'dotenv';
 
-const { secret } = config;
+dotenv.config();
+const { SECRET } = process.env;
 
 const capitalize = str => str.charAt(0).toUpperCase() + str.substr(1);
 
 const getNewId = len => (parseInt(len, 10) + 1);
 
-const hashPassword = password => bcrypt.hashSync(password);
+const hashPassword = async password => bcrypt.hash(password, 8);
 
-const comparePassword = (password, hashedPassword) => bcrypt.compareSync(password, hashedPassword);
+const comparePassword = async (password, hash) => bcrypt.compare(password, hash);
 
 const generateToken = (data) => {
-  const token = jwt.sign(data, secret, { expiresIn: '1h' });
+  const token = jwt.sign(data, SECRET, { expiresIn: '1h' });
   return token;
 };
 
