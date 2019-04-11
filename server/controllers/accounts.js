@@ -147,7 +147,7 @@ const deleteAccount = async (req, res) => {
     };
     return Promise.all([
       setServerResponse(res, 200, {
-        message: 'Account deleted successfully',
+        message: 'Account successfully deleted',
       }),
       // sendMail(composeEmail),
     ]);
