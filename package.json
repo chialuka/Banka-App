@@ -4,7 +4,7 @@
   "description": "Server for the Banka App",
   "main": "index.js",
   "engines": {
-    "node": "10.15"
+    "node": "10"
   },
   "scripts": {
     "test": "nyc --reporter=lcov --reporter=text-summary mocha --require @babel/register --exit",
