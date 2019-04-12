@@ -115,8 +115,6 @@ it('should log in registered user with correct email and password', (done) => {
         expect(err).to.be.null;
         clientToken = res.body.data.token;
         clientId = res.body.data.id;
-        clientFirstname = res.body.data.firstname;
-        clientEmail = res.body.data.email;
         chai
           .request(server)
           .post('/api/v1/users/auth/signin')
@@ -194,6 +192,23 @@ describe('GET/ User', () => {
         done();
       });
   });
+
+  // return non empty array if there are users registered
+  it('should not return empty array if there are users registered', (done) => {
+    chai
+      .request(server)
+      .get('/api/v1/users')
+      .set('Authorization', `Bearer ${staffToken}`)
+      .send()
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.include.key('data');
+        expect(res.body.data).to.be.an('array');
+        expect(res.body.data).to.have.length.above(0);
+        done();
+      });
+  });
 });
 
 describe('PUT/ User', () => {
@@ -243,6 +258,22 @@ describe('DELETE/ User', () => {
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body).to.include.key('message');
+        expect(err).to.be.null;
+        done();
+      });
+  });
+
+  // test to ensure error is returned when trying to delete non existent user
+  it('should return error for deleting non-existent user', (done) => {
+    chai
+      .request(server)
+      .delete('/api/v1/users/10000000000')
+      .set('Authorization', `Bearer ${staffToken}`)
+      .send()
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        expect(res.body).to.include.key('error')
+        expect(res.body.error).to.equal('User not found');
         expect(err).to.be.null;
         done();
       });

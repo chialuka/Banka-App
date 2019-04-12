@@ -115,7 +115,7 @@ const patchAccount = async (req, res) => {
     }
     return Promise.all([
       setServerResponse(res, 200, { data: { ...patchedUser } }),
-      sendMail(composeEmail),
+      // sendMail(composeEmail),
     ]);
   } catch (error) {
     return setServerResponse(res, error.status, { error });
@@ -159,7 +159,7 @@ const deleteAccount = async (req, res) => {
       setServerResponse(res, 200, {
         message: 'Account successfully deleted',
       }),
-      // sendMail(composeEmail),
+      sendMail(composeEmail),
     ]);
   } catch (error) {
     return setServerResponse(res, error.status, { error });

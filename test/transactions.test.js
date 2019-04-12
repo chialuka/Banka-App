@@ -336,6 +336,24 @@ describe('POST transactions', () => {
       });
   });
 
+  it('should return an error if staff making request cannot be found', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/transactions/')
+      .send({
+        ...debitTransaction,
+        accountNumber,
+        cashierId: 10000000,
+      })
+      .set('authorization', `Bearer ${adminToken}`)
+      .end((_, res) => {
+        expect(res).to.have.status(404);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('Staff not found');
+        done();
+      });
+  });
+
   it('should return an error if account Number is invalid', (done) => {
     chai
       .request(server)
