@@ -12,8 +12,10 @@ import {
   correctPasswordClient,
   staffUser,
   correctClient,
+  adminAccount,
 } from '../fixtures';
 import models from '../models';
+import { generateToken } from '../utils';
 
 chai.use(chaiHttp);
 
@@ -23,9 +25,6 @@ let createdClient;
 let createdStaff;
 let clientToken;
 let clientId;
-let clientFirstname;
-let clientEmail;
-let staffToken;
 
 describe('POST User', () => {
   // should create user succesfully(201)
@@ -145,34 +144,31 @@ it('should not login user who is not registered', (done) => {
 });
 
 describe('GET/ User', () => {
+  let getStaffUser;
+  let getStaffToken;
+  before(async () => {
+    getStaffUser = await Users.create(getUserStaff);
+    getStaffToken = generateToken({ id: getStaffUser.id });
+  });
   // should return user with specified id or email
   it('should return specified user', (done) => {
     Users.findAll().then((users) => {
       const [user, ...rest] = users.slice(-1);
       chai
         .request(server)
-        .post('/api/v1/users/auth/signup')
-        .send(getUserStaff)
-        .end((_, res) => {
-          expect(res).to.have.status(201);
-          expect(res.body.data).to.include.key('token');
-          staffToken = res.body.data.token;
-          chai
-            .request(server)
-            .get(`/api/v1/users/${user.id}`)
-            .set('Authorization', `Bearer ${staffToken}`)
-            .send()
-            .end((err, res) => {
-              expect(res).to.have.status(200);
-              expect(res.body).to.be.a('object');
-              expect(res.body).to.include.key('data');
-              expect(res.body.data).to.be.an('object');
-              expect(res.body.data).to.include.key('email');
-              expect(res.body.data).to.include.key('firstname');
-              expect(res.body.data).to.include.key('lastname');
-              expect(err).to.be.null;
-              done();
-            });
+        .get(`/api/v1/users/${user.id}`)
+        .set('Authorization', `Bearer ${getStaffToken}`)
+        .send()
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          expect(res.body).to.be.a('object');
+          expect(res.body).to.include.key('data');
+          expect(res.body.data).to.be.an('object');
+          expect(res.body.data).to.include.key('email');
+          expect(res.body.data).to.include.key('firstname');
+          expect(res.body.data).to.include.key('lastname');
+          expect(err).to.be.null;
+          done();
         });
     });
   });
@@ -182,7 +178,7 @@ describe('GET/ User', () => {
     chai
       .request(server)
       .get(`/api/v1/users/${createdClient.firstname}`)
-      .set('Authorization', `Bearer ${staffToken}`)
+      .set('Authorization', `Bearer ${getStaffToken}`)
       .send()
       .end((_, res) => {
         expect(res).to.have.status(404);
@@ -198,7 +194,7 @@ describe('GET/ User', () => {
     chai
       .request(server)
       .get('/api/v1/users')
-      .set('Authorization', `Bearer ${staffToken}`)
+      .set('Authorization', `Bearer ${getStaffToken}`)
       .send()
       .end((err, res) => {
         expect(res).to.have.status(200);
@@ -218,7 +214,11 @@ describe('PUT/ User', () => {
       .request(server)
       .put(`/api/v1/users/${clientId}`)
       .set('Authorization', `Bearer ${clientToken}`)
-      .send({ ...correctPasswordClient, firstname: 'Rihanna', lastname: 'Okonkwo' })
+      .send({
+        ...correctPasswordClient,
+        firstname: 'Rihanna',
+        lastname: 'Okonkwo',
+      })
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body).to.be.an('object');
@@ -236,7 +236,11 @@ describe('PUT/ User', () => {
       .request(server)
       .put(`/api/v1/users/${clientId}`)
       .set('Authorization', `Bearer ${clientToken}`)
-      .send({ ...correctPasswordClient, lastname: 'Udara', email: 'otakagu.dikagu@gmail.com' })
+      .send({
+        ...correctPasswordClient,
+        lastname: 'Udara',
+        email: 'otakagu.dikagu@gmail.com',
+      })
       .end((err, res) => {
         expect(res).to.have.status(403);
         expect(res.body).to.include.key('error');
@@ -248,12 +252,20 @@ describe('PUT/ User', () => {
 });
 
 describe('DELETE/ User', () => {
+  let staffDeleteAccount;
+  let deleteToken;
+  let clientDeleteAccount;
+  before(async () => {
+    clientDeleteAccount = await Users.create(clientUser);
+    staffDeleteAccount = await Users.create(staffUser);
+    deleteToken = generateToken({ id: staffDeleteAccount.id });
+  });
   // should test to see that user is successfully deleted
   it('should delete user', (done) => {
     chai
       .request(server)
-      .delete(`/api/v1/users/${createdClient.id}`)
-      .set('Authorization', `Bearer ${staffToken}`)
+      .delete(`/api/v1/users/${clientDeleteAccount.id}`)
+      .set('Authorization', `Bearer ${deleteToken}`)
       .send()
       .end((err, res) => {
         expect(res).to.have.status(200);
@@ -268,11 +280,11 @@ describe('DELETE/ User', () => {
     chai
       .request(server)
       .delete('/api/v1/users/10000000000')
-      .set('Authorization', `Bearer ${staffToken}`)
+      .set('Authorization', `Bearer ${deleteToken}`)
       .send()
       .end((err, res) => {
         expect(res).to.have.status(404);
-        expect(res.body).to.include.key('error')
+        expect(res.body).to.include.key('error');
         expect(res.body.error).to.equal('User not found');
         expect(err).to.be.null;
         done();
