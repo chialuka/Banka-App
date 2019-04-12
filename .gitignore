@@ -4,3 +4,4 @@ config
 coverage
 .coveralls.yml
 .env
+.vscode
