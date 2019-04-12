@@ -13,13 +13,16 @@ const { Users, Accounts } = models;
  */
 const createAccount = async (req, res) => {
   try {
-    const user = await Users.findOne(req.body.email);
+    const user = await Users.findOne('email', req.body.email);
     if (!user) {
       return setServerResponse(res, 404, { error: 'User not found' });
     }
+    const { tokenOwner } = res.locals;
+    if (tokenOwner.email !== user.email) {
+      return setServerResponse(res, 403, { error: 'Token and user mismatch' });
+    }
     const accountNumber = Number(generateAccountNumber());
     const { firstname, email, id } = user;
-
     const currentDate = new Date();
     const createdOn = currentDate.toGMTString();
     const accObj = {
@@ -68,11 +71,11 @@ const createAccount = async (req, res) => {
  */
 const patchAccount = async (req, res) => {
   try {
-    const account = await Accounts.findOne(req.params.account_id);
+    const account = await Accounts.findOne('id', Number(req.params.account_id));
     if (!account) {
       return setServerResponse(res, 404, { error: 'Account not found' });
     }
-    const user = await Users.findOne(account.email);
+    const user = await Users.findOne('email', account.email);
     if (!user) {
       return setServerResponse(res, 404, { error: 'Account owner not found' });
     }
@@ -112,7 +115,7 @@ const patchAccount = async (req, res) => {
     }
     return Promise.all([
       setServerResponse(res, 200, { data: { ...patchedUser } }),
-      // sendMail(composeEmail),
+      sendMail(composeEmail),
     ]);
   } catch (error) {
     return setServerResponse(res, error.status, { error });
@@ -129,7 +132,7 @@ const patchAccount = async (req, res) => {
 const deleteAccount = async (req, res) => {
   try {
     const id = req.params.account_id;
-    const account = await Accounts.findOne(id);
+    const account = await Accounts.findOne('id', Number(id));
     if (!account) {
       return setServerResponse(res, 404, { error: 'Account not found' });
     }

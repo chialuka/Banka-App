@@ -1,7 +1,6 @@
 import faker from 'faker';
-import { truncate } from 'fs';
 
-const normalUser = {
+const wrongTypeUser = {
   firstname: faker.name.firstName(),
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
@@ -17,24 +16,35 @@ const wrongEmailDetail = {
   type: faker.name.jobTitle(),
 };
 
-const existingEmailDetail = {
-  firstname: faker.name.firstName(),
-  lastname: faker.name.lastName(),
-  email: normalUser.email,
-  password: faker.internet.password(),
-  type: faker.name.jobTitle(),
-};
-
-const loginUserDetails = {
-  email: normalUser.email,
-  password: 'monkey',
-};
-
 const clientUser = {
   firstname: faker.name.firstName(),
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
+  type: 'client',
+};
+
+const getUserStaff = {
+  firstname: faker.name.firstName(),
+  lastname: faker.name.lastName(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+  type: 'staff',
+};
+
+const correctPasswordClient = {
+  firstname: faker.name.firstName(),
+  lastname: faker.name.lastName(),
+  email: faker.internet.email(),
+  password: 'ndukwu',
+  type: 'client',
+};
+
+const correctClient = {
+  firstname: faker.name.firstName(),
+  lastname: faker.name.lastName(),
+  email: 'rihannandukwe@gmail.com',
+  password: 'ndukwu',
   type: 'client',
 };
 
@@ -44,15 +54,6 @@ const staffUser = {
   email: faker.internet.email(),
   password: faker.internet.password(),
   type: 'staff',
-};
-
-const adminUser = {
-  firstname: faker.name.firstName(),
-  lastname: faker.name.lastName(),
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-  type: 'staff',
-  isAdmin: true,
 };
 
 const accountUser = {
@@ -156,38 +157,90 @@ const adminTransaction = {
 };
 
 const creditTransaction = {
+  description: 'brideprice',
   amount: 5000,
   transactionType: 'credit',
-  cashier: 1,
+  cashierId: 1,
 };
 
 const debitTransaction = {
+  description: 'brideprice',
   amount: 5000,
   transactionType: 'debit',
-  cashier: 1,
+  cashierId: 1,
+};
+
+const noAmountTransaction = {
+  description: 'brideprice',
+  transactionType: 'debit',
+  cashierId: 1,
+};
+
+const noTransactionType = {
+  description: 'brideprice',
+  amount: 5000,
+  cashierId: 1,
+};
+
+const noCashierId = {
+  description: 'brideprice',
+  amount: 5000,
+  transactionType: 'credit',
 };
 
 export {
-  normalUser,
+  wrongTypeUser,
   wrongEmailDetail,
-  existingEmailDetail,
+  correctPasswordClient,
+  correctClient,
+  getUserStaff,
   clientUser,
-  loginUserDetails,
   staffUser,
-  adminUser,
   accountUser,
   noEmailAccount,
-  noTypeAccount,
   noBalanceAccount,
+  noTypeAccount,
   stringOpeningBalance,
   invalidAccountType,
   clientAccount,
-  adminAccount,
   staffAccount,
+  adminAccount,
   adminAccount2,
   clientTransaction,
   staffTransaction,
   adminTransaction,
   creditTransaction,
   debitTransaction,
+  noAmountTransaction,
+  noTransactionType,
+  noCashierId,
 };
+
+// user.test
+// wrongTypeUser,
+// wrongEmailDetail,
+// correctPasswordClient,
+// correctClient
+// getUserStaff,
+// clientUser
+// staffUser
+
+
+// account.test
+// accountUser,
+// noEmailAccount,
+// noBalanceAccount,
+// noTypeAccount,
+// stringOpeningBalance,
+// invalidAccountType,
+// clientAccount,
+// staffAccount,
+// adminAccount,
+// adminAccount2,
+
+// transactions.test
+// clientTransaction,
+// staffTransaction,
+// adminTransaction,
+// creditTransaction,
+// debitTransaction,

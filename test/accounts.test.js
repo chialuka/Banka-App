@@ -32,7 +32,7 @@ describe('POST accounts', () => {
   it('should not create an account without authenticating login', (done) => {
     chai
       .request(server)
-      .post('/api/accounts/')
+      .post('/api/v1/accounts/')
       .send(accountUser)
       .end((_, res) => {
         expect(res).to.have.status(403);
@@ -45,7 +45,7 @@ describe('POST accounts', () => {
   it('should return an error if email is omitted', (done) => {
     chai
       .request(server)
-      .post('/api/accounts/')
+      .post('/api/v1/accounts/')
       .send(noEmailAccount)
       .end((_, res) => {
         expect(res).to.have.status(400);
@@ -60,7 +60,7 @@ describe('POST accounts', () => {
   it('should return an error if account type is omitted', (done) => {
     chai
       .request(server)
-      .post('/api/accounts/')
+      .post('/api/v1/accounts/')
       .send(noTypeAccount)
       .end((_, res) => {
         expect(res).to.have.status(400);
@@ -75,7 +75,7 @@ describe('POST accounts', () => {
   it('should return an error if opening balance is not provided', (done) => {
     chai
       .request(server)
-      .post('/api/accounts/')
+      .post('/api/v1/accounts/')
       .send(noBalanceAccount)
       .end((_, res) => {
         expect(res).to.have.status(400);
@@ -90,7 +90,7 @@ describe('POST accounts', () => {
   it('should return an error if opening balance is not a number', (done) => {
     chai
       .request(server)
-      .post('/api/accounts/')
+      .post('/api/v1/accounts/')
       .send(stringOpeningBalance)
       .end((_, res) => {
         expect(res).to.have.status(400);
@@ -105,7 +105,7 @@ describe('POST accounts', () => {
   it('should return an error if account type is not savings or current', (done) => {
     chai
       .request(server)
-      .post('/api/accounts/')
+      .post('/api/v1/accounts/')
       .send(invalidAccountType)
       .end((_, res) => {
         expect(res).to.have.status(400);
@@ -120,7 +120,7 @@ describe('POST accounts', () => {
   it('should create an account if valid details are provided', (done) => {
     chai
       .request(server)
-      .post('/api/users/auth/signup')
+      .post('/api/v1/users/auth/signup')
       .send(clientAccount)
       .end((err, res) => {
         expect(res).to.have.status(201);
@@ -131,7 +131,7 @@ describe('POST accounts', () => {
           const user = users[users.length - 1];
           chai
             .request(server)
-            .post('/api/accounts/')
+            .post('/api/v1/accounts/')
             .send({
               email: user.email,
               accountType: user.accountType,
@@ -157,7 +157,7 @@ describe('POST accounts', () => {
   it('should not create account if token provided is not for client', (done) => {
     chai
       .request(server)
-      .post('/api/users/auth/signup')
+      .post('/api/v1/users/auth/signup')
       .send(staffAccount)
       .end((err, res) => {
         expect(res).to.have.status(201);
@@ -168,7 +168,7 @@ describe('POST accounts', () => {
           const user = users[users.length - 1];
           chai
             .request(server)
-            .post('/api/accounts/')
+            .post('/api/v1/accounts/')
             .send({
               email: user.email,
               accountType: user.accountType,
@@ -191,12 +191,12 @@ describe('PATCH accounts', () => {
   it('should return an error if account ID params is not given', (done) => {
     chai
       .request(server)
-      .patch('/api/accounts/')
+      .patch('/api/v1/accounts/')
       .send({ status: 'active' })
       .end((_, res) => {
         expect(res).to.have.status(404);
         expect(res.body).to.include.key('message');
-        expect(res.body.message).to.equal('Route /api/accounts/ Not found.');
+        expect(res.body.message).to.equal('Route /api/v1/accounts/ Not found.');
         done();
       });
   });
@@ -204,7 +204,7 @@ describe('PATCH accounts', () => {
   it('should return an error if status is not provided', (done) => {
     chai
       .request(server)
-      .patch('/api/accounts/1')
+      .patch('/api/v1/accounts/1')
       .send({ name: 'active' })
       .end((_, res) => {
         expect(res).to.have.status(400);
@@ -222,7 +222,7 @@ describe('PATCH accounts', () => {
       const [account, ...rest] = allAccounts;
       chai
         .request(server)
-        .patch(`/api/accounts/${account.id}`)
+        .patch(`/api/v1/accounts/${account.id}`)
         .send({ status: 'active' })
         .set('authorization', `Bearer ${clientToken}`)
         .end((err, res) => {
@@ -239,7 +239,7 @@ describe('PATCH accounts', () => {
     const [account, ...rest] = allAccounts;
     chai
       .request(server)
-      .patch(`/api/accounts/${account.id}`)
+      .patch(`/api/v1/accounts/${account.id}`)
       .send({ status: 'dormant' })
       .set('authorization', `Bearer ${staffToken}`)
       .end((err, res) => {
@@ -254,7 +254,7 @@ describe('PATCH accounts', () => {
   it('should fail if wrong account id is provided', (done) => {
     chai
       .request(server)
-      .post('/api/users/auth/signup')
+      .post('/api/v1/users/auth/signup')
       .send(adminAccount2)
       .end((err, res) => {
         expect(res).to.have.status(201);
@@ -264,15 +264,26 @@ describe('PATCH accounts', () => {
         const [account, ...rest] = allAccounts;
         chai
           .request(server)
-          .patch(`/api/accounts/${account.id}`)
-          .send({ status: 'active' })
+          .delete(`/api/v1/users/${account.owner}`)
+          .send()
           .set('authorization', `Bearer ${token}`)
           .end((err, res) => {
-            expect(res).to.have.status(404);
-            expect(res.body).to.include.key('error');
-            expect(res.body.error).to.equal('Account owner not found');
+            expect(res).to.have.status(200);
+            expect(res.body).to.include.key('message');
+            expect(res.body.message).to.equal('User delete successful');
             expect(err).to.be.null;
-            done();
+            chai
+              .request(server)
+              .patch(`/api/v1/accounts/${account.id}`)
+              .send({ status: 'active' })
+              .set('authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                expect(res).to.have.status(404);
+                expect(res.body).to.include.key('error');
+                expect(res.body.error).to.equal('Account owner not found');
+                expect(err).to.be.null;
+                done();
+              });
           });
       });
   });
@@ -280,7 +291,7 @@ describe('PATCH accounts', () => {
   it('should patch account if valid admin token and account id are provided', (done) => {
     chai
       .request(server)
-      .post('/api/users/auth/signup')
+      .post('/api/v1/users/auth/signup')
       .send(adminAccount)
       .end((err, res) => {
         expect(res).to.have.status(201);
@@ -290,7 +301,7 @@ describe('PATCH accounts', () => {
         const [account, ...rest] = allAccounts.slice(-1);
         chai
           .request(server)
-          .patch(`/api/accounts/${account.id}`)
+          .patch(`/api/v1/accounts/${account.id}`)
           .send({ status: 'active' })
           .set('authorization', `Bearer ${adminToken}`)
           .end((err, res) => {
@@ -307,7 +318,7 @@ describe('PATCH accounts', () => {
   it('should fail if non-existent user is provided', (done) => {
     chai
       .request(server)
-      .patch('/api/accounts/10000000')
+      .patch('/api/v1/accounts/10000000')
       .send({ status: 'dormant' })
       .set('authorization', `Bearer ${adminToken}`)
       .end((err, res) => {
@@ -324,12 +335,12 @@ describe('DELETE Account', () => {
   it('should return an error if account ID params is not given', (done) => {
     chai
       .request(server)
-      .delete('/api/accounts/')
+      .delete('/api/v1/accounts/')
       .send()
       .end((_, res) => {
         expect(res).to.have.status(404);
         expect(res.body).to.include.key('message');
-        expect(res.body.message).to.equal('Route /api/accounts/ Not found.');
+        expect(res.body.message).to.equal('Route /api/v1/accounts/ Not found.');
         done();
       });
   });
@@ -339,11 +350,11 @@ describe('DELETE Account', () => {
     const [account, ...rest] = allAccounts.slice(-1);
     chai
       .request(server)
-      .delete(`/api/accounts/${account.id}`)
+      .delete(`/api/v1/accounts/${account.id}`)
       .send()
       .set('Authorization', `Bearer ${staffToken}`)
       .end((err, res) => {
-        Accounts.findOne(account.id).then((item) => {
+        Accounts.findOne('id', Number(account.id)).then((item) => {
           deletedAccount = item;
         });
         expect(res).to.have.status(200);
@@ -357,14 +368,14 @@ describe('DELETE Account', () => {
 
   it('should delete account if valid admin token is provided', (done) => {
     let deletedAccount;
-    const [account, ...rest] = allAccounts.slice(-1);
+    const [account, ...rest] = allAccounts;
     chai
       .request(server)
-      .delete(`/api/accounts/${account.id}`)
+      .delete(`/api/v1/accounts/${account.id}`)
       .send()
       .set('Authorization', `Bearer ${adminToken}`)
       .end((err, res) => {
-        Accounts.findOne(account.id).then((item) => {
+        Accounts.findOne('id', Number(account.id)).then((item) => {
           deletedAccount = item;
         });
         expect(res).to.have.status(200);
@@ -380,7 +391,7 @@ describe('DELETE Account', () => {
     const [account, ...rest] = allAccounts;
     chai
       .request(server)
-      .delete(`/api/accounts/${account.id}`)
+      .delete(`/api/v1/accounts/${account.id}`)
       .send()
       .set('Authorization', `Bearer ${clientToken}`)
       .end((err, res) => {
@@ -395,7 +406,7 @@ describe('DELETE Account', () => {
   it('should return error if non existent user is provided', (done) => {
     chai
       .request(server)
-      .delete('/api/accounts/10000000')
+      .delete('/api/v1/accounts/10000000')
       .send()
       .set('Authorization', `Bearer ${staffToken}`)
       .end((err, res) => {

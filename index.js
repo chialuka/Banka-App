@@ -6,6 +6,9 @@ import routes from './routes';
 
 dotenv.config();
 
+const { PORT } = process.env;
+console.log(PORT);
+
 const app = express();
 
 const router = Router();
@@ -18,13 +21,13 @@ app.use(bodyParser.json());
 
 app.use(morgan('dev'));
 
-app.use('/api', router);
+app.use('/api/v1', router);
 
 app.use((req, res) => {
   res.status(404).json({ message: `Route ${req.url} Not found.` });
 });
 
-app.listen(2800, () => {
+app.listen(PORT, () => {
   console.log('We make magic on port 2800');
 });
 
