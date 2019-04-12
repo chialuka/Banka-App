@@ -14,197 +14,132 @@ import {
   noTransactionType,
   noCashierId,
 } from '../fixtures';
+import { generateToken, generateAccountNumber } from '../utils';
 
 chai.use(chaiHttp);
 
-const { Accounts, Users, Transactions } = models;
-
-let clientToken;
-let staffToken;
-let adminToken;
-let allAccounts;
-let clientData;
-let staffId;
-let adminId;
-let accountNumber;
-let accountId;
+const { Accounts, Users } = models;
 
 describe('POST transactions', () => {
-  before((done) => {
-    Accounts.findAll().then((accounts) => {
-      allAccounts = accounts;
+  let clientToken;
+  let staffToken;
+  let adminToken;
+  let createClient;
+  let createStaff;
+  let createAdmin;
+  let clientAccount;
+  let accountNumber;
+  let activatedAccount;
+
+  before(async () => {
+    createClient = await Users.create(clientTransaction);
+    clientToken = generateToken({ id: createClient.id });
+    const { firstname, email, id } = createClient;
+
+    createStaff = await Users.create(staffTransaction);
+    staffToken = generateToken({ id: createStaff.id });
+
+    createAdmin = await Users.create(adminTransaction);
+    adminToken = generateToken({ id: createAdmin.id });
+
+
+    accountNumber = Number(generateAccountNumber());
+    clientAccount = await Accounts.create({
+      firstname,
+      email,
+      owner: id,
+      accountType: 'current',
+      openingBalance: 5000,
+      accountNumber,
     });
-    chai
-      .request(server)
-      .post('/api/v1/users/auth/signup')
-      .send(staffTransaction)
-      .end((err, res) => {
-        expect(res).to.have.status(201);
-        expect(res.body.data).to.include.key('token');
-        expect(err).to.be.null;
-        staffToken = res.body.data.token;
-        staffId = res.body.data.id;
-        chai
-          .request(server)
-          .post('/api/v1/users/auth/signup')
-          .send(adminTransaction)
-          .end((err, res) => {
-            expect(res).to.have.status(201);
-            expect(res.body.data).to.include.key('token');
-            expect(err).to.be.null;
-            adminToken = res.body.data.token;
-            adminId = res.body.data.id;
-            chai
-              .request(server)
-              .post('/api/v1/users/auth/signup')
-              .send(clientTransaction)
-              .end((err, res) => {
-                expect(res).to.have.status(201);
-                expect(res.body.data).to.include.key('token');
-                expect(err).to.be.null;
-                clientData = res.body.data;
-                clientToken = res.body.data.token;
-                clientId = res.body.id;
-                chai
-                  .request(server)
-                  .post('/api/v1/accounts')
-                  .send({
-                    ...clientData,
-                    accountType: 'current',
-                    openingBalance: 50000,
-                  })
-                  .set('Authorization', `Bearer ${clientData.token}`)
-                  .end((err, res) => {
-                    expect(res).to.have.status(201);
-                    expect(res.body.data).to.include.key('accountNumber');
-                    expect(err).to.be.null;
-                    accountNumber = res.body.data.accountNumber;
-                    accountId = res.body.data.id;
-                    done();
-                  });
-              });
-          });
-      });
+    
+    activatedAccount = await Accounts.findOneAndUpdate({
+      ...clientAccount,
+      status: 'active',
+    });
   });
 
   it('should credit client account if valid details are provided', (done) => {
     chai
       .request(server)
-      .patch(`/api/v1/accounts/${accountId}`)
-      .send({ status: 'active' })
-      .set('authorization', `Bearer ${adminToken}`)
+      .post('/api/v1/transactions/')
+      .send({
+        ...creditTransaction,
+        accountNumber,
+        cashierId: createStaff.id,
+      })
+      .set('Authorization', `Bearer ${staffToken}`)
       .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.include.key('data');
-        expect(res.body.data).to.include.key('status');
-        expect(res.body.data.status).to.equal('active');
+        expect(res).to.have.status(201);
+        expect(res.body).to.be.an('object');
+        expect(res.body.data).to.be.an('object');
+        expect(res.body.data).to.include.key('id');
+        expect(res.body.data).to.include.key('accountNumber');
+        expect(res.body.data).to.include.key('description');
+        expect(res.body.data).to.include.key('date');
+        expect(res.body.data).to.include.key('cashierId');
+        expect(res.body.data).to.include.key('amount');
+        expect(res.body.data).to.include.key('transactionType');
+        expect(res.body.data.transactionType).to.equal('credit');
+        expect(res.body.data).to.include.key('accountBalance');
         expect(err).to.be.null;
-        chai
-          .request(server)
-          .post('/api/v1/transactions/')
-          .send({
-            ...creditTransaction,
-            accountNumber,
-            cashierId: staffId,
-          })
-          .set('Authorization', `Bearer ${staffToken}`)
-          .end((err, res) => {
-            expect(res).to.have.status(201);
-            expect(res.body).to.be.an('object');
-            expect(res.body.data).to.be.an('object');
-            expect(res.body.data).to.include.key('id');
-            expect(res.body.data).to.include.key('accountNumber');
-            expect(res.body.data).to.include.key('description');
-            expect(res.body.data).to.include.key('date');
-            expect(res.body.data).to.include.key('cashierId');
-            expect(res.body.data).to.include.key('amount');
-            expect(res.body.data).to.include.key('transactionType');
-            expect(res.body.data.transactionType).to.equal('credit');
-            expect(res.body.data).to.include.key('accountBalance');
-            expect(err).to.be.null;
-            done();
-          });
+        done();
       });
   });
 
   it('should debit client account if valid details are provided', (done) => {
     chai
       .request(server)
-      .patch(`/api/v1/accounts/${accountId}`)
-      .send({ status: 'active' })
-      .set('authorization', `Bearer ${adminToken}`)
+      .post('/api/v1/transactions')
+      .send({
+        ...debitTransaction,
+        accountNumber,
+        cashierId: createStaff.id,
+      })
+      .set('Authorization', `Bearer ${staffToken}`)
       .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.include.key('data');
-        expect(res.body.data).to.include.key('status');
-        expect(res.body.data.status).to.equal('active');
+        expect(res).to.have.status(201);
+        expect(res.body).to.be.an('object');
+        expect(res.body.data).to.be.an('object');
+        expect(res.body.data).to.include.key('id');
+        expect(res.body.data).to.include.key('accountNumber');
+        expect(res.body.data).to.include.key('description');
+        expect(res.body.data).to.include.key('date');
+        expect(res.body.data).to.include.key('cashierId');
+        expect(res.body.data).to.include.key('amount');
+        expect(res.body.data).to.include.key('transactionType');
+        expect(res.body.data.transactionType).to.equal('debit');
+        expect(res.body.data).to.include.key('accountBalance');
         expect(err).to.be.null;
-        chai
-          .request(server)
-          .post('/api/v1/transactions')
-          .send({
-            ...debitTransaction,
-            accountNumber,
-            cashierId: staffId,
-          })
-          .set('Authorization', `Bearer ${staffToken}`)
-          .end((err, res) => {
-            expect(res).to.have.status(201);
-            expect(res.body).to.be.an('object');
-            expect(res.body.data).to.be.an('object');
-            expect(res.body.data).to.include.key('id');
-            expect(res.body.data).to.include.key('accountNumber');
-            expect(res.body.data).to.include.key('description');
-            expect(res.body.data).to.include.key('date');
-            expect(res.body.data).to.include.key('cashierId');
-            expect(res.body.data).to.include.key('amount');
-            expect(res.body.data).to.include.key('transactionType');
-            expect(res.body.data.transactionType).to.equal('debit');
-            expect(res.body.data).to.include.key('accountBalance');
-            expect(err).to.be.null;
-            done();
-          });
+        done();
       });
   });
 
-  it('should return 200 if admin token and valid details are provided', (done) => {
-    const [account, ...rest] = allAccounts.reverse();
+  it('should return 200 if token and valid details are provided', (done) => {
     chai
       .request(server)
-      .patch(`/api/v1/accounts/${accountId}`)
-      .send({ status: 'active' })
-      .set('authorization', `Bearer ${adminToken}`)
+      .post('/api/v1/transactions')
+      .send({
+        ...debitTransaction,
+        accountNumber,
+        cashierId: createAdmin.id,
+      })
+      .set('Authorization', `Bearer ${adminToken}`)
       .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.include.key('data');
-        expect(res.body.data).to.include.key('status');
-        expect(res.body.data.status).to.equal('active');
+        expect(res).to.have.status(201);
+        expect(res.body).to.be.an('object');
+        expect(res.body.data).to.be.an('object');
+        expect(res.body.data).to.include.key('id');
+        expect(res.body.data).to.include.key('accountNumber');
+        expect(res.body.data).to.include.key('description');
+        expect(res.body.data).to.include.key('date');
+        expect(res.body.data).to.include.key('cashierId');
+        expect(res.body.data).to.include.key('amount');
+        expect(res.body.data).to.include.key('transactionType');
+        expect(res.body.data.transactionType).to.equal('debit');
+        expect(res.body.data).to.include.key('accountBalance');
         expect(err).to.be.null;
-        chai
-          .request(server)
-          .post('/api/v1/transactions')
-          .send({
-            ...debitTransaction,
-            accountNumber,
-            cashierId: adminId,
-          })
-          .set('Authorization', `Bearer ${adminToken}`)
-          .end((err, res) => {
-            expect(res).to.have.status(201);
-            expect(res.body).to.be.an('object');
-            expect(res.body.data).to.be.an('object');
-            expect(res.body.data).to.include.key('id');
-            expect(res.body.data).to.include.key('accountNumber');
-            expect(res.body.data).to.include.key('description');
-            expect(res.body.data).to.include.key('date');
-            expect(res.body.data).to.include.key('cashierId');
-            expect(res.body.data).to.include.key('amount');
-            expect(res.body.data).to.include.key('transactionType');
-            expect(res.body.data.transactionType).to.equal('debit');
-            expect(res.body.data).to.include.key('accountBalance');
-            expect(err).to.be.null;
-            done();
-          });
+        done();
       });
   });
 
@@ -218,6 +153,45 @@ describe('POST transactions', () => {
         expect(res).to.have.status(403);
         expect(res.body).to.include.key('error');
         expect(res.body.error).to.equal('User not authorized');
+        expect(err).to.be.null;
+        done();
+      });
+  });
+
+  it('should fail if debit amount is greater than account balance', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/transactions')
+      .send({
+        ...debitTransaction,
+        amount: 200000000,
+        accountNumber,
+        cashierId: createAdmin.id,
+      })
+      .set('Authorization', `Bearer ${adminToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('Overdraft disallowed');
+        expect(err).to.be.null;
+        done();
+      });
+  });
+
+  it('should fail if token used does not belong to user', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/transactions')
+      .send({
+        ...debitTransaction,
+        accountNumber,
+        cashierId: createAdmin.id,
+      })
+      .set('Authorization', `Bearer ${staffToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(403);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('User and token mismatch');
         expect(err).to.be.null;
         done();
       });
@@ -369,33 +343,25 @@ describe('POST transactions', () => {
       });
   });
 
-  it('should return an error if account is dormant', (done) => {
+  it('should return an error if account is dormant', async () => {
+    const deactivatedAccount = await Accounts.findOneAndUpdate({
+      ...activatedAccount,
+      status: 'dormant',
+    });
+    const accNumber = deactivatedAccount.accountNumber;
     chai
       .request(server)
-      .patch(`/api/v1/accounts/${accountId}`)
-      .send({ status: 'dormant' })
-      .set('authorization', `Bearer ${adminToken}`)
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.include.key('data');
-        expect(res.body.data).to.include.key('status');
-        expect(res.body.data.status).to.equal('dormant');
-        expect(err).to.be.null;
-        chai
-          .request(server)
-          .post('/api/v1/transactions/')
-          .send({
-            ...debitTransaction,
-            accountNumber,
-            cashierId: adminId,
-          })
-          .set('authorization', `Bearer ${adminToken}`)
-          .end((_, res) => {
-            expect(res).to.have.status(400);
-            expect(res.body).to.include.key('error');
-            expect(res.body.error).to.equal('Account not activated');
-            done();
-          });
+      .post('/api/v1/transactions/')
+      .send({
+        ...debitTransaction,
+        accountNumber: accNumber,
+        cashierId: createStaff.id,
+      })
+      .set('authorization', `Bearer ${staffToken}`)
+      .end((_, res) => {
+        expect(res).to.have.status(400);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('Account not activated');
       });
   });
 });

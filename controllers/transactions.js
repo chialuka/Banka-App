@@ -22,7 +22,7 @@ const createTransaction = async (req, res) => {
     } = req.body;
     const staff = await Users.findOne('id', Number(cashierId));
     if (!staff) {
-      setServerResponse(res, 404, { error: 'Staff not found' });
+      return setServerResponse(res, 404, { error: 'Staff not found' });
     }
     const { tokenOwner } = res.locals;
     if (staff.email !== tokenOwner.email) {
@@ -38,7 +38,7 @@ const createTransaction = async (req, res) => {
     if (account.status !== 'active') {
       return setServerResponse(res, 400, { error: 'Account not activated' });
     }
-    const originalBalance = account.accountBalance
+    const originalBalance = 'accountBalance' in account
       ? account.accountBalance
       : account.openingBalance;
     if (transactionType === 'debit' && originalBalance < amount) {
