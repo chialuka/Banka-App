@@ -215,32 +215,3 @@ export {
   noTransactionType,
   noCashierId,
 };
-
-// user.test
-// wrongTypeUser,
-// wrongEmailDetail,
-// correctPasswordClient,
-// correctClient
-// getUserStaff,
-// clientUser
-// staffUser
-
-
-// account.test
-// accountUser,
-// noEmailAccount,
-// noBalanceAccount,
-// noTypeAccount,
-// stringOpeningBalance,
-// invalidAccountType,
-// clientAccount,
-// staffAccount,
-// adminAccount,
-// adminAccount2,
-
-// transactions.test
-// clientTransaction,
-// staffTransaction,
-// adminTransaction,
-// creditTransaction,
-// debitTransaction,

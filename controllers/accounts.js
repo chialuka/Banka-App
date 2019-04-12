@@ -53,7 +53,7 @@ const createAccount = async (req, res) => {
       setServerResponse(res, 201, {
         data: { ...newAccount },
       }),
-      // sendMail(composeEmail),
+      sendMail(composeEmail),
     ]);
   } catch (error) {
     return setServerResponse(res, 500, {
@@ -115,7 +115,7 @@ const patchAccount = async (req, res) => {
     }
     return Promise.all([
       setServerResponse(res, 200, { data: { ...patchedUser } }),
-      // sendMail(composeEmail),
+      sendMail(composeEmail),
     ]);
   } catch (error) {
     return setServerResponse(res, error.status, { error });

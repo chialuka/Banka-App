@@ -15,7 +15,7 @@
     "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
   "author": "Chukwualuka Chiama",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",

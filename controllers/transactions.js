@@ -87,7 +87,7 @@ const createTransaction = async (req, res) => {
 
     return Promise.all([
       setServerResponse(res, 201, { data: { ...newTransaction } }),
-      // sendMail(composeEmail),
+      sendMail(composeEmail),
     ]);
   } catch (error) {
     return setServerResponse(res, 500, {
