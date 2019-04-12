@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/LukasChiama/Banka-App.svg?branch=develop)](https://travis-ci.org/LukasChiama/Banka-App)
-[![Coverage Status](https://coveralls.io/repos/github/LukasChiama/Banka-App/badge.svg?branch=develop)](https://coveralls.io/github/LukasChiama/Banka-App?branch=develop)
+[![Coverage Status](https://coveralls.io/repos/github/LukasChiama/Banka-App/badge.svg?branch=develop&service=github)](https://coveralls.io/github/LukasChiama/Banka-App?branch=develop)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # Banka App
