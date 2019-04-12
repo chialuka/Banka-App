@@ -41,12 +41,11 @@ class Model {
     return results;
   }
 
-  async findOne(param) {
+  async findOne(condition, param) {
     const results = await this.getDataFromFile();
-    if (/@/.test(param)) {
-      return results.find(items => items.email === param);
-    }
-    return results.find(items => items.id === Number(param));
+    const name = condition;
+    const result = results.find(items => items[`${name}`] === param);
+    return result;
   }
 
   async findOneAndUpdate(data) {

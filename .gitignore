@@ -1,6 +1,7 @@
-/node_modules
-/config
-.nyc_output/
-coverage/
+node_modules
+config
+.nyc_output
+coverage
 .coveralls.yml
 .env
+.vscode

@@ -3,22 +3,20 @@
   "version": "1.0.0",
   "description": "Server for the Banka App",
   "main": "index.js",
+  "engines": {
+    "node": "10"
+  },
   "scripts": {
     "test": "nyc --reporter=lcov --reporter=text-summary mocha --require @babel/register --exit",
     "test:watch": "mocha -w test/",
-    "start": "nodemon index.js --exec babel-node",
+    "dev": "nodemon index.js --exec babel-node",
+    "start": "babel-node index.js",
     "lint": "eslint --fix",
     "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
   "author": "Chukwualuka Chiama",
   "license": "ISC",
   "devDependencies": {
-    "@babel/cli": "^7.4.3",
-    "@babel/core": "^7.4.3",
-    "@babel/node": "^7.2.2",
-    "@babel/polyfill": "^7.4.3",
-    "@babel/preset-env": "^7.4.3",
-    "@babel/register": "^7.4.0",
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
     "coveralls": "^3.0.3",
@@ -33,6 +31,12 @@
     "nyc": "^13.3.0"
   },
   "dependencies": {
+    "@babel/cli": "^7.4.3",
+    "@babel/core": "^7.4.3",
+    "@babel/node": "^7.2.2",
+    "@babel/polyfill": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "@babel/register": "^7.4.0",
     "bcrypt-nodejs": "0.0.3",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",

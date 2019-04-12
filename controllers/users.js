@@ -17,7 +17,7 @@ const { Users } = models;
  */
 const createUser = async (req, res) => {
   try {
-    const existingUser = await Users.findOne(req.body.email);
+    const existingUser = await Users.findOne('email', req.body.email);
     if (existingUser) {
       return setServerResponse(res, 409, {
         error: 'User with provided email already exists.',
@@ -75,7 +75,7 @@ const getUsers = async (_, res) => {
  */
 const getUser = async (req, res) => {
   try {
-    const user = await Users.findOne(req.params.user_id);
+    const user = await Users.findOne('id', Number(req.params.user_id));
     if (!user) {
       return setServerResponse(res, 404, { error: 'User not found' });
     }
@@ -98,7 +98,7 @@ const getUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   try {
-    const user = await Users.findOne(req.body.email);
+    const user = await Users.findOne('email', req.body.email);
     if (!user) {
       return setServerResponse(res, 404, {
         error: 'Incorrect email. User not found',
@@ -130,9 +130,13 @@ const loginUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     let hashedPassword = '';
-    const user = await Users.findOne(req.body.email);
+    const user = await Users.findOne('email', req.body.email);
     if (!user) {
-      return setServerResponse(res, 404, { error: 'User does not exist' });
+      return setServerResponse(res, 403, { error: 'Cannot update email' });
+    }
+    const { tokenOwner } = res.locals;
+    if (tokenOwner.email !== user.email) {
+      return setServerResponse(res, 403, { error: 'User and token mismatch' });
     }
     const { password, firstname, lastname } = req.body;
     if (password) {
@@ -166,7 +170,7 @@ const updateUser = async (req, res) => {
  */
 const deleteUser = async (req, res) => {
   try {
-    const user = await Users.findOne(req.params.user_id);
+    const user = await Users.findOne('id', Number(req.params.user_id));
     const deletedUser = await Users.findOneAndDelete(req.params.user_id);
     if (!user || !deletedUser) {
       return setServerResponse(res, 404, { error: 'User not found' });
