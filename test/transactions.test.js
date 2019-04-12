@@ -24,7 +24,6 @@ let staffToken;
 let adminToken;
 let allAccounts;
 let clientData;
-let clientId;
 let staffId;
 let adminId;
 let accountNumber;
