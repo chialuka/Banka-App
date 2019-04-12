@@ -9,7 +9,8 @@
   "scripts": {
     "test": "nyc --reporter=lcov --reporter=text-summary mocha --require @babel/register --exit",
     "test:watch": "mocha -w test/",
-    "start": "nodemon index.js --exec babel-node",
+    "dev": "nodemon index.js --exec babel-node",
+    "start": "babel-node index.js",
     "lint": "eslint --fix",
     "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
