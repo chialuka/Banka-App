@@ -63,7 +63,7 @@ Sample response
 ```
 2. POST [/api/v1/users/auth/signin](https://documenter.getpostman.com/view/5824922/S1ENyyag#71a524ab-16af-4d42-b35f-ceae0609f92a)
 3. GET [/api/v1/users](https://documenter.getpostman.com/view/5824922/S1ENyyag#375c022c-7337-4098-b5d0-19b957782640)
-4. GET [/api/v1/users/:user_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#375c022c-7337-4098-b5d0-19b957782640)
+4. GET [/api/v1/users/:user_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#c93321b2-cc11-4659-b779-aaa92f56a339)
 5. PUT [/api/v1/users/:user_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#569b1f4a-6b5c-46ae-8fdf-f3bfac5a25d6)
 6. DELETE [/api/v1/users/:user_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#0a2bffa4-1dc4-4736-aa75-2b5f0b898e36)
 7. POST [/api/v1/accounts](https://documenter.getpostman.com/view/5824922/S1ENyyag#0149a2f1-be9b-4d3b-99cc-6c4e546d3748)
