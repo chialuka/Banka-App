@@ -13,6 +13,7 @@ const close = util.promisify(fs.close);
 const getBaseDir = file => path.resolve(__dirname, '..', 'data', file);
 
 /**
+ * @name Model
  * @class
  */
 class Model {
