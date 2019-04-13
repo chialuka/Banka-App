@@ -1,6 +1,8 @@
 sudo: false
 language: node_js
 node_js: "10"
+env:
+  global: 4d9541dc059426cdbecdc11ed95511da1bb1fe7696287f5097970fb69c59406a
 cache:
   directories:
     - node_modules
@@ -12,3 +14,5 @@ script:
   - npm run test
 after_success:
   - npm run coveralls
+  - npm install codeclimate-test-reporter
+  - codeclimate-test-reporter < coverage/lcov.info
