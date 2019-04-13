@@ -35,7 +35,18 @@ To use the API, make requests to the endpoints supported by Banka and get your r
 ## Features
 Make requests to the following endpoints:
 
-1. POST [/api/v1/users/auth/signup](https://documenter.getpostman.com/view/5824922/S1ENyyag#b843b5f1-e098-4468-9274-b4df6a61d883)
+1. POST - Sign Up [/api/v1/users/auth/signup](https://documenter.getpostman.com/view/5824922/S1ENyyag#b843b5f1-e098-4468-9274-b4df6a61d883)
+2. POST - Sign In [/api/v1/users/auth/signin](https://documenter.getpostman.com/view/5824922/S1ENyyag#71a524ab-16af-4d42-b35f-ceae0609f92a)
+3. GET - Get all users (requires staff token) [/api/v1/users](https://documenter.getpostman.com/view/5824922/S1ENyyag#375c022c-7337-4098-b5d0-19b957782640)
+4. GET - Get single user (requires staff token) [/api/v1/users/:user_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#c93321b2-cc11-4659-b779-aaa92f56a339)
+5. PUT - Edit user details (requires user token) [/api/v1/users/:user_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#569b1f4a-6b5c-46ae-8fdf-f3bfac5a25d6)
+6. DELETE - Delete user (requires staff token) [/api/v1/users/:user_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#0a2bffa4-1dc4-4736-aa75-2b5f0b898e36)
+7. POST - Create bank account (requires user token) [/api/v1/accounts](https://documenter.getpostman.com/view/5824922/S1ENyyag#0149a2f1-be9b-4d3b-99cc-6c4e546d3748)
+8. PATCH - Activate or deactivate account (requires admin token) [/api/v1/accounts/:accounts_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#ce38bfe8-6fd9-4cd7-880e-f707fef2f768)
+9. DELETE - Delete bank account (requires staff token) [/api/v1/accounts/:accounts_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#ebaf56e7-fe43-47f9-89b2-642d52bceed1)
+10. POST - Credit or debit an account (requires staff token) [/api/v1/transactions](https://documenter.getpostman.com/view/5824922/S1ENyyag#0149a2f1-be9b-4d3b-99cc-6c4e546d3748)
+
+
 
 Sample request:
 ```JSON
@@ -63,15 +74,7 @@ Sample response
     }
 }
 ```
-2. POST [/api/v1/users/auth/signin](https://documenter.getpostman.com/view/5824922/S1ENyyag#71a524ab-16af-4d42-b35f-ceae0609f92a)
-3. GET [/api/v1/users](https://documenter.getpostman.com/view/5824922/S1ENyyag#375c022c-7337-4098-b5d0-19b957782640)
-4. GET [/api/v1/users/:user_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#c93321b2-cc11-4659-b779-aaa92f56a339)
-5. PUT [/api/v1/users/:user_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#569b1f4a-6b5c-46ae-8fdf-f3bfac5a25d6)
-6. DELETE [/api/v1/users/:user_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#0a2bffa4-1dc4-4736-aa75-2b5f0b898e36)
-7. POST [/api/v1/accounts](https://documenter.getpostman.com/view/5824922/S1ENyyag#0149a2f1-be9b-4d3b-99cc-6c4e546d3748)
-8. PATCH [/api/v1/accounts/:accounts_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#ce38bfe8-6fd9-4cd7-880e-f707fef2f768)
-9. DELETE [/api/v1/accounts/:accounts_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#ebaf56e7-fe43-47f9-89b2-642d52bceed1)
-10. POST [/api/v1/transactions](https://documenter.getpostman.com/view/5824922/S1ENyyag#0149a2f1-be9b-4d3b-99cc-6c4e546d3748)
+
 Sample request
 ```JSON
 {
@@ -86,7 +89,7 @@ Sample response
 ```JSON
 {
   "status": 403,
-  "error": "Invalid Token. Please login"
+  "error": "User and token mismatch"
 }
 ```
 
