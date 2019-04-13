@@ -17,3 +17,12 @@ ratings:
   - "src/**.js"
 exclude_paths:
 - dist/**/*
+- config/
+- db/
+- dist/
+- features/
+- script/
+- Tests/
+- fixtures/
+- tests/
+- node_modules/
