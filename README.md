@@ -48,7 +48,7 @@ Make requests to the following endpoints:
 
 
 
-Sample request:
+Sample sign up request:
 ```JSON
 {
   "firstname":"Rihanna",
@@ -75,7 +75,7 @@ Sample response
 }
 ```
 
-Sample request
+Sample debit transaction request:
 ```JSON
 {
   "amount": 80000,
