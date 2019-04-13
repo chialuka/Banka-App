@@ -64,9 +64,9 @@ Sample response
 {
   "status": 201,
   "data": {
-    "firstname": "Nekete",
-    "lastname": "Uwa",
-    "email": "test@tester.com",
+    "firstname": "Rihanna",
+    "lastname": "Maduka",
+    "email": "test@test.com",
     "type": "staff",
     "isAdmin": true,
     "id": 308,
