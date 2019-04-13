@@ -22,7 +22,7 @@ exclude_paths:
 - dist/
 - features/
 - script/
-- tests/
+- test/
 - fixtures/
 - tests/
 - node_modules/
