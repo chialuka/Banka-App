@@ -1,0 +1,28 @@
+---
+engines:
+  duplication:
+    enabled: true
+    checks:
+      Similar code:
+        enabled: true
+    config:
+      languages:
+      - javascript
+  eslint:
+    enabled: true
+  fixme:
+    enabled: true
+ratings:
+  paths:
+  - "src/**.js"
+exclude_paths:
+- dist/**/*
+- config/
+- db/
+- dist/
+- features/
+- script/
+- test/
+- fixtures/
+- tests/
+- node_modules/
