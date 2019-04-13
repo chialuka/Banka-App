@@ -2,6 +2,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/LukasChiama/Banka-App/badge.svg?branch=develop&service=github)](https://coveralls.io/github/LukasChiama/Banka-App?branch=develop)
 [![Maintainability](https://api.codeclimate.com/v1/badges/b682600a774a0549806f/maintainability)](https://codeclimate.com/github/LukasChiama/Banka-App/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/b682600a774a0549806f/test_coverage)](https://codeclimate.com/github/LukasChiama/Banka-App/test_coverage)
+[![dependencies Status](https://david-dm.org/LukasChiama/Banka-App/status.svg)](https://david-dm.org/LukasChiama/Banka-App)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # Banka App
