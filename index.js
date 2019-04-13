@@ -20,6 +20,10 @@ app.use(bodyParser.json());
 
 app.use(morgan('dev'));
 
+app.get('/', (req, res) => {
+  res.send('Welcome to Banka. The future is now...');
+});
+
 app.use('/api/v1', router);
 
 app.use((req, res) => {
