@@ -1,2 +1,52 @@
-[{"firstname":"Cornelius","email":"Judah.Mraz60@gmail.com","owner":328,"accountType":"current","openingBalance":5000,"accountNumber":5386928770,"id":23,"status":"dormant"},{"firstname":"Carlotta","email":"Ruben93@yahoo.com","owner":342,"accountType":"current","openingBalance":5000,"accountNumber":5282763249,"id":24,"status":"dormant"},{"firstname":"Lelah","email":"Ambrose_Hamill@yahoo.com","owner":356,"accountType":"current","openingBalance":5000,"accountNumber":5508214800,"id":25,"status":"dormant"}]
-
+[
+  {
+    "firstname": "Cornelius",
+    "email": "Judah.Mraz60@gmail.com",
+    "owner": 328,
+    "accountType": "current",
+    "openingBalance": 5000,
+    "accountNumber": 5386928770,
+    "id": 23,
+    "status": "dormant"
+  },
+  {
+    "firstname": "Carlotta",
+    "email": "Ruben93@yahoo.com",
+    "owner": 342,
+    "accountType": "current",
+    "openingBalance": 5000,
+    "accountNumber": 5282763249,
+    "id": 24,
+    "status": "dormant"
+  },
+  {
+    "firstname": "Lelah",
+    "email": "Ambrose_Hamill@yahoo.com",
+    "owner": 356,
+    "accountType": "current",
+    "openingBalance": 5000,
+    "accountNumber": 5508214800,
+    "id": 25,
+    "status": "dormant"
+  },
+  {
+    "accountNumber": 5782106890,
+    "createdOn": "Mon, 15 Apr 2019 18:25:17 GMT",
+    "status": "active",
+    "owner": 7,
+    "email": "mazinna@gmail.com",
+    "accountType": "current",
+    "id": 26,
+    "accountBalance": 69000
+  },
+  {
+    "accountNumber": 5186249318,
+    "createdOn": "Mon, 15 Apr 2019 19:10:04 GMT",
+    "status": "active",
+    "owner": 8,
+    "email": "mazi@gmail.com",
+    "accountType": "current",
+    "id": 27,
+    "accountBalance": 18000
+  }
+]

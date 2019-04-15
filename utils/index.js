@@ -7,7 +7,7 @@ const { SECRET } = process.env;
 
 const capitalize = str => str.charAt(0).toUpperCase() + str.substr(1);
 
-const getNewId = len => (parseInt(len, 10) + 1);
+const getNewId = len => parseInt(len, 10) + 1;
 
 const hashPassword = async password => bcrypt.hash(password, 8);
 
@@ -31,6 +31,7 @@ const setServerResponse = (res, status, data) => {
 };
 
 export {
+  getNewId,
   capitalize,
   hashPassword,
   generateToken,
@@ -38,5 +39,3 @@ export {
   setServerResponse,
   generateAccountNumber,
 };
-
-export default getNewId;

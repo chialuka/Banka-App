@@ -5,6 +5,72 @@ import { setServerResponse, capitalize } from '../utils';
 const { Users, Accounts, Transactions } = models;
 
 /**
+ * function for sending an email to the specified receiver
+ * @name mailSender
+ * @param {String} email
+ * @param {String} firstname
+ * @param {Object} data
+ */
+const mailSender = (email, firstname, data) => {
+  const composeEmail = {
+    to: email,
+    subject: 'Banka Transaction alert',
+    message: `<h3>Banka Transaction Alert Service</h3>
+    <p>Dear ${capitalize(firstname)}, </p>
+    <p>Please be informed that a ${capitalize(data.transactionType)} transaction
+    occured on your account</p>
+    <p>Kindly find details of the transaction below</p>
+    <ul>
+    <li>Account Number: ${data.accountNumber}</li>
+    <li>Description: ${data.description}</li>
+    <li>Transaction Amount: ${data.amount}</li>
+    <li>Transaction Date: ${data.date}</li>
+    <li>Account Balance: NGN${data.accountBalance}</li>
+    </ul>
+    <p>Thank you for choosing Banka</p>
+    <p>Best wishes.</p>`,
+  };
+
+  // sendMail(composeEmail);
+};
+
+/**
+ * function for charging the account of the provided client
+ * @name chargeAccount
+ * @async
+ * @param {Object} res
+ * @param {Object} account
+ * @param {Object} reqBody
+ * @return {JSON Object}
+ */
+const chargeAccount = async (res, account, reqBody) => {
+  const { amount, transactionType } = reqBody;
+  const originalBalance = 'accountBalance' in account
+    ? account.accountBalance : account.openingBalance;
+  if (reqBody.transactionType === 'debit' && originalBalance < amount) {
+    return setServerResponse(res, 400, { error: 'Overdraft disallowed' });
+  }
+  const accountBalance = transactionType === 'credit'
+    ? originalBalance + amount : originalBalance - amount;
+  const newDate = new Date();
+  const transactionData = {
+    ...reqBody, accountBalance, date: newDate.toDateString(),
+  };
+  delete account.openingBalance;
+  const accountData = { ...account, accountBalance };
+  await Accounts.findOneAndUpdate(accountData);
+  const user = await Users.findOne('email', account.email);
+  if (!user) {
+    return setServerResponse(res, 404, { error: 'Account owner not found' });
+  }
+  const newTransaction = await Transactions.create(transactionData);
+  mailSender(account.email, user.firstname, transactionData);
+  if (reqBody.senderAccount || reqBody.receiverAccount) return null;
+  return setServerResponse(res, 201, { data: { ...newTransaction } });
+};
+
+/**
+ * function for identifying account and sending request off for charging
  * @name createTransaction
  * @async
  * @param {Object} req
@@ -13,14 +79,7 @@ const { Users, Accounts, Transactions } = models;
  */
 const createTransaction = async (req, res) => {
   try {
-    const {
-      cashierId,
-      accountNumber,
-      transactionType,
-      amount,
-      description,
-    } = req.body;
-    const staff = await Users.findOne('id', Number(cashierId));
+    const staff = await Users.findOne('id', Number(req.body.cashierId));
     if (!staff) {
       return setServerResponse(res, 404, { error: 'Staff not found' });
     }
@@ -29,71 +88,22 @@ const createTransaction = async (req, res) => {
       return setServerResponse(res, 403, { error: 'User and token mismatch' });
     }
     const account = await Accounts.findOne(
-      'accountNumber',
-      Number(accountNumber),
+      'accountNumber', Number(req.body.accountNumber),
     );
     if (!account) {
       return setServerResponse(res, 404, { error: 'Account not found' });
     }
+
     if (account.status !== 'active') {
       return setServerResponse(res, 400, { error: 'Account not activated' });
     }
-    const originalBalance = 'accountBalance' in account
-      ? account.accountBalance
-      : account.openingBalance;
-    if (transactionType === 'debit' && originalBalance < amount) {
-      return setServerResponse(res, 400, { error: 'Overdraft disallowed' });
-    }
-    const accountBalance = transactionType === 'credit'
-      ? originalBalance + amount
-      : originalBalance - amount;
-    const newDate = new Date();
-    const date = newDate.toGMTString();
-    const transactionData = {
-      ...req.body,
-      accountBalance,
-      date,
-    };
-    delete account.openingBalance;
-    const accountData = {
-      ...account,
-      accountBalance,
-    };
-    await Accounts.findOneAndUpdate(accountData);
-    const user = await Users.findOne('email', account.email);
-    if (!user) {
-      return setServerResponse(res, 404, { error: 'Account owner not found' });
-    }
-    const newTransaction = await Transactions.create(transactionData);
 
-    const composeEmail = {
-      to: account.email,
-      subject: 'Banka Transaction alert',
-      message: `<h3>Banka Transaction Alert Service</h3>
-      <p>Dear ${capitalize(user.firstname)}, </p>
-      <p>Please be informed that a ${capitalize(transactionType)} transaction
-      occured on your account</p>
-      <p>Kindly find details of the transaction below</p>
-      <ul>
-      <li>Account Number: ${accountNumber}</li>
-      <li>Description: ${description}</li>
-      <li>Transaction Amount: ${amount}</li>
-      <li>Transaction Date: ${date}</li>
-      <li>Account Balance: NGN${accountBalance}</li>
-      </ul>
-      <p>Thank you for choosing Banka</p>
-      <p>Best wishes.</p>`,
-    };
-
-    return Promise.all([
-      setServerResponse(res, 201, { data: { ...newTransaction } }),
-      sendMail(composeEmail),
-    ]);
+    return chargeAccount(res, account, req.body);
   } catch (error) {
-    return setServerResponse(res, 500, {
-      error,
-    });
+    return setServerResponse(res, 500, { error });
   }
 };
+
+export { chargeAccount };
 
 export default createTransaction;
