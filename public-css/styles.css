@@ -4,9 +4,12 @@ html {
 
 body {
   margin: 0;
-  font-family: 'Roboto', Arial, Helvetica, sans-serif;
-  background-color: rgba(250, 250, 250, 0.9);
-  color: rgb(10, 8, 8);
+  font-family: 'Montserrat', 'Source Sans Pro', sans-serif, 'Roboto', Arial, Helvetica, sans-serif;
+  background:   linear-gradient(
+    rgba(255, 255, 255, 0.7), 
+    rgba(247, 247, 247, 0.7)
+  ), url('../banking.jpg') no-repeat;
+  color: rgb(0, 0, 0);
   font-size: 10px;
 }
 
@@ -24,8 +27,8 @@ header {
 .content-wrapper {
   padding-bottom: 20px;
   min-height: calc(100vh - 160px);
-  max-width: 70%;
-  margin: auto
+  max-width: 80%;
+  margin: auto;
 }
 
 .form-header {
@@ -35,18 +38,19 @@ header {
 }
 
 h1 {
-  font-size: 1.9em;
+  font-size: 2em;
 }
 
 a {
-  text-decoration: none;
+  color: rgba(33, 103, 253, 0.9);
 }
 
 .logo a {
-  color: rgba(117, 157, 243, 0.9);
+  color: rgba(33, 103, 253, 0.9);
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   text-decoration: none;
   font-weight: bold;
+  font-size: 2.1em;
 }
 
 .col-75 {
@@ -61,36 +65,18 @@ a {
   clear: both;
 }
 
-@media screen and (min-width: 650px) {
-  .content-wrapper {
-    max-width: 550px;
-  }
-  h1 {
-    font-size: 3.0em;
-  }
-  .details {
-    font-size: 16px;
-  }
-  .terms {
-    font-size: 16px;
-  }
-  footer .footer-item {
-    font-size: 12px;
-  }
-}
-
 .terms {
   border: 10px;
 }
 
 button {
-  background-color: #3d1dee;
+  background-color: rgba(33, 103, 253, 0.9);
   color: white;
   padding: 12px 20px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  width: 100%;
+  width:  100%;
   margin-top: 10px;
 }
 
@@ -99,21 +85,22 @@ select {
   padding: 15px;
   margin: 5px 0 5px 0;
   border: none;
-  background: #f1f1f1;
+  border-radius: 5px;
   width: 100%;
 }
 
 #form-error {
   font-size: 20px;
-  color: rgb(0, 119, 255);
+  color: rgba(33, 103, 253, 0.9);
 }
 
 p {
-  font-size: 15px;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
 }
 
 .link {
-  display: flex;
   margin-bottom: 50px;
   justify-content: center;
 }
@@ -144,6 +131,7 @@ footer {
   padding: 5px;
   bottom: 0;
   height: 80px;
+  color: rgb(10, 10, 10);
   border-top: 1px solid rgb(216, 214, 214);
   font-size: 10px
 }
@@ -151,4 +139,32 @@ footer {
 footer p {
   padding: 3px;
   font-size: 9px;
+}
+
+@media screen and (min-width: 768px) {
+  .content-wrapper {
+    max-width: 600px;
+  }
+  h1 {
+    font-size: 2.2em;
+  }
+  p {
+    font-size: 20px;
+    font-style: bold;
+  }
+  .details {
+    font-size: 16px;
+  }
+  .terms {
+    font-size: 16px;
+  }
+  footer .footer-item {
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    background-size: cover;
+  }
 }

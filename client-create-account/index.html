@@ -3,6 +3,10 @@
   <head>
     <title>Client Bank Account Creation</title>
     <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Roboto|Source+Sans+Pro"
+      rel="stylesheet"
+    />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="Chukwualuka Chiama" />
@@ -27,7 +31,7 @@
         <fieldset>
           <legend>Personal Information</legend>
           <div class="col-75">
-            <input type="text" name="name" placeholder="Full Name" disabled/>
+            <input type="text" name="name" placeholder="Full Name" disabled />
           </div>
           <div class="col-75">
             <input
@@ -46,28 +50,34 @@
             />
           </div>
           <div class="col-75">
-            <input type="text" name="phone" placeholder="Phone Number" required minlength="9"/>
+            <input
+              type="text"
+              name="phone"
+              placeholder="Phone Number"
+              required
+              minlength="9"
+            />
           </div>
         </fieldset>
         <fieldset>
           <legend>Account Information:</legend>
-            <div class="col-75">
-              <select name="account">
-                <option selected name disabled> Select Account Type </option>
-                <option> Savings </option>
-                <option> Current </option>
-                <option> Savings Extra </option>
-                <option> Fixed Deposit </option>
-              </select>
-            </div>
-            <div class="col-75">
-              <select name="atm">
-                <option selected name disabled> Select ATM Card Type </option>
-                <option> MasterCard </option>
-                <option> Visa </option>
-                <option> Verve </option>
-              </select>
-            </div>
+          <div class="col-75">
+            <select name="account">
+              <option selected name disabled> Select Account Type </option>
+              <option> Savings </option>
+              <option> Current </option>
+              <option> Savings Extra </option>
+              <option> Fixed Deposit </option>
+            </select>
+          </div>
+          <div class="col-75">
+            <select name="atm">
+              <option selected name disabled> Select ATM Card Type </option>
+              <option> MasterCard </option>
+              <option> Visa </option>
+              <option> Verve </option>
+            </select>
+          </div>
         </fieldset>
         <div id="form-error"></div>
         <div class="row">

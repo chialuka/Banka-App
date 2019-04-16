@@ -84,7 +84,7 @@ a:hover {
   float: left;
   padding: 15px 15px;
   font-size: 22px;
-  color: rgb(143, 176, 245);
+  color: rgba(33, 103, 253, 0.9);
   background-color: white;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
@@ -140,8 +140,8 @@ a:hover {
   padding: 15px 44px;
   border: none;
   border-radius: 4px;
-  background-color: #3d1dee;
   color: white;
+  background-color: rgba(33, 103, 253, 0.9);
   box-shadow: 2px 2px 4px 0 rgba(125, 152, 189, 0.1);
 }
 

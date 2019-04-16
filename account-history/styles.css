@@ -4,6 +4,11 @@ html {
 
 body {
   margin: 0;
+  font-family: 'Montserrat', sans-serif, 'Roboto';
+  background:   linear-gradient(
+    rgba(255, 255, 255, 0.7), 
+    rgba(247, 247, 247, 0.7)
+  ), url('../banking.jpg');
 }
 
 #logo {
@@ -13,7 +18,7 @@ body {
 
 a {
   text-decoration: none;
-  color: rgb(180, 201, 245);
+  color: rgba(33, 103, 253, 0.9);
 }
 
 header {
@@ -28,29 +33,18 @@ main {
   align-items: center;
 }
 
-@media screen and (min-width: 500px) {
-  .footer {
-    font-size: 10px;
-  }
-}
-
-@media screen and (min-width: 650px) {
-  .footer {
-    font-size: 12px;
-  }
-}
 
 .history {
   list-style-type: none;
-  padding: 10px;
+  padding: 15px;
+  background-color: rgba(185, 185, 184, 0.9);
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  border-radius: 5px;
+  font-weight: bold;
 }
 
-.history:nth-child(even) {
-  background-color: rgb(228, 222, 222);
-}
-
-.history:nth-child(odd) {
-  background-color: rgb(192, 189, 189);
+li {
+  padding: 5px;
 }
 
 footer {
@@ -65,4 +59,32 @@ footer {
 
 footer a {
   padding: 10px;
+}
+
+
+@media (min-width: 425px) {
+  .footer {
+    font-size: 10px;
+  }
+}
+
+@media (min-width: 768px) {
+  .footer {
+    font-size: 12px;
+  }
+  #history {
+    display: flex;
+    flex-flow: row wrap; 
+    align-items: center;
+    justify-content: center;
+  }
+  .history {
+    margin: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    background-size: cover;
+  }
 }
