@@ -5,7 +5,6 @@ html {
 body {
   margin: 0;
   font-family: 'Roboto', sans-serif, Arial, Helvetica, sans-serif;
-  background-color: rgb(231, 231, 231);
 }
 
 * {
@@ -20,9 +19,11 @@ body {
 main {
   min-height: calc(100vh - 160px);
   padding-bottom: 20px;
+  margin: 0 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-shadow: 4px 2px 4px 2px rgba(226, 223, 223, 0.2);
 }
 
 header {
@@ -41,15 +42,20 @@ button {
   border-radius: 4px;
   background-color: rgba(176, 181, 243, 0.5);
   margin: 5px;
-  color: black
+  background-color: #3d1dee;
 }
 
 a {
   text-decoration: none;
+  color: black;
 }
 
 #history {
   display: none
+}
+
+#logout {
+  cursor: pointer;
 }
 
 .list {
@@ -58,7 +64,8 @@ a {
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   transition: 0.3s;
   font-family: 'Montserrat', sans-serif;
-  background-color: rgba(240, 230, 220, 0.5);
+  background-color: rgba(168, 165, 164, 0.5);
+  color: #1f1f1f;
 }
 
 .list:hover {
@@ -92,6 +99,9 @@ footer a {
     flex-direction: column;
     padding: 15px;
     border-radius: 5px;
+  }
+  button {
+    font-size: 1em;
   }
   .account-details {
     width: 60%;

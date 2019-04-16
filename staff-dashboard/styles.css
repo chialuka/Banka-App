@@ -4,6 +4,7 @@ html {
 
 body {
   margin: 0;
+  font-family: 'Roboto', sans-serif;
 }
 
 #logo {
@@ -26,25 +27,30 @@ main {
   align-items: center;
 }
 
-@media screen and (min-width: 500px) {
-  .footer {
-    font-size: 10px;
-  }
-}
-
-@media screen and (min-width: 650px) {
-  .footer {
-    font-size: 12px;
-  }
-}
-
 #admin {
   display: none;
   cursor: pointer;
 }
 
+a {
+  text-decoration: none;
+  background-color: rgb(47, 47, 224);
+  padding: 15px;
+  color: whitesmoke;
+  border-radius: 5px;
+}
+
 .list {
   padding: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  background-color: #cfcaca;
+  border: 20px;
+  list-style-type: none;
+  font-family: 'Monteserrat', sans-serif;
+}
+
+.list:hover {
+  box-shadow: 4px 4px 8px 4px rgba(0,0,0,0.2);
 }
 
 .item {
@@ -69,4 +75,26 @@ footer {
 
 footer a {
   padding: 10px;
+}
+
+
+@media screen and (min-width: 425px) {
+  .footer {
+    font-size: 10px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .footer {
+    font-size: 12px;
+  }
+  #accounts {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .list {
+    padding: 15px;
+    margin: 15px;
+  }
 }

@@ -1,6 +1,9 @@
-/* :root {
-  red: #f00f00 
-} */
+:root {
+  --red: #f00f00;
+  --blue: #2c1fe2;
+  --white: #d3d2e9;
+  --black: #272727;
+}
 html {
   margin: 0;
 }
@@ -11,6 +14,7 @@ body {
   flex-direction: column;
   align-items: center;
   font-family: 'Roboto', sans-serif;
+  color: var(--black);
 }
 
 header {
@@ -40,6 +44,7 @@ main {
   align-items: center;
   padding-bottom: 20px;
   min-height: calc(100vh - 160px);
+  width: 100%;
 }
 
 .buttons {
@@ -53,7 +58,7 @@ main {
 
 #activate {
   display: none;
-  background-color: #3d1dee;
+  background-color: var(--blue);
 }
 
 .list {
@@ -62,6 +67,7 @@ main {
   display: flex;
   flex-direction: column;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  background-color: rgba(240, 230, 220, 0.5);
   list-style-type: none;
   font-family: 'Monteserrat', sans-serif;
 }
@@ -76,7 +82,7 @@ input {
   margin: 10px 0 10px 0;
   display: inline-block;
   border: none;
-  background: #f1f1f1;
+  background: var(--white);
   width: 40%;
 }
 
@@ -93,7 +99,7 @@ button {
   border: none;
   border-radius: 4px;
   font-weight: bold;
-  color: white;
+  color: var(--white);
 }
 
 button:hover,
@@ -102,24 +108,24 @@ button:focus {
 }
 
 button:disabled {
-  background-color: #ccc;
+  background-color: var(--white);
   cursor: not-allowed;
 }
 
 .delete {
-  background-color: #f00f00;
+  background-color: var(--red);
 }
 
 .credit {
-  background-color: #3d1dee;
+  background-color: var(--blue);
 }
 
 .debit {
-  background-color: #f00f00;
+  background-color: var(--red);
 }
 
 #error {
-  color: #f00f00;
+  color: var(--red);
   font-size: 15px;
 }
 
@@ -157,12 +163,28 @@ footer a {
 @media screen and (min-width: 768px) {
   main {
     flex-direction: row;
+    justify-content: space-evenly;
   }
   .buttons {
     flex-direction: column;
   }
+  #activate {
+    width: 100%;
+    font-size: 15px;
+  }
+  .delete {
+    width: 100%;
+    font-size: 1.1em;
+  }
+  #account-details {
+    display: flex;
+    justify-content: center;
+  }
   .footer {
     font-size: 12px;
+  }
+  input {
+    width: 100%;
   }
   .list .item {
     font-size: 19px;
@@ -173,5 +195,7 @@ footer a {
   .bottom {
     display: flex;
     flex-direction: column;
+    /* width: 15%; */
+    align-items: center;
   }
 }

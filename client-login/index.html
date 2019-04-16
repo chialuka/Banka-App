@@ -3,8 +3,16 @@
   <head>
     <title>Banka Client Login</title>
     <link rel="stylesheet" href="../public-css/styles.css" />
-    <link href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Roboto" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Roboto"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+      crossorigin="anonymous"
+    />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="Chukwualuka Chiama" />
@@ -40,6 +48,14 @@
               required
             />
           </div>
+          <div>
+            <select name="roles">
+              <option selected name disabled> Select Role </option>
+              <option> Client </option>
+              <option> Staff </option>
+              <option> Admin </option>
+            </select>
+          </div>
           <div id="form-error"></div>
           <div class="row">
             <button type="submit" class="submit">Login</button>
@@ -47,9 +63,6 @@
           <p class="link">
             Don't have an account?
             <a href="../client-signup/index.html">Sign Up here</a>
-          </p>
-          <p class="link">
-            <a class="staffLink" href="../staff-login/index.html">Staff Login<i class="fas fa-arrow-circle-right"></i></a>
           </p>
         </div>
       </form>
