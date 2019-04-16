@@ -85,6 +85,10 @@ a {
   padding: 5px
 }
 
+.link {
+  color: #1041e0;
+}
+
 footer {
   display: flex;
   justify-content: center;
