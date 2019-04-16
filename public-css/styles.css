@@ -4,7 +4,7 @@ html {
 
 body {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Roboto', Arial, Helvetica, sans-serif;
   background-color: rgba(250, 250, 250, 0.9);
   color: rgb(10, 8, 8);
   font-size: 10px;
@@ -109,7 +109,29 @@ select {
 }
 
 p {
-  font-size: 13px;
+  font-size: 15px;
+}
+
+.link {
+  display: flex;
+  margin-bottom: 50px;
+  justify-content: center;
+}
+
+.staffLink {
+  font-family: 'Montserrat', sans-serif, 'Open Sans', 'Roboto', Arial;
+  font-size: 15px;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 20px;
+  background-image: linear-gradient(#00d2ff, #3a7bd5);
+  padding: 15px 20px;
+  color: white;
+}
+
+.fa, .fab, .fal, .far, .fas {
+  padding-left: 20px;
 }
 
 .back {

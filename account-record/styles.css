@@ -1,3 +1,6 @@
+/* :root {
+  red: #f00f00 
+} */
 html {
   margin: 0;
 }
@@ -7,22 +10,23 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  font-family: 'Roboto', sans-serif;
 }
 
 header {
   height: 80px;
-  text-align: center
+  text-align: center;
 }
 
-#header{
-  text-align: center
+#header {
+  text-align: center;
 }
 
 .logo {
   cursor: pointer;
   align-items: center;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-weight: bold
+  font-weight: bold;
 }
 
 a {
@@ -38,33 +42,13 @@ main {
   min-height: calc(100vh - 160px);
 }
 
-.top-buttons {
+.buttons {
   display: flex;
-  flex-direction: row
+  flex-direction: row;
 }
 
-@media screen and (min-width: 500px) {
-  .footer {
-    font-size: 10px;
-  }
-  .list .item {
-    font-size: 17px;
-  }
-  #account {
-    font-size: 18px;
-  }
-}
-
-@media screen and (min-width: 650px) {
-  .footer {
-    font-size: 12px;
-  }
-  .list .item {
-    font-size: 19px;
-  }
-  #account {
-    font-size: 21px;
-  }
+#account {
+  text-align: center;
 }
 
 #activate {
@@ -78,7 +62,8 @@ main {
   display: flex;
   flex-direction: column;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  list-style-type: none
+  list-style-type: none;
+  font-family: 'Monteserrat', sans-serif;
 }
 
 .item {
@@ -98,7 +83,6 @@ input {
 .amount-inputs {
   display: flex;
   flex-direction: column;
-  width: 400px;
   align-items: center;
 }
 
@@ -112,9 +96,9 @@ button {
   color: white;
 }
 
-button:hover, 
+button:hover,
 button:focus {
-  cursor: pointer
+  cursor: pointer;
 }
 
 button:disabled {
@@ -123,7 +107,7 @@ button:disabled {
 }
 
 .delete {
-  background-color: red;
+  background-color: #f00f00;
 }
 
 .credit {
@@ -131,12 +115,17 @@ button:disabled {
 }
 
 .debit {
-  background-color: red;
+  background-color: #f00f00;
 }
 
 #error {
-  color: red;
+  color: #f00f00;
   font-size: 15px;
+}
+
+.bottom-buttons {
+  display: flex;
+  flex-direction: row;
 }
 
 footer {
@@ -151,4 +140,38 @@ footer {
 
 footer a {
   padding: 8px;
+}
+
+@media screen and (min-width: 425px) {
+  .footer {
+    font-size: 10px;
+  }
+  .list .item {
+    font-size: 17px;
+  }
+  #account {
+    font-size: 18px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  main {
+    flex-direction: row;
+  }
+  .buttons {
+    flex-direction: column;
+  }
+  .footer {
+    font-size: 12px;
+  }
+  .list .item {
+    font-size: 19px;
+  }
+  #account {
+    font-size: 21px;
+  }
+  .bottom {
+    display: flex;
+    flex-direction: column;
+  }
 }
