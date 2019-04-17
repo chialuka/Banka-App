@@ -20,15 +20,26 @@
       name="description"
       content="The Client Login page of the Banka App houses a form that allows Clients login to their accounts"
     />
-    <script src="script.js"></script>
   </head>
   <body>
-    <header class="header">
-      <h1 class="logo"><a href="../index.html">Banka</a></h1>
-    </header>
+    <div class="navbar">
+        <div class="col-2 logo"><a href="../index.html">Banka</a></div>
+        <div class="menu-icon col-2" onclick="menuFunction(this)">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </div>
+      <div class="menu-items">
+        <div class="col-4">
+          <a href="../about/index.html">About</a>
+          <a href="../contact/index.html">Contact Us</a>
+          <a href="../client-signup/index.html">Sign Up</a>
+        </div>
+      </div>
+    </div>
     <main class="content-wrapper">
       <div class="image-holder"></div>
-      <form id="login-client" onsubmit="return validateForm()" method="POST">
+      <form id="login-client" onsubmit="return validateLoginForm()" method="POST">
         <div class="form-header">
           <h1 class="title">Login</h1>
         </div>
@@ -71,5 +82,6 @@
     <footer class="footer">
       <p class="footer-item">&copy;Banka Nig Plc 2019</p>
     </footer>
+    <script src="../script.js"></script>
   </body>
 </html>

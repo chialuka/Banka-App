@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>Welcome to Banka</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="./public-css/styles.css" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="Chukwualuka Chiama" />
@@ -12,28 +12,28 @@
     />
   </head>
   <body>
-    <header class="navbar">
-      <div class="col-2 logo">Banka</div>
-      <div class="menu-icon col-2" onclick="menuFunction(this)">
+    <div class="navbar">
+        <div class="col-2 logo"><a href="#">Banka</a></div>
+        <div class="menu-icon col-2" onclick="menuFunction(this)">
         <div class="bar1"></div>
         <div class="bar2"></div>
         <div class="bar3"></div>
       </div>
       <div class="menu-items">
-        <div class="col-4">
-          <a href="#about">About</a>
-          <a href="#contact">Contact Us</a>
+        <div class="col-4 mobile-menu">
+          <a href="about/index.html">About</a>
+          <a href="contact/index.html">Contact Us</a>
           <a href="client-login/index.html">Login</a>
-          <a href="client-signup/index.html">Sign Up</a>  
+          <a href="client-signup/index.html">Sign Up</a>
         </div>
       </div>
-    </header>
-    <main id="content-wrapper">
+    </div>
+    <main class="content-wrapper">
       <div class="slider">
-        <img class="slide" src="winning.jpg" />
-        <img class="slide showing" src="atm.jpg" />
-        <img class="slide" src="happy2.jpg" />
-        <img class="slide" src="mobile4.jpg" />
+        <img class="slide" src="./images/winning.jpg" />
+        <img class="slide showing" src="./images/atm.jpg" />
+        <img class="slide" src="./images/happy2.jpg" />
+        <img class="slide" src="./images/mobile4.jpg" />
       </div>
       <div class="account-pitch">
         <div class="pitch-text">
