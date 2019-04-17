@@ -8,7 +8,7 @@ body {
   background:   linear-gradient(
     rgba(255, 255, 255, 0.7), 
     rgba(247, 247, 247, 0.7)
-  ), url('../banking.jpg');
+  ), url('../images/banking.jpg');
 }
 
 #logo {

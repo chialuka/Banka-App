@@ -11,7 +11,7 @@ body {
   background:   linear-gradient(
     rgba(255, 255, 255, 0.75), 
     rgba(247, 247, 247, 0.75)
-  ), url('../banking.jpg') no-repeat;
+  ), url('../images/banking.jpg') no-repeat;
 }
 
 * {
