@@ -20,13 +20,6 @@ function menuFunction(menu) {
       : 'none';
 }
 
-(function() {
-  const email = localStorage.getItem('loggedInUser');
-  if (email) {
-    window.location.href = '../client-dashboard/index.html';
-  }
-})();
-
 function validateSignUpForm() {
   event.preventDefault();
   const name = document.forms['register-client']['name'].value;
