@@ -17,6 +17,10 @@ const getBaseDir = file => path.resolve(__dirname, '..', 'data', file);
  * @class
  */
 class Model {
+  /**
+   * @constructor
+   * @param {String} file
+   */
   constructor(file) {
     this.file = file;
   }

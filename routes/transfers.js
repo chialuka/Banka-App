@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import createTransfer from '../controllers/transfers';
 import { authorizeClient } from '../middlewares/auth';
-import validateBodyPayload from '../middlewares/validators';
+import { validateBodyPayload } from '../middlewares/validators';
 
 export default (router) => {
   router.route('/transfers').post(

@@ -188,6 +188,22 @@ const noCashierId = {
   transactionType: 'credit',
 };
 
+const clientTransfer = {
+  firstname: faker.name.firstName(),
+  lastname: faker.name.lastName(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+  type: 'client',
+};
+
+// const clientTransferCredit = {
+//   firstname: faker.name.firstName(),
+//   lastname: faker.name.lastName(),
+//   email: faker.internet.email(),
+//   password: faker.internet.password(),
+//   type: 'client',
+// };
+
 export {
   wrongTypeUser,
   wrongEmailDetail,
@@ -214,4 +230,5 @@ export {
   noAmountTransaction,
   noTransactionType,
   noCashierId,
+  clientTransfer,
 };

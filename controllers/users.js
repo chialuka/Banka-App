@@ -9,6 +9,7 @@ import {
 const { Users } = models;
 
 /**
+ * Create a new user after hashing password and generating token
  * @name createUser
  * @async
  * @param {Object} req
@@ -25,15 +26,8 @@ const createUser = async (req, res) => {
     }
     const { password, type } = req.body;
     const hashedPassword = await hashPassword(password);
-    const newUserObj = {
-      ...req.body,
-      password: hashedPassword,
-    };
-    if (type === 'client') {
-      delete newUserObj.isAdmin;
-    }
-    // Another solution in the real world would be to have a user
-    // table that staff and client will inherit from
+    const newUserObj = { ...req.body, password: hashedPassword };
+    if (type === 'client') delete newUserObj.isAdmin;
     const user = await Users.create({ ...newUserObj });
     const token = generateToken({ id: user.id });
     delete user.password;
@@ -46,6 +40,7 @@ const createUser = async (req, res) => {
 };
 
 /**
+ * return all the users in the database
  * @name getUsers
  * @async
  * @param {Object} req
@@ -67,6 +62,7 @@ const getUsers = async (_, res) => {
 };
 
 /**
+ * return a given user if the id provided is correct
  * @name getUser
  * @async
  * @param {Object} req
@@ -75,7 +71,7 @@ const getUsers = async (_, res) => {
  */
 const getUser = async (req, res) => {
   try {
-    const user = await Users.findOne('id', Number(req.params.user_id));
+    const user = await Users.findOne('id', Number(req.params.id));
     if (!user) {
       return setServerResponse(res, 404, { error: 'User not found' });
     }
@@ -89,13 +85,13 @@ const getUser = async (req, res) => {
 };
 
 /**
+ * Provide token for signed up user to login
  * @name loginUser
  * @async
  * @param {Object} req
  * @param {Object} res
  * @returns {JSON Object}
  */
-
 const loginUser = async (req, res) => {
   try {
     const user = await Users.findOne('email', req.body.email);
@@ -108,7 +104,6 @@ const loginUser = async (req, res) => {
     if (!isValid) {
       return setServerResponse(res, 401, { error: 'Incorrect password' });
     }
-
     const token = generateToken({ id: user.id });
     const userObj = { ...user };
     delete userObj.password;
@@ -121,6 +116,7 @@ const loginUser = async (req, res) => {
 };
 
 /**
+ * Update the details of the provided user. Don't update email
  * @name updateUser
  * @async
  * @param {Object} req
@@ -130,27 +126,22 @@ const loginUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     let hashedPassword = '';
-    const user = await Users.findOne('email', req.body.email);
+    const user = await Users.findOne('id', Number(req.params.id));
     if (!user) {
-      return setServerResponse(res, 403, { error: 'Cannot update email' });
+      return setServerResponse(res, 404, { error: 'Cannot find user' });
     }
     const { tokenOwner } = res.locals;
     if (tokenOwner.email !== user.email) {
       return setServerResponse(res, 403, { error: 'User and token mismatch' });
     }
     const { password, firstname, lastname } = req.body;
-    if (password) {
-      hashedPassword = await hashPassword(password);
-    }
+    if (password) hashedPassword = await hashPassword(password);
     const data = {
       ...(hashedPassword && { password: hashedPassword }),
       ...(firstname && { firstname }),
       ...(lastname && { lastname }),
     };
-    const newUserObj = {
-      ...user,
-      ...data,
-    };
+    const newUserObj = { ...user, ...data };
     const updatedUser = await Users.findOneAndUpdate(newUserObj);
     delete updatedUser.password;
     return setServerResponse(res, 200, { data: { ...updatedUser } });
@@ -162,6 +153,7 @@ const updateUser = async (req, res) => {
 };
 
 /**
+ * Delete a provided user from the database
  * @name deleteUser
  * @async
  * @param {Object} req,
@@ -170,8 +162,8 @@ const updateUser = async (req, res) => {
  */
 const deleteUser = async (req, res) => {
   try {
-    const user = await Users.findOne('id', Number(req.params.user_id));
-    const deletedUser = await Users.findOneAndDelete(req.params.user_id);
+    const user = await Users.findOne('id', Number(req.params.id));
+    const deletedUser = await Users.findOneAndDelete(req.params.id);
     if (!user || !deletedUser) {
       return setServerResponse(res, 404, { error: 'User not found' });
     }

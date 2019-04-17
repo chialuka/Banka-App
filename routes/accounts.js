@@ -4,7 +4,10 @@ import {
   patchAccount,
   deleteAccount,
 } from '../controllers/accounts';
-import validateBodyPayload from '../middlewares/validators';
+import {
+  validateBodyPayload,
+  validateIdParams,
+} from '../middlewares/validators';
 import {
   authorizeClient,
   authorizeAdmin,
@@ -27,15 +30,16 @@ export default (router) => {
   );
 
   router
-    .route('/accounts/:account_id')
+    .route('/accounts/:id')
     .patch(
       validateBodyPayload({
         status: Joi.string()
           .valid('dormant', 'active')
           .required(),
       }),
+      validateIdParams,
       authorizeAdmin,
       patchAccount,
     )
-    .delete(authorizeStaff, deleteAccount);
+    .delete(validateIdParams, authorizeStaff, deleteAccount);
 };

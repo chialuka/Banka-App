@@ -5,11 +5,12 @@ import { setServerResponse, capitalize } from '../utils';
 const { Users, Accounts, Transactions } = models;
 
 /**
- * function for sending an email to the specified receiver
+ * Send an email to the specified client stating the transaction that occured
  * @name mailSender
  * @param {String} email
  * @param {String} firstname
  * @param {Object} data
+ * @returns {null}
  */
 const mailSender = (email, firstname, data) => {
   const composeEmail = {
@@ -30,12 +31,11 @@ const mailSender = (email, firstname, data) => {
     <p>Thank you for choosing Banka</p>
     <p>Best wishes.</p>`,
   };
-
-  // sendMail(composeEmail);
+  sendMail(composeEmail);
 };
 
 /**
- * function for charging the account of the provided client
+ * Charge the account of the provided client with the specified amount and save
  * @name chargeAccount
  * @async
  * @param {Object} res
@@ -70,7 +70,7 @@ const chargeAccount = async (res, account, reqBody) => {
 };
 
 /**
- * function for identifying account and sending request off for charging
+ * Identify account, validate and send request off for charging
  * @name createTransaction
  * @async
  * @param {Object} req
@@ -93,11 +93,9 @@ const createTransaction = async (req, res) => {
     if (!account) {
       return setServerResponse(res, 404, { error: 'Account not found' });
     }
-
     if (account.status !== 'active') {
       return setServerResponse(res, 400, { error: 'Account not activated' });
     }
-
     return chargeAccount(res, account, req.body);
   } catch (error) {
     return setServerResponse(res, 500, { error });

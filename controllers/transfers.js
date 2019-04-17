@@ -5,7 +5,8 @@ import models from '../models';
 const { Accounts } = models;
 
 /**
- * function for handling transfer between client accounts
+ * Charge the client initiating the transfer
+ * and credit the other client.
  * @name createTransfer
  * @async
  * @param {Object} req
@@ -19,13 +20,24 @@ const makeCharges = async (req, res, senderAccount, receiverAccount) => {
     await chargeAccount(res, senderAccount, debitClient);
     await chargeAccount(res, receiverAccount, creditClient);
     return setServerResponse(res, 200, {
-      Message: `Transfer of ${req.body.amount} successful`,
+      Message: `Transfer of N${req.body.amount} successful`,
     });
   } catch (error) {
     return setServerResponse(res, 500, { error: { ...error } });
   }
 };
 
+/**
+ * validate the receiver in a transfer transaction to ensure
+ * account exists and is not dormant.
+ * If successful, then call function to charge client
+ * @name validateReceiver
+ * @async
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Object} senderAccount
+ * @returns {function}
+ */
 const validateReceiver = async (req, res, senderAccount) => {
   const receiverAccount = await Accounts.findOne(
     'accountNumber',
@@ -42,6 +54,15 @@ const validateReceiver = async (req, res, senderAccount) => {
   return makeCharges(req, res, senderAccount, receiverAccount);
 };
 
+/**
+ * validate the sender's account to ensure the account exists and isn't dormant
+ * If checks pass, then call function to validate receiver
+ * @name validateSender
+ * @async
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {function} validateReceiver
+ */
 const validateSender = async (req, res) => {
   const senderAccount = await Accounts.findOne(
     'accountNumber',
@@ -58,6 +79,14 @@ const validateSender = async (req, res) => {
   return validateReceiver(req, res, senderAccount);
 };
 
+/**
+ * pass the res object and values from the req object on to the validators
+ * @name createTransfer
+ * @async
+ * @param {Object} req
+ * @param {Object} res
+ * @returns @function validateReceiver
+ */
 const createTransfer = async (req, res) => validateSender(req, res);
 
 export default createTransfer;
