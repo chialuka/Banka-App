@@ -5,6 +5,31 @@ import sendMail from '../lib/mail';
 const { Users, Accounts } = models;
 
 /**
+ * send off an email to client's registered email once account is opened
+ * @name sendNewAccountMail
+ * @param {Object} user
+ * @param {Object} accObj
+ * @returns {null}
+ */
+const sendNewAccountMail = (user, accObj) => {
+  const composeEmail = {
+    to: user.email,
+    subject: 'New Banka Account',
+    text: 'You have opened a new Banka account',
+    message: `<h1>New Banka Account</h1>
+    <p>Hi ${user.firstname},</p>
+    <p>This is to inform you that your new ${accObj.accountType} account with
+    account number: ${Number(accObj.accountNumber)}
+    and opening balance: N${accObj.openingBalance}
+    has been successfully opened with Banka.</p>
+    <p>Thank you for choosing Banka.</p>
+    <p> Best wishes.</p>`,
+  };
+  sendMail(composeEmail);
+};
+
+/**
+ * ensure user exists, create account and call function to send email to user
  * @name createAccount
  * @async
  * @param {Object} req
@@ -22,39 +47,14 @@ const createAccount = async (req, res) => {
       return setServerResponse(res, 403, { error: 'Token and user mismatch' });
     }
     const accountNumber = Number(generateAccountNumber());
-    const { firstname, email, id } = user;
     const currentDate = new Date();
     const createdOn = currentDate.toGMTString();
     const accObj = {
-      accountNumber,
-      createdOn,
-      status: 'draft',
-      owner: id,
-      ...req.body,
+      accountNumber, createdOn, status: 'draft', owner: user.id, ...req.body,
     };
     const newAccount = await Accounts.create(accObj);
-
-    const { accountType, openingBalance } = accObj;
-    const composeEmail = {
-      to: email,
-      subject: 'New Banka Account',
-      text: 'You have opened a new Banka account',
-      message: `<h1>New Banka Account</h1>
-      <p>Hi ${firstname},</p>
-      <p>This is to inform you that your new ${accountType} account with
-      account number: ${Number(accountNumber)}
-      and opening balance: N${openingBalance}
-      has been successfully opened with Banka.</p>
-      <p>Thank you for choosing Banka.</p>
-      <p> Best wishes.</p>`,
-    };
-
-    return Promise.all([
-      setServerResponse(res, 201, {
-        data: { ...newAccount },
-      }),
-      sendMail(composeEmail),
-    ]);
+    sendNewAccountMail(user, accObj);
+    return setServerResponse(res, 201, { data: { ...newAccount } });
   } catch (error) {
     return setServerResponse(res, 500, {
       error: "We're sorry about this. We're working to fix the problem.",
@@ -63,6 +63,51 @@ const createAccount = async (req, res) => {
 };
 
 /**
+ * send email to client whose account was deactivated
+ * @name sendDeactivationMail
+ * @param {Object} account
+ * @return {null}
+ */
+const sendDeactivationMail = (account) => {
+  const composeEmail = {
+    to: account.email,
+    subject: 'Account Deactivation',
+    message: `<h1>Account Deactivation</h1>
+    <p>We regret to inform you that your ${account.accountType} account 
+    with account number ${account.accountNumber} has been deactivated.</p>
+    <p>Please note that you cannot make transactions until 
+    your account is activated again. 
+    Contact our nearest branch or reply this email for more information.</p>
+    <p>Thank you for choosing Banka.</p>
+    <p> Best wishes.</p>`,
+  };
+  sendMail(composeEmail);
+};
+
+/**
+ * send email to client whose account was activated
+ * @name sendActivationMail
+ * @param {Object} account
+ * @returns {null}
+ */
+const sendActivationMail = (account) => {
+  const composeEmail = {
+    to: account.email,
+    subject: 'Account Activation',
+    message: `<h1>Account Activation</h1>
+    <p>We are pleased to inform you that your ${account.accountType} account 
+    with account number ${account.accountNumber} has been activated.</p>
+    <p>You can now make transactions with your account 
+    and with your issued ATM card.</p>
+    <p>Thank you for choosing Banka.</p>
+    <p> Best wishes.</p>`,
+  };
+  sendMail(composeEmail);
+};
+
+/**
+ * Activate or deactivate client account
+ * then call function to send relevant email to the client
  * @name patchAccount
  * @async
  * @param {Object} req
@@ -71,7 +116,7 @@ const createAccount = async (req, res) => {
  */
 const patchAccount = async (req, res) => {
   try {
-    const account = await Accounts.findOne('id', Number(req.params.account_id));
+    const account = await Accounts.findOne('id', Number(req.params.id));
     if (!account) {
       return setServerResponse(res, 404, { error: 'Account not found' });
     }
@@ -80,46 +125,39 @@ const patchAccount = async (req, res) => {
       return setServerResponse(res, 404, { error: 'Account owner not found' });
     }
     const { status } = req.body;
-    const data = {
-      ...account,
-      status,
-    };
+    const data = { ...account, status };
     const patchedUser = await Accounts.findOneAndUpdate(data);
-    const { email, accountType, accountNumber } = account;
-    let composeEmail;
     if (status === 'dormant') {
-      composeEmail = {
-        to: email,
-        subject: 'Account Deactivation',
-        message: `<h1>Account Deactivation</h1>
-        <p>We regret to inform you that your ${accountType} account 
-        with account number ${accountNumber} has been deactivated.</p>
-        <p>Please note that you cannot make transactions until 
-        your account is activated again. 
-        Contact our nearest branch or reply this email for more information.</p>
-        <p>Thank you for choosing Banka.</p>
-        <p> Best wishes.</p>`,
-      };
-    } else {
-      composeEmail = {
-        to: email,
-        subject: 'Account Activation',
-        message: `<h1>Account Activation</h1>
-        <p>We are pleased to inform you that your ${accountType} account 
-        with account number ${accountNumber} has been activated.</p>
-        <p>You can now make transactions with your account 
-        and with your issued ATM card.</p>
-        <p>Thank you for choosing Banka.</p>
-        <p> Best wishes.</p>`,
-      };
+      sendDeactivationMail(account);
     }
-    return Promise.all([
-      setServerResponse(res, 200, { data: { ...patchedUser } }),
-      sendMail(composeEmail),
-    ]);
+    sendActivationMail(account);
+    return setServerResponse(res, 200, { data: { ...patchedUser } });
   } catch (error) {
     return setServerResponse(res, error.status, { error });
   }
+};
+
+/**
+ * send email to customer whose account was deleted
+ * @name sendDeleteMail
+ * @param {Object} account
+ * @returns {null}
+ */
+const sendDeleteMail = (account) => {
+  const composeEmail = {
+    to: account.email,
+    subject: 'New Banka Account',
+    message: `<h1>New Banka Account</h1>
+    <p>Dear esteemed customer,</p>
+    <p>This is to inform you that your ${account.accountType} account with
+    account number: ${Number(account.accountNumber)}
+    has been deleted from Banka.</p>
+    <p>Please visit a branch nearest to you 
+    or reply this email for more details.</p>
+    <p>Thank you for choosing Banka.</p>
+    <p> Best wishes.</p>`,
+  };
+  sendMail(composeEmail);
 };
 
 /**
@@ -131,36 +169,18 @@ const patchAccount = async (req, res) => {
  */
 const deleteAccount = async (req, res) => {
   try {
-    const id = req.params.account_id;
-    const account = await Accounts.findOne('id', Number(id));
+    const account = await Accounts.findOne('id', Number(req.params.id));
     if (!account) {
       return setServerResponse(res, 404, { error: 'Account not found' });
     }
-    const deletedAccount = await Accounts.findOneAndDelete(id);
+    const deletedAccount = await Accounts.findOneAndDelete(req.params.id);
     if (!deletedAccount) {
       return setServerResponse(res, 500, { error: 'Error deleting account' });
     }
-    const { email, accountType, accountNumber } = account;
-    const composeEmail = {
-      to: email,
-      subject: 'New Banka Account',
-      text: 'You have opened a new Banka account',
-      message: `<h1>New Banka Account</h1>
-      <p>Dear esteemed customer,</p>
-      <p>This is to inform you that your ${accountType} account with
-      account number: ${Number(accountNumber)}
-      has been deleted from Banka.</p>
-      <p>Please visit a branch nearest to you 
-      or reply this email for more details.</p>
-      <p>Thank you for choosing Banka.</p>
-      <p> Best wishes.</p>`,
-    };
-    return Promise.all([
-      setServerResponse(res, 200, {
-        message: 'Account successfully deleted',
-      }),
-      sendMail(composeEmail),
-    ]);
+    sendDeleteMail(account);
+    return setServerResponse(res, 200, {
+      message: 'Account successfully deleted',
+    });
   } catch (error) {
     return setServerResponse(res, error.status, { error });
   }

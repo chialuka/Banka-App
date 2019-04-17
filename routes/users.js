@@ -6,11 +6,13 @@ import createUser, {
   deleteUser,
   loginUser,
 } from '../controllers/users';
-import validateBodyPayload from '../middlewares/validators';
+import {
+  validateBodyPayload,
+  validateIdParams,
+} from '../middlewares/validators';
 import { authorizeClient, authorizeStaff } from '../middlewares/auth';
 
 export default (router) => {
-  // Todo: Fix this.  have two middlewares
   router.route('/users').get(authorizeStaff, getUsers);
 
   router.route('/users/auth/signup').post(
@@ -42,8 +44,8 @@ export default (router) => {
   );
 
   router
-    .route('/users/:user_id')
-    .get(authorizeStaff, getUser)
+    .route('/users/:id')
+    .get(validateIdParams, authorizeStaff, getUser)
     .put(
       validateBodyPayload({
         email: Joi.string()
@@ -53,8 +55,9 @@ export default (router) => {
         lastname: Joi.string(),
         password: Joi.string().min(6),
       }),
+      validateIdParams,
       authorizeClient,
       updateUser,
     )
-    .delete(authorizeStaff, deleteUser);
+    .delete(validateIdParams, authorizeStaff, deleteUser);
 };

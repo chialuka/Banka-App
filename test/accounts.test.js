@@ -201,6 +201,21 @@ describe('PATCH accounts', () => {
       });
   });
 
+  // should fail to return when invalid params are passed
+  it('should return error on entering invalid params', (done) => {
+    chai
+      .request(server)
+      .patch('/api/v1/accounts/firstname')
+      .send({ status: 'active' })
+      .end((_, res) => {
+        expect(res).to.have.status(400);
+        expect(res).to.not.include.key('data');
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('Provided id is invalid. Please provide a positive integer');
+        done();
+      });
+  });
+
   it('should return an error if status is not provided', (done) => {
     chai
       .request(server)
@@ -251,44 +266,7 @@ describe('PATCH accounts', () => {
       });
   });
 
-  it('should fail if wrong account id is provided', (done) => {
-    chai
-      .request(server)
-      .post('/api/v1/users/auth/signup')
-      .send(adminAccount2)
-      .end((err, res) => {
-        expect(res).to.have.status(201);
-        expect(res.body.data).to.include.key('token');
-        expect(err).to.be.null;
-        const { token } = res.body.data;
-        const [account, ...rest] = allAccounts;
-        chai
-          .request(server)
-          .delete(`/api/v1/users/${account.owner}`)
-          .send()
-          .set('authorization', `Bearer ${token}`)
-          .end((err, res) => {
-            expect(res).to.have.status(200);
-            expect(res.body).to.include.key('message');
-            expect(res.body.message).to.equal('User delete successful');
-            expect(err).to.be.null;
-            chai
-              .request(server)
-              .patch(`/api/v1/accounts/${account.id}`)
-              .send({ status: 'active' })
-              .set('authorization', `Bearer ${token}`)
-              .end((err, res) => {
-                expect(res).to.have.status(404);
-                expect(res.body).to.include.key('error');
-                expect(res.body.error).to.equal('Account owner not found');
-                expect(err).to.be.null;
-                done();
-              });
-          });
-      });
-  });
-
-  it('should patch account if valid admin token and account id are provided', (done) => {
+  it('should activate account if valid admin token and account id are provided', (done) => {
     chai
       .request(server)
       .post('/api/v1/users/auth/signup')
@@ -309,6 +287,34 @@ describe('PATCH accounts', () => {
             expect(res.body).to.include.key('data');
             expect(res.body.data).to.include.key('status');
             expect(res.body.data.status).to.equal('active');
+            expect(err).to.be.null;
+            done();
+          });
+      });
+  });
+
+  
+  it('should deactivate account if valid admin token and account id are provided', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/users/auth/signin')
+      .send(adminAccount)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.data).to.include.key('token');
+        expect(err).to.be.null;
+        adminToken = res.body.data.token;
+        const [account, ...rest] = allAccounts.slice(-1);
+        chai
+          .request(server)
+          .patch(`/api/v1/accounts/${account.id}`)
+          .send({ status: 'dormant' })
+          .set('authorization', `Bearer ${adminToken}`)
+          .end((err, res) => {
+            expect(res).to.have.status(200);
+            expect(res.body).to.include.key('data');
+            expect(res.body.data).to.include.key('status');
+            expect(res.body.data.status).to.equal('dormant');
             expect(err).to.be.null;
             done();
           });

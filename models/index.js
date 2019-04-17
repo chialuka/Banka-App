@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import util from 'util';
 
-import getNewId, { capitalize } from '../utils';
+import { getNewId, capitalize } from '../utils';
 
 const open = util.promisify(fs.open);
 const read = util.promisify(fs.readFile);
@@ -17,6 +17,10 @@ const getBaseDir = file => path.resolve(__dirname, '..', 'data', file);
  * @class
  */
 class Model {
+  /**
+   * @constructor
+   * @param {String} file
+   */
   constructor(file) {
     this.file = file;
   }

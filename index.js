@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 
 app.use(morgan('dev'));
 
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
   res.send('Welcome to Banka. The future is now...');
 });
 
