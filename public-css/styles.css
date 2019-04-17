@@ -362,11 +362,11 @@ footer p {
     line-height: 30px;
   }
   .logo {
-    padding: 20px 35px;
+    padding: 5px 35px 2px 35px;
     font-size: 2em;
   }
   .col-4 a {
-    padding: 26px 35px;
+    padding: 11px 35px 10px 35px;
     font-size: 0.8em;
   }
   .pitch-text {
@@ -401,6 +401,9 @@ footer p {
   footer .footer-item {
     font-size: 12px;
   }
+  .about {
+    max-width: 60%;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -408,8 +411,12 @@ footer p {
     background-size: cover;
   }
   .logo {
-    padding: 20px 35px;
+    padding: 5px 35px 2px 35px;
     font-size: 2.5em;
+  }
+  .col-4 a {
+    padding: 11px 50px 10px 50px;
+    font-size: 1.1em;
   }
   .title {
     font-size: 3em;
@@ -425,10 +432,6 @@ footer p {
   div .motto {
     font-size: 32px;
     font-weight: 800;
-  }
-  .col-4 a {
-    padding: 27px 50px;
-    font-size: 1.1em;
   }
   .account-pitch {
     font-size: 24px;
