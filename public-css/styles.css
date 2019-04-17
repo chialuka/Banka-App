@@ -388,9 +388,6 @@ footer p {
   div .menu-items {
     font-size: 22px;
   }
-  .content-wrapper {
-    max-width: 600px;
-  }
   h1 {
     font-size: 2.2em;
   }
@@ -426,7 +423,6 @@ footer p {
   }
   #content-wrapper,
   .navbar {
-    max-width: 1080px;
     margin: auto;
   }
   div .motto {
