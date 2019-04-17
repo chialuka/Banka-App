@@ -344,9 +344,6 @@ footer p {
     width: 20%;
     padding: 15px 10px;
   }
-  div .pitch {
-    line-height: 20px;
-  }
 }
 
 @media (min-width: 768px) {
@@ -362,7 +359,7 @@ footer p {
   .pitch {
     font-size: var(--sm-font-size);
     font-weight: 400;
-    line-height: 25px;
+    line-height: 30px;
   }
   .logo {
     padding: 20px 35px;
