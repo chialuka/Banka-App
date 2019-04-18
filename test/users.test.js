@@ -14,17 +14,29 @@ import {
   correctClient,
   adminAccount,
 } from '../fixtures';
-import models from '../models';
+import * as Users from '../models/users';
 import { generateToken } from '../utils';
 
 chai.use(chaiHttp);
-
-const { Users } = models;
 
 let createdClient;
 let createdStaff;
 let clientToken;
 let clientId;
+
+describe('GET Home', () => {
+  it('should get the home page', (done) => {
+    chai
+      .request(server)
+      .get('/')
+      .send()
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(err).to.be.null;
+        done();
+      });
+  });
+});
 
 describe('POST User', () => {
   // should create user succesfully(201)
@@ -174,17 +186,17 @@ describe('GET/ User', () => {
   });
 
   // should fail to return when wrong details are passed
-  it('should not return user on entering wrong params', (done) => {
+  it('should not return user on entering invalid params', (done) => {
     chai
       .request(server)
       .get(`/api/v1/users/${createdClient.firstname}`)
       .set('Authorization', `Bearer ${getStaffToken}`)
       .send()
       .end((_, res) => {
-        expect(res).to.have.status(404);
+        expect(res).to.have.status(400);
         expect(res).to.not.include.key('data');
         expect(res.body).to.include.key('error');
-        expect(res.body.error).to.equal('User not found');
+        expect(res.body.error).to.equal('Provided id is invalid. Please provide a positive integer');
         done();
       });
   });
@@ -208,18 +220,28 @@ describe('GET/ User', () => {
 });
 
 describe('PUT/ User', () => {
+  let client;
+  let token;
+  before(async () => {
+    const clients = await Users.findAll();
+    client = clients.find(item => item.type === 'client');
+    token = generateToken({ id: client.id });
+  });
   // should test for updating user's names
-  it("should update user's names", (done) => {
+  it("should update user's details", (done) => {
+    console.log(client.id);
     chai
       .request(server)
-      .put(`/api/v1/users/${clientId}`)
-      .set('Authorization', `Bearer ${clientToken}`)
+      .put(`/api/v1/users/${client.id}`)
+      .set('Authorization', `Bearer ${token}`)
       .send({
-        ...correctPasswordClient,
+        ...client,
         firstname: 'Rihanna',
         lastname: 'Okonkwo',
+        password: 'mangohead',
       })
       .end((err, res) => {
+        console.log(res.body);
         expect(res).to.have.status(200);
         expect(res.body).to.be.an('object');
         expect(res.body).to.include.key('data');
@@ -231,20 +253,20 @@ describe('PUT/ User', () => {
   });
 
   // should test to ensure user email cannot be updated
-  it('should not update user email', (done) => {
+  it('should not update user if it cannot find email', (done) => {
     chai
       .request(server)
-      .put(`/api/v1/users/${clientId}`)
-      .set('Authorization', `Bearer ${clientToken}`)
+      .put('/api/v1/users/10000000')
+      .set('Authorization', `Bearer ${token}`)
       .send({
         ...correctPasswordClient,
         lastname: 'Udara',
         email: 'otakagu.dikagu@gmail.com',
       })
       .end((err, res) => {
-        expect(res).to.have.status(403);
+        expect(res).to.have.status(404);
         expect(res.body).to.include.key('error');
-        expect(res.body.error).to.equal('Cannot update email');
+        expect(res.body.error).to.equal('Cannot find user');
         expect(err).to.be.null;
         done();
       });

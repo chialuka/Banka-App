@@ -8,8 +8,6 @@ engines:
     config:
       languages:
       - javascript
-  eslint:
-    enabled: true
   fixme:
     enabled: true
 ratings:
@@ -26,3 +24,4 @@ exclude_paths:
 - fixtures/
 - tests/
 - node_modules/
+- client/

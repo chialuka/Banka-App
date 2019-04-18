@@ -3,7 +3,8 @@ import '@babel/polyfill';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../index';
-import models from '../models';
+import * as Accounts from '../models/accounts';
+import * as Users from '../models/users';
 import {
   staffTransaction,
   clientTransaction,
@@ -13,14 +14,13 @@ import {
   noAmountTransaction,
   noTransactionType,
   noCashierId,
+  clientTransfer,
 } from '../fixtures';
 import { generateToken, generateAccountNumber } from '../utils';
 
 chai.use(chaiHttp);
 
-const { Accounts, Users } = models;
-
-describe('POST transactions', () => {
+describe('POST transactions and Transfers', () => {
   let clientToken;
   let staffToken;
   let adminToken;
@@ -30,9 +30,14 @@ describe('POST transactions', () => {
   let clientAccount;
   let accountNumber;
   let activatedAccount;
+  let userToBeCredited;
+  let accountToBeCredited;
+  let accountNumberCredited;
+  let activatedCreditedAccount;
 
   before(async () => {
     createClient = await Users.create(clientTransaction);
+    userToBeCredited = await Users.create(clientTransfer);
     clientToken = generateToken({ id: createClient.id });
     const { firstname, email, id } = createClient;
 
@@ -42,8 +47,8 @@ describe('POST transactions', () => {
     createAdmin = await Users.create(adminTransaction);
     adminToken = generateToken({ id: createAdmin.id });
 
-
     accountNumber = Number(generateAccountNumber());
+    accountNumberCredited = Number(generateAccountNumber());
     clientAccount = await Accounts.create({
       firstname,
       email,
@@ -52,9 +57,21 @@ describe('POST transactions', () => {
       openingBalance: 5000,
       accountNumber,
     });
-    
+
+    accountToBeCredited = await Accounts.create({
+      ...userToBeCredited,
+      owner: id,
+      accountType: 'savings',
+      openingBalance: 5000,
+      accountNumber: accountNumberCredited,
+    });
+
     activatedAccount = await Accounts.findOneAndUpdate({
       ...clientAccount,
+      status: 'active',
+    });
+    activatedCreditedAccount = await Accounts.findOneAndUpdate({
+      ...accountToBeCredited,
       status: 'active',
     });
   });
@@ -343,6 +360,27 @@ describe('POST transactions', () => {
       });
   });
 
+  it('should transfer between clients', (done) => {
+    const amount = 0;
+    const receiverAccount = accountNumberCredited;
+    chai
+      .request(server)
+      .post('/api/v1/transfers')
+      .send({
+        senderAccount: accountNumber,
+        receiverAccount,
+        description: 'bride price',
+        amount,
+      })
+      .set('authorization', `Bearer ${clientToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body).to.include.key('Message');
+        expect(res.body.Message).to.equal(`Transfer of N${0} successful`);
+        expect(err).to.be.null;
+        done();
+      });
+  });
   it('should return an error if account is dormant', async () => {
     const deactivatedAccount = await Accounts.findOneAndUpdate({
       ...activatedAccount,
