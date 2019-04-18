@@ -1,85 +1,61 @@
-import fs from 'fs';
-import path from 'path';
-import util from 'util';
+import { Pool } from 'pg';
+import uri from '../config';
 
-import { getNewId, capitalize } from '../utils';
+const pool = new Pool({
+  connectionString: uri,
+});
 
-const open = util.promisify(fs.open);
-const read = util.promisify(fs.readFile);
-const write = util.promisify(fs.writeFile);
-const append = util.promisify(fs.appendFile);
-const close = util.promisify(fs.close);
+const create = async (data) => {
+  const {
+    firstname, lastname, email, password, isStaff, isAdmin,
+  } = data;
+  const newItem = await pool.query(
+    'INSERT INTO users(firstname, lastname, email, password, is_staff, is_admin) VALUES($1, $2, $3, $4, $5, $6) RETURNING *',
+    [firstname, lastname, email, password, isStaff, isAdmin],
+  );
+  return newItem.rows;
+};
 
-const getBaseDir = file => path.resolve(__dirname, '..', 'data', file);
+const findAll = async () => {
+  const results = await pool.query('SELECT * FROM users ORDER BY id ASC');
+  return results.rows;
+};
 
-/**
- * @name Model
- * @class
- */
-class Model {
-  /**
-   * @constructor
-   * @param {String} file
-   */
-  constructor(file) {
-    this.file = file;
-  }
+const findOneById = async (id) => {
+  const result = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
+  return result.rows;
+};
 
-  async getDataFromFile() {
-    const results = await read(getBaseDir(this.file));
-    return JSON.parse(results);
-  }
+const findOneByEmail = async (email) => {
+  const result = await pool.query('SELECT * FROM users WHERE email = $1', [
+    email,
+  ]);
+  return result.rows;
+};
 
-  async create(data) {
-    const oldData = await this.getDataFromFile();
-    const id = oldData.length > 0 ? getNewId(oldData[oldData.length - 1].id) : 1;
-    const newItem = { ...data, id };
-    const newData = oldData.concat(newItem);
-    const fd = await open(getBaseDir(this.file), 'w+');
-    await append(fd, JSON.stringify(newData));
-    await close(fd);
-    return newItem;
-  }
+const findOneAndUpdate = async (data) => {
+  const {
+    firstname, lastname, password, id,
+  } = data;
+  const userId = Number(id);
+  await pool.query(
+    'UPDATE users SET firstname = $1 WHERE $1 <> NULL, lastname = $2 WHERE $2 <> NULL, password = $3 WHERE $3 <> NULL, WHERE id = $4',
+    [firstname, lastname, password, userId],
+  );
+  const result = await findOneById(userId);
+  return result;
+};
 
-  async findAll() {
-    const results = await this.getDataFromFile();
-    return results;
-  }
+const findOneAndDelete = async (id) => {
+  await pool.query('DELETE FROM users WHERE id = $1', [id]);
+  return id;
+};
 
-  async findOne(condition, param) {
-    const results = await this.getDataFromFile();
-    const name = condition;
-    const result = results.find(items => items[`${name}`] === param);
-    return result;
-  }
-
-  async findOneAndUpdate(data) {
-    const oldData = await this.getDataFromFile();
-    const usersArray = oldData.filter(items => items.id !== Number(data.id));
-    const newData = usersArray.concat(data);
-    const sortedData = newData.sort((a, b) => a.id - b.id);
-    const fd = await open(getBaseDir(this.file), 'w+');
-    await write(fd, JSON.stringify(sortedData));
-    await close(fd);
-    return data;
-  }
-
-  async findOneAndDelete(id) {
-    const results = await this.getDataFromFile();
-    const usersArray = results.filter(items => items.id !== Number(id));
-    write(getBaseDir(this.file), JSON.stringify(usersArray));
-    return id;
-  }
-}
-
-const models = fs
-  .readdirSync(getBaseDir(''))
-  .filter(file => file.endsWith('.json'))
-  .reduce((acc, file) => {
-    const model = new Model(file);
-    const name = capitalize(file.replace('.json', ''));
-    acc[name] = model;
-    return acc;
-  }, {});
-
-export default models;
+export {
+  create,
+  findAll,
+  findOneById,
+  findOneByEmail,
+  findOneAndUpdate,
+  findOneAndDelete,
+};
