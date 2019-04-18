@@ -127,7 +127,7 @@ a:hover {
 
 .content-wrapper {
   padding-bottom: 20px;
-  min-height: calc(100vh - 160px);
+  min-height: calc(100vh - 90px);
   max-width: 80%;
   margin: auto;
 }
@@ -136,6 +136,10 @@ a:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+form {
+  margin-top: 5rem;
 }
 
 h1 {
@@ -210,14 +214,6 @@ p {
   color: white;
 }
 
-.fa,
-.fab,
-.fal,
-.far,
-.fas {
-  padding-left: 20px;
-}
-
 .back {
   font-size: 15px;
 }
@@ -238,6 +234,10 @@ p {
   opacity: 1;
   z-index: 2;
   display: block;
+}
+
+.logo a:hover {
+  background-color: transparent;
 }
 
 a:hover {
@@ -305,7 +305,7 @@ footer {
   justify-content: center;
   padding: 5px;
   bottom: 0;
-  height: 50px;
+  height: 40px;
   color: rgb(10, 10, 10);
   border-top: 1px solid rgb(216, 214, 214);
   font-size: 10px;
@@ -350,6 +350,14 @@ footer p {
   div .motto {
     font-size: 28px;
     font-weight: 700;
+  }
+  .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .col-4 {
+    float: right;
   }
   .account-pitch {
     display: flex;
@@ -438,5 +446,9 @@ footer p {
   }
   div .pitch-button a {
     font-size: 25px;
+  }
+  form {
+    width: 50%;
+    margin-top: 5rem;
   }
 }
