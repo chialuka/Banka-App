@@ -1,7 +1,8 @@
-import * as Accounts from '../models/accounts';
-import * as Users from '../models/users';
+import models from '../models';
 import { setServerResponse, generateAccountNumber } from '../utils';
 import sendMail from '../lib/mail';
+
+const { Users, Accounts } = models;
 
 /**
  * send off an email to client's registered email once account is opened
@@ -19,7 +20,7 @@ const sendNewAccountMail = (user, accObj) => {
     <p>Hi ${user.firstname},</p>
     <p>This is to inform you that your new ${accObj.accountType} account with
     account number: ${Number(accObj.accountNumber)}
-    and opening balance: N${accObj.accountBalance}
+    and opening balance: N${accObj.openingBalance}
     has been successfully opened with Banka.</p>
     <p>Thank you for choosing Banka.</p>
     <p> Best wishes.</p>`,
@@ -37,7 +38,7 @@ const sendNewAccountMail = (user, accObj) => {
  */
 const createAccount = async (req, res) => {
   try {
-    const user = await Users.findOneByEmail(req.body.email);
+    const user = await Users.findOne('email', req.body.email);
     if (!user) {
       return setServerResponse(res, 404, { error: 'User not found' });
     }
@@ -48,10 +49,8 @@ const createAccount = async (req, res) => {
     const accountNumber = Number(generateAccountNumber());
     const currentDate = new Date();
     const createdOn = currentDate.toGMTString();
-    const accountBalance = req.body.openingBalance;
-    const data = { ...req.body, openingBalance: accountBalance };
     const accObj = {
-      accountNumber, createdOn, status: 'draft', owner: user.id, data,
+      accountNumber, createdOn, status: 'draft', owner: user.id, ...req.body,
     };
     const newAccount = await Accounts.create(accObj);
     sendNewAccountMail(user, accObj);
@@ -96,8 +95,8 @@ const sendActivationMail = (account) => {
     to: account.email,
     subject: 'Account Activation',
     message: `<h1>Account Activation</h1>
-    <p>We are pleased to inform you that your ${account.account_type} account 
-    with account number ${account.account_number} has been activated.</p>
+    <p>We are pleased to inform you that your ${account.accountType} account 
+    with account number ${account.accountNumber} has been activated.</p>
     <p>You can now make transactions with your account 
     and with your issued ATM card.</p>
     <p>Thank you for choosing Banka.</p>
@@ -117,17 +116,17 @@ const sendActivationMail = (account) => {
  */
 const patchAccount = async (req, res) => {
   try {
-    const id = Number(req.params.id);
-    const account = await Accounts.findOneById(id);
+    const account = await Accounts.findOne('id', Number(req.params.id));
     if (!account) {
       return setServerResponse(res, 404, { error: 'Account not found' });
     }
-    const user = await Users.findOneByEmail(account.email);
+    const user = await Users.findOne('email', account.email);
     if (!user) {
       return setServerResponse(res, 404, { error: 'Account owner not found' });
     }
     const { status } = req.body;
-    const patchedUser = await Accounts.findOneAndUpdate({ status, id });
+    const data = { ...account, status };
+    const patchedUser = await Accounts.findOneAndUpdate(data);
     if (status === 'dormant') {
       sendDeactivationMail(account);
     }
@@ -150,8 +149,8 @@ const sendDeleteMail = (account) => {
     subject: 'New Banka Account',
     message: `<h1>New Banka Account</h1>
     <p>Dear esteemed customer,</p>
-    <p>This is to inform you that your ${account.account_type} account with
-    account number: ${Number(account.account_number)}
+    <p>This is to inform you that your ${account.accountType} account with
+    account number: ${Number(account.accountNumber)}
     has been deleted from Banka.</p>
     <p>Please visit a branch nearest to you 
     or reply this email for more details.</p>
@@ -170,7 +169,7 @@ const sendDeleteMail = (account) => {
  */
 const deleteAccount = async (req, res) => {
   try {
-    const account = await Accounts.findOneById(Number(req.params.id));
+    const account = await Accounts.findOne('id', Number(req.params.id));
     if (!account) {
       return setServerResponse(res, 404, { error: 'Account not found' });
     }

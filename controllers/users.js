@@ -1,10 +1,12 @@
-import * as Users from '../models/users';
+import models from '../models';
 import {
   hashPassword,
   comparePassword,
   generateToken,
   setServerResponse,
 } from '../utils';
+
+const { Users } = models;
 
 /**
  * Create a new user after hashing password and generating token
@@ -16,17 +18,18 @@ import {
  */
 const createUser = async (req, res) => {
   try {
-    const existingUser = await Users.findOneByEmail(req.body.email);
-    if (existingUser.length > 0) {
+    const existingUser = await Users.findOne('email', req.body.email);
+    if (existingUser) {
       return setServerResponse(res, 409, {
         error: 'User with provided email already exists.',
       });
     }
-    const { password } = req.body;
+    const { password, type } = req.body;
     const hashedPassword = await hashPassword(password);
     const newUserObj = { ...req.body, password: hashedPassword };
+    if (type === 'client') delete newUserObj.isAdmin;
     const user = await Users.create({ ...newUserObj });
-    const token = generateToken({ id: user[0].id });
+    const token = generateToken({ id: user.id });
     delete user.password;
     return setServerResponse(res, 201, { data: { ...user, token } });
   } catch (error) {
@@ -68,7 +71,7 @@ const getUsers = async (_, res) => {
  */
 const getUser = async (req, res) => {
   try {
-    const user = await Users.findOneById(Number(req.params.id));
+    const user = await Users.findOne('id', Number(req.params.id));
     if (!user) {
       return setServerResponse(res, 404, { error: 'User not found' });
     }
@@ -91,7 +94,7 @@ const getUser = async (req, res) => {
  */
 const loginUser = async (req, res) => {
   try {
-    const user = await Users.findOneByEmail(req.body.email);
+    const user = await Users.findOne('email', req.body.email);
     if (!user) {
       return setServerResponse(res, 404, {
         error: 'Incorrect email. User not found',
@@ -123,7 +126,7 @@ const loginUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     let hashedPassword = '';
-    const user = await Users.findOneById(Number(req.params.id));
+    const user = await Users.findOne('id', Number(req.params.id));
     if (!user) {
       return setServerResponse(res, 404, { error: 'Cannot find user' });
     }
@@ -159,7 +162,7 @@ const updateUser = async (req, res) => {
  */
 const deleteUser = async (req, res) => {
   try {
-    const user = await Users.findOneById(Number(req.params.id));
+    const user = await Users.findOne('id', Number(req.params.id));
     const deletedUser = await Users.findOneAndDelete(req.params.id);
     if (!user || !deletedUser) {
       return setServerResponse(res, 404, { error: 'User not found' });

@@ -229,7 +229,6 @@ describe('PUT/ User', () => {
   });
   // should test for updating user's names
   it("should update user's details", (done) => {
-    console.log(client.id);
     chai
       .request(server)
       .put(`/api/v1/users/${client.id}`)
@@ -241,7 +240,6 @@ describe('PUT/ User', () => {
         password: 'mangohead',
       })
       .end((err, res) => {
-        console.log(res.body);
         expect(res).to.have.status(200);
         expect(res.body).to.be.an('object');
         expect(res.body).to.include.key('data');

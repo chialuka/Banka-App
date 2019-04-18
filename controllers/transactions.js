@@ -1,9 +1,8 @@
-import * as Transactions from '../models/transactions';
-import * as Accounts from '../models/accounts';
-import * as Users from '../models/users';
+import models from '../models';
 import sendMail from '../lib/mail';
 import { setServerResponse, capitalize } from '../utils';
 
+const { Users, Accounts, Transactions } = models;
 
 /**
  * Send an email to the specified client stating the transaction that occured
@@ -46,19 +45,21 @@ const mailSender = (email, firstname, data) => {
  */
 const chargeAccount = async (res, account, reqBody) => {
   const { amount, transactionType } = reqBody;
-  const balance = account.account_balance;
-  if (reqBody.transactionType === 'debit' && balance < amount) {
+  const originalBalance = 'accountBalance' in account
+    ? account.accountBalance : account.openingBalance;
+  if (reqBody.transactionType === 'debit' && originalBalance < amount) {
     return setServerResponse(res, 400, { error: 'Overdraft disallowed' });
   }
   const accountBalance = transactionType === 'credit'
-    ? balance + amount : balance - amount;
+    ? originalBalance + amount : originalBalance - amount;
   const newDate = new Date();
   const transactionData = {
-    ...reqBody, accountBalance, date: newDate.toGMTString(),
+    ...reqBody, accountBalance, date: newDate.toDateString(),
   };
+  delete account.openingBalance;
   const accountData = { ...account, accountBalance };
   await Accounts.findOneAndUpdate(accountData);
-  const user = await Users.findOneByEmail(account.email);
+  const user = await Users.findOne('email', account.email);
   if (!user) {
     return setServerResponse(res, 404, { error: 'Account owner not found' });
   }
@@ -78,7 +79,7 @@ const chargeAccount = async (res, account, reqBody) => {
  */
 const createTransaction = async (req, res) => {
   try {
-    const staff = await Users.findOneById(Number(req.body.cashierId));
+    const staff = await Users.findOne('id', Number(req.body.cashierId));
     if (!staff) {
       return setServerResponse(res, 404, { error: 'Staff not found' });
     }
