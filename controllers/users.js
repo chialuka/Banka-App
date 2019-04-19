@@ -1,10 +1,12 @@
-import * as Users from '../models/users';
+import models from '../models';
 import {
   hashPassword,
   comparePassword,
   generateToken,
   setServerResponse,
 } from '../utils';
+
+const { Users } = models;
 
 /**
  * Create a new user after hashing password and generating token
@@ -16,17 +18,18 @@ import {
  */
 const createUser = async (req, res) => {
   try {
-    const existingUser = await Users.findOneByEmail(req.body.email);
-    if (existingUser.length > 0) {
+    const existingUser = await Users.findOne('email', req.body.email);
+    if (existingUser) {
       return setServerResponse(res, 409, {
         error: 'User with provided email already exists.',
       });
     }
-    const { password } = req.body;
+    const { password, type } = req.body;
     const hashedPassword = await hashPassword(password);
     const newUserObj = { ...req.body, password: hashedPassword };
+    if (type === 'client') delete newUserObj.isAdmin;
     const user = await Users.create({ ...newUserObj });
-    const token = generateToken({ id: user[0].id });
+    const token = generateToken({ id: user.id });
     delete user.password;
     return setServerResponse(res, 201, { data: { ...user, token } });
   } catch (error) {
