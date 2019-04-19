@@ -1,8 +1,7 @@
-import models from '../models';
+import * as Accounts from '../models/accounts';
+import * as Users from '../models/users';
 import { setServerResponse, generateAccountNumber } from '../utils';
 import sendMail from '../lib/mail';
-
-const { Users, Accounts } = models;
 
 /**
  * send off an email to client's registered email once account is opened

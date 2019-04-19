@@ -1,12 +1,11 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { setServerResponse } from '../utils';
-import models from '../models';
+import * as Users from '../models/users';
 
 dotenv.config();
 
 const { SECRET } = process.env;
-const { Users } = models;
 
 const verifyJwt = async (req, res) => {
   try {
