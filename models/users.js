@@ -5,7 +5,10 @@ const create = async (data) => {
     firstname, lastname, email, password, isStaff, isAdmin,
   } = data;
   const newItem = await db.query(
-    'INSERT INTO users(first_name, last_name, email, password, is_staff, is_admin) VALUES($1, $2, $3, $4, $5, $6) RETURNING *',
+    `INSERT INTO users(
+      first_name, last_name, email, password, is_staff, is_admin
+      ) 
+     VALUES($1, $2, $3, $4, $5, $6) RETURNING *`,
     [firstname, lastname, email, password, isStaff, isAdmin],
   );
   return newItem.rows[0];
@@ -30,15 +33,19 @@ const findOneByEmail = async (email) => {
 
 const findOneAndUpdate = async (data) => {
   const {
-    firstname, lastname, password, id,
+    firstname, lastname, password, email, id,
   } = data;
-  const userId = Number(id);
-  await db.query(
-    'UPDATE users SET first_name = $1 WHERE $1 <> NULL, last_name = $2 WHERE $2 <> NULL, password = $3 WHERE $3 <> NULL, WHERE id = $4',
-    [firstname, lastname, password, userId],
+  const result = await db.query(
+    `UPDATE users 
+     SET 
+      first_name = COALESCE($1, first_name), 
+      last_name = COALESCE($2, last_name), 
+      password =  COALESCE($3, password),
+      email = COALESCE($4, email)
+    WHERE id = $5 RETURNING *`,
+    [firstname, lastname, password, email, id],
   );
-  const result = await findOneById(userId);
-  return result;
+  return result.rows[0];
 };
 
 const findOneAndDelete = async (id) => {

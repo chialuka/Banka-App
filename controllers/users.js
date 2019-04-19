@@ -126,7 +126,7 @@ const loginUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     let hashedPassword = '';
-    const user = await Users.findOne('id', Number(req.params.id));
+    const user = await Users.findOneById(req.params.id);
     if (!user) {
       return setServerResponse(res, 404, { error: 'Cannot find user' });
     }
@@ -134,21 +134,20 @@ const updateUser = async (req, res) => {
     if (tokenOwner.email !== user.email) {
       return setServerResponse(res, 403, { error: 'User and token mismatch' });
     }
-    const { password, firstname, lastname } = req.body;
+    const { password, firstname, lastname, email } = req.body;
     if (password) hashedPassword = await hashPassword(password);
     const data = {
       ...(hashedPassword && { password: hashedPassword }),
       ...(firstname && { firstname }),
       ...(lastname && { lastname }),
+      ...(email && { email }),
+      id: user.id,
     };
-    const newUserObj = { ...user, ...data };
-    const updatedUser = await Users.findOneAndUpdate(newUserObj);
+    const updatedUser = await Users.findOneAndUpdate(data);
     delete updatedUser.password;
-    return setServerResponse(res, 200, { data: { ...updatedUser } });
+    return setServerResponse(res, 200, { data: [{ ...updatedUser }] });
   } catch (error) {
-    return setServerResponse(res, 500, {
-      error: "We're sorry about this. We're working to fix the problem.",
-    });
+    return setServerResponse(res, 500, { error });
   }
 };
 

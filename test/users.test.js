@@ -23,7 +23,6 @@ let createdClient;
 let createdStaff;
 
 describe('GET / route', () => {
-  // clear users table from the DB before running tests
   before(async () => {
     await Users.deleteAll();
   });
@@ -41,7 +40,6 @@ describe('GET / route', () => {
 });
 
 describe('POST User', () => {
-  // should create user succesfully(201)
   it('should create a user successfully', (done) => {
     chai
       .request(server)
@@ -62,7 +60,6 @@ describe('POST User', () => {
       });
   });
 
-  // should not create user if req body is invalid(400)
   it('should not create a user if email is invalid', (done) => {
     chai
       .request(server)
@@ -78,7 +75,6 @@ describe('POST User', () => {
       });
   });
 
-  // should not create a user who is an admin
   it('should not create a client who is an admin', (done) => {
     chai
       .request(server)
@@ -92,7 +88,6 @@ describe('POST User', () => {
       });
   });
 
-  // should not create user with email that exists(409)
   it('should not create a user if email already exists', (done) => {
     chai
       .request(server)
@@ -109,7 +104,6 @@ describe('POST User', () => {
   });
 });
 
-// should create token for user with correct credentials
 it('should not log user with wrong password in', (done) => {
   Users.create(staffUser).then((user) => {
     createdStaff = user;
@@ -153,7 +147,6 @@ it('should log in registered user with correct email and password', (done) => {
   });
 });
 
-// should not login user with wrong details
 it('should not login user who is not registered', (done) => {
   chai
     .request(server)
@@ -174,7 +167,7 @@ describe('GET/ User', () => {
     getstaffUser = await Users.create(getUserStaff);
     getStaffToken = generateToken({ id: getstaffUser.id });
   });
-  // should return user with specified id or email
+
   it('should return specified user', (done) => {
     chai
       .request(server)
@@ -193,7 +186,6 @@ describe('GET/ User', () => {
       });
   });
 
-  // should fail to return when wrong details are passed
   it('should not return user on entering invalid params', (done) => {
     chai
       .request(server)
@@ -210,7 +202,6 @@ describe('GET/ User', () => {
       });
   });
 
-  // return non empty array if there are users registered
   it('should not return empty array if there are users registered', (done) => {
     chai
       .request(server)
@@ -226,7 +217,6 @@ describe('GET/ User', () => {
       });
   });
 
-  // return a 404 if no users are registered yt
   it('should return an error if no user making request cannot be found', async () => {
     await Users.deleteAll();
     chai
@@ -242,45 +232,46 @@ describe('GET/ User', () => {
   });
 });
 
-xdescribe('PUT/ User', () => {
+describe('PUT/ User', () => {
   let client;
+  let staff;
   let token;
   before(async () => {
-    const clients = await Users.findAll();
-    client = clients.find(item => item.type === 'client');
+    await Users.deleteAll();
+    client = await Users.create(correctPasswordClient);
+    staff = await Users.create(staffUser);
     token = generateToken({ id: client.id });
   });
-  // should test for updating user's names
+
   it("should update user's details", (done) => {
     chai
       .request(server)
       .put(`/api/v1/users/${client.id}`)
       .set('Authorization', `Bearer ${token}`)
       .send({
-        ...client,
         firstname: 'Rihanna',
         lastname: 'Okonkwo',
         password: 'mangohead',
+        email: 'testingthisemail@testing.com',
       })
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body).to.be.an('object');
         expect(res.body).to.include.key('data');
-        expect(res.body.data.firstname).to.equal('Rihanna');
-        expect(res.body.data.lastname).to.equal('Okonkwo');
+        expect(res.body.data[0].first_name).to.equal('Rihanna');
+        expect(res.body.data[0].last_name).to.equal('Okonkwo');
+        expect(res.body.data[0].email).to.equal('testingthisemail@testing.com');
         expect(err).to.be.null;
         done();
       });
   });
 
-  // should test to ensure user email cannot be updated
-  it('should not update user if it cannot find email', (done) => {
+  it('should not update user if it cannot find user', (done) => {
     chai
       .request(server)
       .put('/api/v1/users/10000000')
       .set('Authorization', `Bearer ${token}`)
       .send({
-        ...correctPasswordClient,
         lastname: 'Udara',
         email: 'otakagu.dikagu@gmail.com',
       })
@@ -288,6 +279,24 @@ xdescribe('PUT/ User', () => {
         expect(res).to.have.status(404);
         expect(res.body).to.include.key('error');
         expect(res.body.error).to.equal('Cannot find user');
+        expect(err).to.be.null;
+        done();
+      });
+  });
+
+  it('should not update if there is a token mismatch', (done) => {
+    chai
+      .request(server)
+      .put(`/api/v1/users/${staff.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        firstname: 'Omo',
+        email: 'ncha_bu_omo@gmail.com',
+      })
+      .end((err, res) => {
+        expect(res).to.have.status(403);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('User and token mismatch');
         expect(err).to.be.null;
         done();
       });
