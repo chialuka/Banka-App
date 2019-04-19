@@ -20,7 +20,7 @@ import { generateToken, generateAccountNumber } from '../utils';
 
 chai.use(chaiHttp);
 
-describe('POST transactions and Transfers', () => {
+xdescribe('POST transactions and Transfers', () => {
   let clientToken;
   let staffToken;
   let adminToken;
@@ -33,7 +33,6 @@ describe('POST transactions and Transfers', () => {
   let userToBeCredited;
   let accountToBeCredited;
   let accountNumberCredited;
-  let activatedCreditedAccount;
 
   before(async () => {
     createClient = await Users.create(clientTransaction);

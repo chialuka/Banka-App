@@ -1,12 +1,10 @@
-import models from '../models';
+import * as Users from '../models/users';
 import {
   hashPassword,
   comparePassword,
   generateToken,
   setServerResponse,
 } from '../utils';
-
-const { Users } = models;
 
 /**
  * Create a new user after hashing password and generating token

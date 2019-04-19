@@ -1,8 +1,8 @@
-import models from '../models';
+import * as Transactions from '../models/transactions';
+import * as Accounts from '../models/accounts';
+import * as Users from '../models/users';
 import sendMail from '../lib/mail';
 import { setServerResponse, capitalize } from '../utils';
-
-const { Users, Accounts, Transactions } = models;
 
 /**
  * Send an email to the specified client stating the transaction that occured
