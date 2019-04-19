@@ -1,8 +1,6 @@
 import { setServerResponse } from '../utils';
 import { chargeAccount } from './transactions';
-import models from '../models';
-
-const { Accounts } = models;
+import * as Accounts from '../models/accounts';
 
 /**
  * Charge the client initiating the transfer

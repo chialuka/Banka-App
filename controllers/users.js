@@ -1,12 +1,10 @@
-import models from '../models';
+import * as Users from '../models/users';
 import {
   hashPassword,
   comparePassword,
   generateToken,
   setServerResponse,
 } from '../utils';
-
-const { Users } = models;
 
 /**
  * Create a new user after hashing password and generating token
@@ -18,20 +16,19 @@ const { Users } = models;
  */
 const createUser = async (req, res) => {
   try {
-    const existingUser = await Users.findOne('email', req.body.email);
+    const existingUser = await Users.findOneByEmail(req.body.email);
     if (existingUser) {
       return setServerResponse(res, 409, {
         error: 'User with provided email already exists.',
       });
     }
-    const { password, type } = req.body;
+    const { password } = req.body;
     const hashedPassword = await hashPassword(password);
     const newUserObj = { ...req.body, password: hashedPassword };
-    if (type === 'client') delete newUserObj.isAdmin;
     const user = await Users.create({ ...newUserObj });
     const token = generateToken({ id: user.id });
     delete user.password;
-    return setServerResponse(res, 201, { data: { ...user, token } });
+    return setServerResponse(res, 201, { data: [{ ...user, token }] });
   } catch (error) {
     return setServerResponse(res, 500, {
       error: "We're sorry about this. We're working to fix the problem.",
@@ -71,7 +68,7 @@ const getUsers = async (_, res) => {
  */
 const getUser = async (req, res) => {
   try {
-    const user = await Users.findOne('id', Number(req.params.id));
+    const user = await Users.findOneById(Number(req.params.id));
     if (!user) {
       return setServerResponse(res, 404, { error: 'User not found' });
     }
@@ -94,7 +91,7 @@ const getUser = async (req, res) => {
  */
 const loginUser = async (req, res) => {
   try {
-    const user = await Users.findOne('email', req.body.email);
+    const user = await Users.findOneByEmail(req.body.email);
     if (!user) {
       return setServerResponse(res, 404, {
         error: 'Incorrect email. User not found',
@@ -107,13 +104,14 @@ const loginUser = async (req, res) => {
     const token = generateToken({ id: user.id });
     const userObj = { ...user };
     delete userObj.password;
-    return setServerResponse(res, 200, { data: { ...userObj, token } });
+    return setServerResponse(res, 200, { data: [{ ...userObj, token }] });
   } catch (error) {
     return setServerResponse(res, 500, {
       error: "We're sorry about this. We're working to fix the problem.",
     });
   }
 };
+
 
 /**
  * Update the details of the provided user. Don't update email

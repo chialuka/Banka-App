@@ -7,9 +7,9 @@
     "node": "10"
   },
   "scripts": {
-    "test": "nyc --reporter=lcov --reporter=text-summary mocha --require @babel/register --exit",
+    "test": "cross-env NODE_ENV=test nyc --reporter=lcov --reporter=text-summary mocha --require @babel/register --exit",
     "test:watch": "mocha -w test/",
-    "dev": "nodemon index.js --exec babel-node",
+    "dev": "cross-env NODE_ENV=development nodemon index.js --exec babel-node",
     "start": "babel-node index.js",
     "lint": "eslint --fix",
     "coveralls": "cat ./coverage/lcov.info | coveralls"
@@ -20,15 +20,16 @@
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
     "coveralls": "^3.0.3",
+    "cross-env": "^5.2.0",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "faker": "^4.1.0",
-    "mocha": "^6.1.2",
+    "mocha": "^6.1.4",
     "nodemon": "^1.18.10",
-    "nyc": "^13.3.0"
+    "nyc": "^14.0.0"
   },
   "dependencies": {
     "@babel/cli": "^7.4.3",
@@ -46,7 +47,7 @@
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.9.1",
     "nodemailer": "^6.1.0",
-    "pg": "^7.10.0"
+    "pg": "^7.9.0"
   },
   "nodemonConfig": {
     "ignore": [

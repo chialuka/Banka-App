@@ -5,7 +5,8 @@ const wrongTypeUser = {
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
-  type: faker.name.jobTitle(),
+  isStaff: faker.name.jobTitle(),
+  isAdmin: faker.name.jobTitle(),
 };
 
 const wrongEmailDetail = {
@@ -13,7 +14,8 @@ const wrongEmailDetail = {
   lastname: faker.name.lastName(),
   email: faker.name.firstName(),
   password: faker.internet.password(),
-  type: faker.name.jobTitle(),
+  isStaff: faker.name.jobTitle(),
+  isAdmin: faker.name.jobTitle(),
 };
 
 const clientUser = {
@@ -21,7 +23,8 @@ const clientUser = {
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
-  type: 'client',
+  isStaff: true,
+  isAdmin: false,
 };
 
 const getUserStaff = {
@@ -29,7 +32,8 @@ const getUserStaff = {
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
-  type: 'staff',
+  isStaff: true,
+  isAdmin: false,
 };
 
 const correctPasswordClient = {
@@ -37,7 +41,8 @@ const correctPasswordClient = {
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: 'ndukwu',
-  type: 'client',
+  isStaff: true,
+  isAdmin: false,
 };
 
 const correctClient = {
@@ -45,7 +50,8 @@ const correctClient = {
   lastname: faker.name.lastName(),
   email: 'rihannandukwe@gmail.com',
   password: 'ndukwu',
-  type: 'client',
+  isStaff: true,
+  isAdmin: false,
 };
 
 const staffUser = {
@@ -53,7 +59,8 @@ const staffUser = {
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
-  type: 'staff',
+  isStaff: true,
+  isAdmin: false,
 };
 
 const accountUser = {
@@ -94,7 +101,8 @@ const clientAccount = {
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
-  type: 'client',
+  isStaff: true,
+  isAdmin: false,
   accountType: 'current',
   openingBalance: 8000,
 };
@@ -104,8 +112,8 @@ const adminAccount = {
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
-  type: 'staff',
-  isAdmin: true,
+  isStaff: true,
+  isAdmin: false,
   accountType: 'current',
   openingBalance: 8000,
 };
@@ -115,8 +123,8 @@ const adminAccount2 = {
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
-  type: 'staff',
-  isAdmin: true,
+  isStaff: true,
+  isAdmin: false,
   accountType: 'current',
   openingBalance: 8000,
 };
@@ -126,7 +134,8 @@ const staffAccount = {
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
-  type: 'staff',
+  isStaff: true,
+  isAdmin: false,
   accountType: 'current',
   openingBalance: 8000,
 };
@@ -136,7 +145,8 @@ const clientTransaction = {
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
-  type: 'client',
+  isStaff: true,
+  isAdmin: false,
 };
 
 const staffTransaction = {
@@ -144,7 +154,8 @@ const staffTransaction = {
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
-  type: 'staff',
+  isStaff: true,
+  isAdmin: false,
 };
 
 const adminTransaction = {
@@ -152,8 +163,8 @@ const adminTransaction = {
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
-  type: 'staff',
-  isAdmin: true,
+  isStaff: true,
+  isAdmin: false,
 };
 
 const creditTransaction = {
@@ -193,16 +204,9 @@ const clientTransfer = {
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
-  type: 'client',
+  isStaff: true,
+  isAdmin: false,
 };
-
-// const clientTransferCredit = {
-//   firstname: faker.name.firstName(),
-//   lastname: faker.name.lastName(),
-//   email: faker.internet.email(),
-//   password: faker.internet.password(),
-//   type: 'client',
-// };
 
 export {
   wrongTypeUser,

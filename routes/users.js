@@ -25,8 +25,8 @@ export default (router) => {
       password: Joi.string()
         .min(6)
         .required(),
-      type: Joi.string().required(),
-      isAdmin: Joi.boolean(),
+      isStaff: Joi.boolean().required(),
+      isAdmin: Joi.boolean().required(),
     }),
     createUser,
   );
