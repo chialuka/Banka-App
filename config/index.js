@@ -1,3 +1,4 @@
+import { Pool } from 'pg';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -23,6 +24,9 @@ const config = {
     url: DB_URI_PROD,
   },
 };
-const uri = config[NODE_ENV.toLowerCase()].url;
+const connectionString = config[NODE_ENV.toLowerCase()].url;
 
-export default uri;
+const db = new Pool({
+  connectionString,
+});
+export default db;

@@ -15,7 +15,7 @@ const verifyJwt = async (req, res) => {
     }
     const [, token] = header.split(' ');
     const { id } = jwt.verify(token, SECRET);
-    const tokenOwner = await Users.findOne('id', Number(id));
+    const tokenOwner = await Users.findOneById(id);
     if (!tokenOwner) {
       return setServerResponse(res, 404, {
         error: 'User with provided token not found',
@@ -43,7 +43,7 @@ const getUserFromToken = async (req, res) => {
 const authorizeClient = async (req, res, next) => {
   const tokenOwner = await getUserFromToken(req, res);
   if (!tokenOwner) return null;
-  if (tokenOwner.type !== 'client') {
+  if (tokenOwner[0].is_staff) {
     return setServerResponse(res, 403, { error: 'User not authorized' });
   }
   return next();

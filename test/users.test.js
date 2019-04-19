@@ -21,12 +21,16 @@ chai.use(chaiHttp);
 let createdClient;
 let createdStaff;
 
-describe('GET Home', () => {
-  it('should get the home page', (done) => {
+describe('GET / route', () => {
+  // clear users table from the DB before running tests
+  before(async () => {
+    await Users.deleteAll();
+  });
+
+  it('should get / route', (done) => {
     chai
       .request(server)
       .get('/')
-      .send()
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(err).to.be.null;
@@ -35,7 +39,7 @@ describe('GET Home', () => {
   });
 });
 
-xdescribe('POST User', () => {
+describe('POST User', () => {
   // should create user succesfully(201)
   it('should create a user successfully', (done) => {
     chai
@@ -47,11 +51,11 @@ xdescribe('POST User', () => {
         expect(res).to.be.json;
         expect(res.body).to.be.a('object');
         expect(res.body).to.include.key('data');
-        expect(res.body.data).to.include.key('email');
-        expect(res.body.data).to.include.key('firstname');
-        expect(res.body.data).to.include.key('lastname');
-        expect(res.body.data).to.include.key('token');
-        expect(res.body.data).to.not.include.key('password');
+        expect(res.body.data['0']).to.include.key('email');
+        expect(res.body.data['0']).to.include.key('first_name');
+        expect(res.body.data['0']).to.include.key('last_name');
+        expect(res.body.data['0']).to.include.key('token');
+        expect(res.body.data['0']).to.not.include.key('password');
         expect(err).to.be.null;
         done();
       });
@@ -93,7 +97,7 @@ xdescribe('POST User', () => {
 });
 
 // should create token for user with correct credentials
-xit('should not log user with wrong password in', (done) => {
+it('should not log user with wrong password in', (done) => {
   Users.create(staffUser).then((user) => {
     createdStaff = user;
     chai
@@ -110,7 +114,7 @@ xit('should not log user with wrong password in', (done) => {
   });
 });
 
-xit('should log in registered user with correct email and password', (done) => {
+it('should log in registered user with correct email and password', (done) => {
   Users.create(correctClient).then((user) => {
     createdClient = user;
     chai
@@ -119,7 +123,7 @@ xit('should log in registered user with correct email and password', (done) => {
       .send(correctPasswordClient)
       .end((err, res) => {
         expect(res).to.have.status(201);
-        expect(res.body.data).to.include.key('token');
+        expect(res.body.data['0']).to.include.key('token');
         expect(err).to.be.null;
         chai
           .request(server)
@@ -128,7 +132,7 @@ xit('should log in registered user with correct email and password', (done) => {
           .end((err, res) => {
             expect(res).to.have.status(200);
             expect(res.body).to.include.key('data');
-            expect(res.body.data).to.include.key('token');
+            expect(res.body.data['0']).to.include.key('token');
             expect(err).to.be.null;
             done();
           });
@@ -137,7 +141,7 @@ xit('should log in registered user with correct email and password', (done) => {
 });
 
 // should not login user with wrong details
-xit('should not login user who is not registered', (done) => {
+it('should not login user who is not registered', (done) => {
   chai
     .request(server)
     .post('/api/v1/users/auth/signin')
