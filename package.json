@@ -12,7 +12,8 @@
     "dev": "cross-env NODE_ENV=development nodemon index.js --exec babel-node",
     "start": "babel-node index.js",
     "lint": "eslint --fix",
-    "coveralls": "cat ./coverage/lcov.info | coveralls"
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
+    "postinstall": "babel-node ./config/db-tablesetup.js"
   },
   "author": "Chukwualuka Chiama",
   "license": "MIT",
