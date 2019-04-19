@@ -12,6 +12,7 @@ import {
   correctPasswordClient,
   staffUser,
   correctClient,
+  wrongAdminUser,
 } from '../fixtures';
 import * as Users from '../models/users';
 import { generateToken } from '../utils';
@@ -77,7 +78,19 @@ describe('POST User', () => {
       });
   });
 
-  // should fail with server error(500)
+  // should not create a user who is an admin
+  it('should not create a client who is an admin', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/users/auth/signup')
+      .send(wrongAdminUser)
+      .end((err, res) => {
+        expect(res).to.have.status(201);
+        expect(res.body.data[0].is_admin).to.equal(false);
+        expect(err).to.be.null;
+        done();
+      });
+  });
 
   // should not create user with email that exists(409)
   it('should not create a user if email already exists', (done) => {
@@ -154,34 +167,30 @@ it('should not login user who is not registered', (done) => {
     });
 });
 
-xdescribe('GET/ User', () => {
-  let getStaffUser;
+describe('GET/ User', () => {
+  let getstaffUser;
   let getStaffToken;
   before(async () => {
-    getStaffUser = await Users.create(getUserStaff);
-    getStaffToken = generateToken({ id: getStaffUser.id });
+    getstaffUser = await Users.create(getUserStaff);
+    getStaffToken = generateToken({ id: getstaffUser.id });
   });
   // should return user with specified id or email
   it('should return specified user', (done) => {
-    Users.findAll().then((users) => {
-      const [user, ...rest] = users.slice(-1);
-      chai
-        .request(server)
-        .get(`/api/v1/users/${user.id}`)
-        .set('Authorization', `Bearer ${getStaffToken}`)
-        .send()
-        .end((err, res) => {
-          expect(res).to.have.status(200);
-          expect(res.body).to.be.a('object');
-          expect(res.body).to.include.key('data');
-          expect(res.body.data).to.be.an('object');
-          expect(res.body.data).to.include.key('email');
-          expect(res.body.data).to.include.key('firstname');
-          expect(res.body.data).to.include.key('lastname');
-          expect(err).to.be.null;
-          done();
-        });
-    });
+    chai
+      .request(server)
+      .get(`/api/v1/users/${getstaffUser.id}`)
+      .set('Authorization', `Bearer ${getStaffToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body).to.be.a('object');
+        expect(res.body).to.include.key('data');
+        expect(res.body.data[0]).to.be.an('object');
+        expect(res.body.data[0]).to.include.key('email');
+        expect(res.body.data[0]).to.include.key('first_name');
+        expect(res.body.data[0]).to.include.key('last_name');
+        expect(err).to.be.null;
+        done();
+      });
   });
 
   // should fail to return when wrong details are passed
@@ -190,12 +199,13 @@ xdescribe('GET/ User', () => {
       .request(server)
       .get(`/api/v1/users/${createdClient.firstname}`)
       .set('Authorization', `Bearer ${getStaffToken}`)
-      .send()
       .end((_, res) => {
         expect(res).to.have.status(400);
         expect(res).to.not.include.key('data');
         expect(res.body).to.include.key('error');
-        expect(res.body.error).to.equal('Provided id is invalid. Please provide a positive integer');
+        expect(res.body.error).to.equal(
+          'Provided id is invalid. Please provide a positive integer',
+        );
         done();
       });
   });
@@ -206,7 +216,6 @@ xdescribe('GET/ User', () => {
       .request(server)
       .get('/api/v1/users')
       .set('Authorization', `Bearer ${getStaffToken}`)
-      .send()
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body).to.be.an('object');
@@ -214,6 +223,21 @@ xdescribe('GET/ User', () => {
         expect(res.body.data).to.be.an('array');
         expect(res.body.data).to.have.length.above(0);
         done();
+      });
+  });
+
+  // return a 404 if no users are registered yt
+  it('should return an error if no user making request cannot be found', async () => {
+    await Users.deleteAll();
+    chai
+      .request(server)
+      .get('/api/v1/users')
+      .set('Authorization', `Bearer ${getStaffToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('User with provided token not found');
+        expect(err).to.be.null;
       });
   });
 });
