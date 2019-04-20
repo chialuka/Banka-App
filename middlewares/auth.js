@@ -43,7 +43,7 @@ const getUserFromToken = async (req, res) => {
 const authorizeClient = async (req, res, next) => {
   const tokenOwner = await getUserFromToken(req, res);
   if (!tokenOwner) return null;
-  if (tokenOwner[0].is_staff) {
+  if (tokenOwner.is_staff) {
     return setServerResponse(res, 403, { error: 'User not authorized' });
   }
   return next();
@@ -52,7 +52,7 @@ const authorizeClient = async (req, res, next) => {
 const authorizeStaff = async (req, res, next) => {
   const user = await getUserFromToken(req, res);
   if (!user) return null;
-  if (user.type !== 'staff') {
+  if (!user.is_staff) {
     return setServerResponse(res, 403, { error: 'User not authorized' });
   }
   return next();
@@ -61,7 +61,7 @@ const authorizeStaff = async (req, res, next) => {
 const authorizeAdmin = async (req, res, next) => {
   const user = await getUserFromToken(req, res);
   if (!user) return null;
-  if (!user.isAdmin || user.type === 'client') {
+  if (!user.is_admin) {
     return setServerResponse(res, 403, { error: 'User not authorized' });
   }
   return next();

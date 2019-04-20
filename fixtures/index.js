@@ -63,6 +63,15 @@ const staffUser = {
   isAdmin: false,
 };
 
+const wrongAdminUser = {
+  firstname: faker.name.firstName(),
+  lastname: faker.name.lastName(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+  isStaff: false,
+  isAdmin: true,
+};
+
 const accountUser = {
   email: faker.internet.email(),
   accountType: 'savings',
@@ -216,6 +225,7 @@ export {
   getUserStaff,
   clientUser,
   staffUser,
+  wrongAdminUser,
   accountUser,
   noEmailAccount,
   noBalanceAccount,

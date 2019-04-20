@@ -25,6 +25,9 @@ const createUser = async (req, res) => {
     const { password } = req.body;
     const hashedPassword = await hashPassword(password);
     const newUserObj = { ...req.body, password: hashedPassword };
+    if (!req.body.isStaff) {
+      newUserObj.isAdmin = false;
+    }
     const user = await Users.create({ ...newUserObj });
     const token = generateToken({ id: user.id });
     delete user.password;
@@ -50,7 +53,7 @@ const getUsers = async (_, res) => {
     if (!users) {
       return setServerResponse(res, 404, { error: 'No users yet.' });
     }
-    return setServerResponse(res, 200, { data: users });
+    return setServerResponse(res, 200, { data: [users] });
   } catch (error) {
     return setServerResponse(res, 500, {
       error: "We're sorry about this. We're working to fix the problem.",
@@ -68,12 +71,12 @@ const getUsers = async (_, res) => {
  */
 const getUser = async (req, res) => {
   try {
-    const user = await Users.findOneById(Number(req.params.id));
+    const user = await Users.findOneById(req.params.id);
     if (!user) {
       return setServerResponse(res, 404, { error: 'User not found' });
     }
     delete user.password;
-    return setServerResponse(res, 200, { data: user });
+    return setServerResponse(res, 200, { data: [user] });
   } catch (error) {
     return setServerResponse(res, 500, {
       error: "We're sorry about this. We're working to fix the problem.",
@@ -111,7 +114,6 @@ const loginUser = async (req, res) => {
     });
   }
 };
-
 
 /**
  * Update the details of the provided user. Don't update email
