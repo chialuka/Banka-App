@@ -36,6 +36,15 @@ const adminUser = {
   isAdmin: true,
 };
 
+const wrongAdminUser = {
+  firstname: faker.name.firstName(),
+  lastname: faker.name.lastName(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+  isStaff: false,
+  isAdmin: true,
+};
+
 const accountUser = {
   id: 1,
   accountType: 'savings',
