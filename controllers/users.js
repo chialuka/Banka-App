@@ -161,12 +161,14 @@ const updateUser = async (req, res) => {
  */
 const deleteUser = async (req, res) => {
   try {
-    const user = await Users.findOne('id', Number(req.params.id));
-    const deletedUser = await Users.findOneAndDelete(req.params.id);
-    if (!user || !deletedUser) {
+    const user = await Users.findOneById(req.params.id);
+    if (!user) {
       return setServerResponse(res, 404, { error: 'User not found' });
     }
-    return setServerResponse(res, 200, { message: 'User delete successful' });
+    await Users.findOneAndDelete(req.params.id);
+    return setServerResponse(res, 200, {
+      message: `User with ID ${user.id} deleted successfully`,
+    });
   } catch (error) {
     return setServerResponse(res, 500, {
       error: "We're sorry about this. We're working to fix the problem.",
