@@ -35,7 +35,7 @@ const findOne = async (param) => {
 const findOneAndUpdate = async (data) => {
   const { status, id } = data;
   const result = await db.query(
-    'UPDATE accounts SET status = $1 WHERE id = $2 RETURNING *', 
+    'UPDATE accounts SET status = $1 WHERE id = $2 RETURNING *',
     [status, id],
   );
   return result.rows[0];
