@@ -15,10 +15,10 @@ const userTableQuery = `
 const accountTableQuery = `
   CREATE TABLE IF NOT EXISTS accounts(
     id SERIAL PRIMARY KEY,
-    status VARCHAR(10) NOT NULL,
     owner INTEGER NOT NULL,
+    status VARCHAR(10) NOT NULL,
     account_type TEXT NOT NULL,
-    account_number INTEGER NOT NULL,
+    account_number BIGINT NOT NULL,
     account_balance NUMERIC(15,2) NOT NULL,
     created_on TIMESTAMP NOT NULL
   )
@@ -38,9 +38,9 @@ const tableNames = [
 const createTable = async (name, query) => {
   try {
     await db.query(query);
-    console.info(`${name} table created successfully!`);
+    return (`${name} table created successfully!`);
   } catch (error) {
-    console.error(`${name} table Failed to create!`);
+    return (`${name} table Failed to create!`);
   }
 };
 
@@ -48,7 +48,6 @@ const setupTables = async () => {
   await Promise.all(
     tableNames.map(({ name, query }) => createTable(name, query)),
   );
-
   await db.end();
 };
 
