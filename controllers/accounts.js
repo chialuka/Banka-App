@@ -46,8 +46,7 @@ const createAccount = async (req, res) => {
       return setServerResponse(res, 403, { error: 'Token and user mismatch' });
     }
     const accountNumber = Number(generateAccountNumber());
-    const currentDate = new Date();
-    const createdOn = currentDate.toGMTString();
+    const createdOn = (new Date()).toGMTString();
     const accObj = {
       accountNumber, createdOn, status: 'draft', ...req.body,
     };
@@ -65,20 +64,20 @@ const createAccount = async (req, res) => {
  * @param {Object} account
  * @return {null}
  */
-const sendDeactivationMail = (account) => {
-  const composeEmail = {
-    to: account.email,
+const sendDeactivationMail = (email, account) => {
+  const deactivationEmail = {
+    to: email,
     subject: 'Account Deactivation',
     message: `<h1>Account Deactivation</h1>
-    <p>We regret to inform you that your ${account.accountType} account 
-    with account number ${account.accountNumber} has been deactivated.</p>
+    <p>We regret to inform you that your ${account.account_type} account 
+    with account number ${account.account_number} has been deactivated.</p>
     <p>Please note that you cannot make transactions until 
     your account is activated again. 
     Contact our nearest branch or reply this email for more information.</p>
     <p>Thank you for choosing Banka.</p>
     <p> Best wishes.</p>`,
   };
-  sendMail(composeEmail);
+  sendMail(deactivationEmail);
 };
 
 /**
@@ -87,19 +86,19 @@ const sendDeactivationMail = (account) => {
  * @param {Object} account
  * @returns {null}
  */
-const sendActivationMail = (account) => {
-  const composeEmail = {
-    to: account.email,
+const sendActivationMail = (email, account) => {
+  const composeActivationEmail = {
+    to: email,
     subject: 'Account Activation',
     message: `<h1>Account Activation</h1>
-    <p>We are pleased to inform you that your ${account.accountType} account 
-    with account number ${account.accountNumber} has been activated.</p>
+    <p>We are pleased to inform you that your ${account.account_type} account 
+    with account number ${account.account_number} has been activated.</p>
     <p>You can now make transactions with your account 
     and with your issued ATM card.</p>
     <p>Thank you for choosing Banka.</p>
     <p> Best wishes.</p>`,
   };
-  sendMail(composeEmail);
+  sendMail(composeActivationEmail);
 };
 
 /**
@@ -113,24 +112,24 @@ const sendActivationMail = (account) => {
  */
 const patchAccount = async (req, res) => {
   try {
-    const account = await Accounts.findOne('id', Number(req.params.id));
+    const account = await Accounts.findOne(req.params.id);
     if (!account) {
       return setServerResponse(res, 404, { error: 'Account not found' });
     }
-    const user = await Users.findOne('email', account.email);
+    const user = await Users.findOneById(account.owner);
     if (!user) {
       return setServerResponse(res, 404, { error: 'Account owner not found' });
     }
     const { status } = req.body;
-    const data = { ...account, status };
+    const data = { status, id: account.id };
     const patchedUser = await Accounts.findOneAndUpdate(data);
     if (status === 'dormant') {
-      sendDeactivationMail(account);
+      sendDeactivationMail(user.email, account);
     }
-    sendActivationMail(account);
-    return setServerResponse(res, 200, { data: { ...patchedUser } });
+    sendActivationMail(user.email, account);
+    return setServerResponse(res, 200, { data: [{ ...patchedUser }] });
   } catch (error) {
-    return setServerResponse(res, error.status, { error });
+    return setServerResponse(res, 500, { error });
   }
 };
 
