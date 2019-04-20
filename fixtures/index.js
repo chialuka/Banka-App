@@ -41,7 +41,7 @@ const correctPasswordClient = {
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: 'ndukwu',
-  isStaff: true,
+  isStaff: false,
   isAdmin: false,
 };
 
@@ -50,7 +50,7 @@ const correctClient = {
   lastname: faker.name.lastName(),
   email: 'rihannandukwe@gmail.com',
   password: 'ndukwu',
-  isStaff: true,
+  isStaff: false,
   isAdmin: false,
 };
 
