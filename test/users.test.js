@@ -11,7 +11,6 @@ import {
   getUserStaff,
   correctPasswordClient,
   staffUser,
-  correctClient,
   wrongAdminUser,
 } from '../fixtures';
 import * as Users from '../models/users';
@@ -19,7 +18,6 @@ import { generateToken } from '../utils';
 
 chai.use(chaiHttp);
 
-let createdClient;
 let createdStaff;
 
 describe('GET / route', () => {
@@ -122,29 +120,26 @@ it('should not log user with wrong password in', (done) => {
 });
 
 it('should log in registered user with correct email and password', (done) => {
-  Users.create(correctClient).then((user) => {
-    createdClient = user;
-    chai
-      .request(server)
-      .post('/api/v1/users/auth/signup')
-      .send(correctPasswordClient)
-      .end((err, res) => {
-        expect(res).to.have.status(201);
-        expect(res.body.data['0']).to.include.key('token');
-        expect(err).to.be.null;
-        chai
-          .request(server)
-          .post('/api/v1/users/auth/signin')
-          .send(correctPasswordClient)
-          .end((err, res) => {
-            expect(res).to.have.status(200);
-            expect(res.body).to.include.key('data');
-            expect(res.body.data['0']).to.include.key('token');
-            expect(err).to.be.null;
-            done();
-          });
-      });
-  });
+  chai
+    .request(server)
+    .post('/api/v1/users/auth/signup')
+    .send(correctPasswordClient)
+    .end((err, res) => {
+      expect(res).to.have.status(201);
+      expect(res.body.data['0']).to.include.key('token');
+      expect(err).to.be.null;
+      chai
+        .request(server)
+        .post('/api/v1/users/auth/signin')
+        .send(correctPasswordClient)
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          expect(res.body).to.include.key('data');
+          expect(res.body.data['0']).to.include.key('token');
+          expect(err).to.be.null;
+          done();
+        });
+    });
 });
 
 it('should not login user who is not registered', (done) => {
@@ -189,7 +184,7 @@ describe('GET/ User', () => {
   it('should not return user on entering invalid params', (done) => {
     chai
       .request(server)
-      .get(`/api/v1/users/${createdClient.firstname}`)
+      .get('/api/v1/users/firstname')
       .set('Authorization', `Bearer ${getStaffToken}`)
       .end((_, res) => {
         expect(res).to.have.status(400);
@@ -303,41 +298,54 @@ describe('PUT/ User', () => {
   });
 });
 
-xdescribe('DELETE/ User', () => {
-  let staffDeleteAccount;
-  let deleteToken;
-  let clientDeleteAccount;
+describe('DELETE/ User', () => {
+  let token;
+  let staff;
   before(async () => {
-    clientDeleteAccount = await Users.create(clientUser);
-    staffDeleteAccount = await Users.create(staffUser);
-    deleteToken = generateToken({ id: staffDeleteAccount.id });
+    await Users.deleteAll();
+    staff = await Users.create(staffUser);
+    token = generateToken({ id: staff.id });
   });
-  // should test to see that user is successfully deleted
-  it('should delete user', (done) => {
+
+  it('should return error for deleting non-existent user', (done) => {
     chai
       .request(server)
-      .delete(`/api/v1/users/${clientDeleteAccount.id}`)
-      .set('Authorization', `Bearer ${deleteToken}`)
-      .send()
+      .delete('/api/v1/users/10000000')
+      .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.include.key('message');
+        expect(res).to.have.status(404);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('User not found');
         expect(err).to.be.null;
         done();
       });
   });
 
-  // test to ensure error is returned when trying to delete non existent user
-  it('should return error for deleting non-existent user', (done) => {
+  it('should delete user', (done) => {
     chai
       .request(server)
-      .delete('/api/v1/users/10000000000')
-      .set('Authorization', `Bearer ${deleteToken}`)
-      .send()
+      .delete(`/api/v1/users/${staff.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body).to.include.key('message');
+        expect(res.body.message).to.equal(
+          `User with ID ${staff.id} deleted successfully`,
+        );
+        expect(err).to.be.null;
+        done();
+      });
+  });
+
+  it('should return an error if token owner does not exist', (done) => {
+    chai
+      .request(server)
+      .delete(`/api/v1/users/${staff.id}`)
+      .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         expect(res).to.have.status(404);
         expect(res.body).to.include.key('error');
-        expect(res.body.error).to.equal('User not found');
+        expect(res.body.error).to.equal('User with provided token not found');
         expect(err).to.be.null;
         done();
       });
