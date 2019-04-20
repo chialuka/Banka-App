@@ -5,13 +5,9 @@ import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../index';
 import {
-  wrongEmailDetail,
   clientUser,
-  wrongTypeUser,
-  getUserStaff,
   correctPasswordClient,
   staffUser,
-  wrongAdminUser,
 } from '../fixtures';
 import * as Users from '../models/users';
 import { generateToken } from '../utils';
@@ -62,7 +58,10 @@ describe('POST User', () => {
     chai
       .request(server)
       .post('/api/v1/users/auth/signup')
-      .send(wrongEmailDetail)
+      .send({
+        clientUser,
+        email: 'howareyou',
+      })
       .end((_, res) => {
         expect(res).to.have.status(400);
         expect(res.body).to.include.key('errors');
@@ -77,7 +76,11 @@ describe('POST User', () => {
     chai
       .request(server)
       .post('/api/v1/users/auth/signup')
-      .send(wrongAdminUser)
+      .send({
+        ...clientUser,
+        email: 'test@test.com',
+        isAdmin: true,
+      })
       .end((err, res) => {
         expect(res).to.have.status(201);
         expect(res.body.data[0].is_admin).to.equal(false);
@@ -146,7 +149,10 @@ it('should not login user who is not registered', (done) => {
   chai
     .request(server)
     .post('/api/v1/users/auth/signin')
-    .send(wrongTypeUser)
+    .send({
+      ...clientUser,
+      isStaff: false,
+    })
     .end((err, res) => {
       expect(res).to.have.status(404);
       expect(res.body).to.include.key('error');
@@ -159,7 +165,8 @@ describe('GET/ User', () => {
   let getstaffUser;
   let getStaffToken;
   before(async () => {
-    getstaffUser = await Users.create(getUserStaff);
+    await Users.deleteAll();
+    getstaffUser = await Users.create(staffUser);
     getStaffToken = generateToken({ id: getstaffUser.id });
   });
 
@@ -209,6 +216,19 @@ describe('GET/ User', () => {
         expect(res.body.data).to.be.an('array');
         expect(res.body.data).to.have.length.above(0);
         done();
+      });
+  });
+
+  it('should return an error if requested user cannot be found', async () => {
+    chai
+      .request(server)
+      .get('/api/v1/users/1000000')
+      .set('Authorization', `Bearer ${getStaffToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('User not found');
+        expect(err).to.be.null;
       });
   });
 

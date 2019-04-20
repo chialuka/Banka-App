@@ -116,6 +116,19 @@ const loginUser = async (req, res) => {
 };
 
 /**
+ * @name dataToUpdateUser
+ * @param {String} firstname
+ * @param {String} lastname
+ * @param {String} email
+ * @returns {Object}
+ */
+const dataToUpdateUser = ({ firstname, lastname, email }) => ({
+  ...(firstname && { firstname }),
+  ...(lastname && { lastname }),
+  ...(email && { email }),
+});
+
+/**
  * Update the details of the provided user. Don't update email
  * @name updateUser
  * @async
@@ -125,7 +138,7 @@ const loginUser = async (req, res) => {
  */
 const updateUser = async (req, res) => {
   try {
-    let hashedPassword = '';
+    let hashedPassword;
     const user = await Users.findOneById(req.params.id);
     if (!user) {
       return setServerResponse(res, 404, { error: 'Cannot find user' });
@@ -140,9 +153,7 @@ const updateUser = async (req, res) => {
     if (password) hashedPassword = await hashPassword(password);
     const data = {
       ...(hashedPassword && { password: hashedPassword }),
-      ...(firstname && { firstname }),
-      ...(lastname && { lastname }),
-      ...(email && { email }),
+      ...(dataToUpdateUser({ firstname, lastname, email })),
       id: user.id,
     };
     const updatedUser = await Users.findOneAndUpdate(data);
@@ -152,6 +163,7 @@ const updateUser = async (req, res) => {
     return setServerResponse(res, 500, { error });
   }
 };
+
 
 /**
  * Delete a provided user from the database

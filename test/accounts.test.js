@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-shadow */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable import/no-extraneous-dependencies */
@@ -9,24 +10,37 @@ import * as Users from '../models/users';
 import * as Accounts from '../models/accounts';
 import {
   accountUser,
-  noEmailAccount,
+  noIdAccount,
   noBalanceAccount,
   noTypeAccount,
   stringOpeningBalance,
   invalidAccountType,
-  clientAccount,
-  adminAccount,
-  staffAccount,
+  clientUser,
+  staffUser,
+  adminUser,
+  correctPasswordClient,
 } from '../fixtures';
+import { generateToken } from '../utils';
 
 chai.use(chaiHttp);
 
-let clientToken;
-let staffToken;
-let adminToken;
-let allAccounts;
-
-xdescribe('POST accounts', () => {
+describe('POST accounts', () => {
+  let clientToken;
+  let staffToken;
+  let adminToken;
+  let client;
+  let staff;
+  let admin;
+  before(async () => {
+    await Users.deleteAll();
+    await Accounts.deleteAll();
+    client = await Users.create(clientUser);
+    staff = await Users.create(staffUser);
+    admin = await Users.create(adminUser);
+    clientToken = generateToken({ id: client.id });
+    staffToken = generateToken({ id: staff.id });
+    adminToken = generateToken({ id: admin.id });
+  });
   it('should not create an account without authenticating login', (done) => {
     chai
       .request(server)
@@ -40,17 +54,17 @@ xdescribe('POST accounts', () => {
       });
   });
 
-  it('should return an error if email is omitted', (done) => {
+  it('should return an error if od is omitted', (done) => {
     chai
       .request(server)
       .post('/api/v1/accounts/')
-      .send(noEmailAccount)
+      .send(noIdAccount)
       .end((_, res) => {
         expect(res).to.have.status(400);
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.includes('"email" is required');
+          .that.includes('"id" is required');
         done();
       });
   });
@@ -115,72 +129,78 @@ xdescribe('POST accounts', () => {
       });
   });
 
-  it('should create an account if valid details are provided', (done) => {
+  it('should create an account if valid details are provided', async () => {
     chai
       .request(server)
-      .post('/api/v1/users/auth/signup')
-      .send(clientAccount)
+      .post('/api/v1/accounts/')
+      .send({
+        id: client.id,
+        accountType: 'current',
+        openingBalance: 10000,
+      })
+      .set('authorization', `Bearer ${clientToken}`)
       .end((err, res) => {
         expect(res).to.have.status(201);
-        expect(res.body.data).to.include.key('token');
+        expect(res.body).to.include.key('data');
+        expect(res.body.data[0]).to.include.key('account_number');
+        expect(res.body.data[0]).to.include.key('account_balance');
+        expect(res.body.data[0]).to.include.key('account_type');
+        expect(res.body.data[0]).to.include.key('status');
+        expect(res.body.data[0]).to.include.key('owner');
+        expect(res.body.data[0]).to.include.key('created_on');
         expect(err).to.be.null;
-        clientToken = res.body.data.token;
-        Users.findAll().then((users) => {
-          const user = users[users.length - 1];
-          chai
-            .request(server)
-            .post('/api/v1/accounts/')
-            .send({
-              email: user.email,
-              accountType: user.accountType,
-              openingBalance: user.openingBalance,
-            })
-            .set('authorization', `Bearer ${clientToken}`)
-            .end((err, res) => {
-              expect(res).to.have.status(201);
-              expect(res.body).to.include.key('data');
-              expect(res.body.data).to.include.key('accountNumber');
-              expect(res.body.data).to.include.key('openingBalance');
-              expect(res.body.data).to.include.key('accountType');
-              expect(res.body.data).to.include.key('status');
-              expect(res.body.data).to.include.key('owner');
-              expect(res.body.data).to.include.key('createdOn');
-              expect(err).to.be.null;
-              done();
-            });
-        });
       });
   });
 
   it('should not create account if token provided is not for client', (done) => {
     chai
       .request(server)
-      .post('/api/v1/users/auth/signup')
-      .send(staffAccount)
+      .post('/api/v1/accounts/')
+      .send(accountUser)
+      .set('authorization', `Bearer ${staffToken}`)
       .end((err, res) => {
-        expect(res).to.have.status(201);
-        expect(res.body.data).to.include.key('token');
+        expect(res).to.have.status(403);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('User not authorized');
         expect(err).to.be.null;
-        staffToken = res.body.data.token;
-        Users.findAll().then((users) => {
-          const user = users[users.length - 1];
-          chai
-            .request(server)
-            .post('/api/v1/accounts/')
-            .send({
-              email: user.email,
-              accountType: user.accountType,
-              openingBalance: user.openingBalance,
-            })
-            .set('authorization', `Bearer ${staffToken}`)
-            .end((err, res) => {
-              expect(res).to.have.status(403);
-              expect(res.body).to.include.key('error');
-              expect(res.body.error).to.equal('User not authorized');
-              expect(err).to.be.null;
-              done();
-            });
-        });
+        done();
+      });
+  });
+
+  it('should not create account if the owner does not exist', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/accounts/')
+      .send({
+        ...accountUser,
+        id: 100000000,
+      })
+      .set('authorization', `Bearer ${clientToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('Account owner not found');
+        expect(err).to.be.null;
+        done();
+      });
+  });
+
+  it('should not create account if token does not belong to user with request if', async () => {
+    const newUser = await Users.create(correctPasswordClient);
+    const newToken = generateToken({ id: newUser.id });
+    chai
+      .request(server)
+      .post('/api/v1/accounts/')
+      .send({
+        ...accountUser,
+        id: client.id,
+      })
+      .set('authorization', `Bearer ${newToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(403);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('Token and user mismatch');
+        expect(err).to.be.null;
       });
   });
 });
@@ -209,7 +229,9 @@ xdescribe('PATCH accounts', () => {
         expect(res).to.have.status(400);
         expect(res).to.not.include.key('data');
         expect(res.body).to.include.key('error');
-        expect(res.body.error).to.equal('Provided id is invalid. Please provide a positive integer');
+        expect(res.body.error).to.equal(
+          'Provided id is invalid. Please provide a positive integer',
+        );
         done();
       });
   });
@@ -231,7 +253,7 @@ xdescribe('PATCH accounts', () => {
 
   it('should fail if client token is used to make request', (done) => {
     Accounts.findAll().then((accounts) => {
-      allAccounts = accounts;
+      const allAccounts = accounts;
       const [account, ...rest] = allAccounts;
       chai
         .request(server)
@@ -291,7 +313,6 @@ xdescribe('PATCH accounts', () => {
       });
   });
 
-  
   it('should deactivate account if valid admin token and account id are provided', (done) => {
     chai
       .request(server)

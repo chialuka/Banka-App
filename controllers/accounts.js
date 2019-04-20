@@ -16,7 +16,7 @@ const sendNewAccountMail = (user, accObj) => {
     subject: 'New Banka Account',
     text: 'You have opened a new Banka account',
     message: `<h1>New Banka Account</h1>
-    <p>Hi ${user.firstname},</p>
+    <p>Hi ${user.first_name},</p>
     <p>This is to inform you that your new ${accObj.accountType} account with
     account number: ${Number(accObj.accountNumber)}
     and opening balance: N${accObj.openingBalance}
@@ -37,9 +37,9 @@ const sendNewAccountMail = (user, accObj) => {
  */
 const createAccount = async (req, res) => {
   try {
-    const user = await Users.findOne('email', req.body.email);
+    const user = await Users.findOneById(req.body.id);
     if (!user) {
-      return setServerResponse(res, 404, { error: 'User not found' });
+      return setServerResponse(res, 404, { error: 'Account owner not found' });
     }
     const { tokenOwner } = res.locals;
     if (tokenOwner.email !== user.email) {
@@ -49,15 +49,13 @@ const createAccount = async (req, res) => {
     const currentDate = new Date();
     const createdOn = currentDate.toGMTString();
     const accObj = {
-      accountNumber, createdOn, status: 'draft', owner: user.id, ...req.body,
+      accountNumber, createdOn, status: 'draft', ...req.body,
     };
     const newAccount = await Accounts.create(accObj);
     sendNewAccountMail(user, accObj);
-    return setServerResponse(res, 201, { data: { ...newAccount } });
+    return setServerResponse(res, 201, { data: [{ ...newAccount }] });
   } catch (error) {
-    return setServerResponse(res, 500, {
-      error: "We're sorry about this. We're working to fix the problem.",
-    });
+    return setServerResponse(res, 500, { error });
   }
 };
 

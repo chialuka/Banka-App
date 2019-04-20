@@ -20,9 +20,7 @@ export default (router) => {
       accountType: Joi.string()
         .valid('savings', 'current')
         .required(),
-      email: Joi.string()
-        .email({ minDomainAtoms: 2 })
-        .required(),
+      id: Joi.number().required(),
       openingBalance: Joi.number().required(),
     }),
     authorizeClient,
