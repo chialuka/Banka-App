@@ -18,7 +18,8 @@ const validateBodyPayload = schema => async (req, res, next) => {
 };
 
 const validateIdParams = (req, res, next) => {
-  if (!req.params.id.search(/[^\d]/g)) {
+  const invalid = req.params.id.search(/[^\d]/g);
+  if (invalid !== -1) {
     return res.status(400).json({
       status: 400,
       error: 'Provided id is invalid. Please provide a positive integer',
