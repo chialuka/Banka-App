@@ -1,61 +1,56 @@
-import { Pool } from 'pg';
-import config from '../config';
-
-const pool = new Pool({ connectionString: config });
+import db from '../config';
 
 const create = async (data) => {
   const {
     accountNumber,
     createdOn,
-    email,
     status,
-    owner,
+    id,
     accountType,
-    accountBalance,
+    openingBalance,
   } = data;
-  const newItem = await pool.query(
-    'INSERT INTO accounts (account_number, created_on, email, status, owner, account_type, account_balance) RETURNING *',
-    [
-      accountNumber,
-      createdOn,
-      email,
-      status,
-      owner,
-      accountType,
-      accountBalance,
-    ],
+  const newItem = await db.query(
+    `INSERT INTO accounts (
+      account_number, created_on, status, owner, account_type, account_balance
+    ) 
+    VALUES($1, $2, $3, $4, $5, $6) RETURNING *`,
+    [accountNumber, createdOn, status, id, accountType, openingBalance],
   );
-  return newItem.rows;
+  return newItem.rows[0];
 };
 
 const findAll = async () => {
-  const results = await pool.query('SELECT * FROM $1 ORDER BY id ASC');
-  return results.rows;
+  const results = await db.query('SELECT * FROM $1 ORDER BY id ASC');
+  return results.rows[0];
 };
 
 const findOne = async (param) => {
-  const result = await pool.query(
+  const result = await db.query(
     'SELECT * FROM $1 WHERE id = $1 OR account_number = $1',
     [param],
   );
-  return result.rows;
+  return result.rows[0];
 };
 
 const findOneAndUpdate = async (data) => {
   const { status, id } = data;
-  await pool.query(
-    'UPDATE accounts SET status = $1 WHERE id = $2',
+  const result = await db.query(
+    'UPDATE accounts SET status = $1 WHERE id = $2 RETURNING *',
     [status, id],
   );
-  const result = await findOne(id);
-  return result;
+  return result.rows[0];
 };
 
 const findOneAndDelete = async (id) => {
-  await pool.query('DELETE FROM accounts WHERE id = $1', [id]);
+  await db.query('DELETE FROM accounts WHERE id = $1', [id]);
   return id;
 };
 
+const deleteAll = async () => {
+  await db.query('DELETE FROM accounts');
+  return true;
+};
+
 export {
-  create, findAll, findOne, findOneAndUpdate, findOneAndDelete,
+  create, findAll, findOne, findOneAndUpdate, findOneAndDelete, deleteAll,
 };

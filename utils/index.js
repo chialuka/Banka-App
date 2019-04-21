@@ -20,8 +20,8 @@ const generateToken = (data) => {
 };
 
 const generateAccountNumber = () => {
-  const accNum = `5${Math.floor(Math.random() * (10 ** 9))}`;
-  return accNum;
+  const accNum = `5${Math.floor(Math.random() * (10 ** 12))}`;
+  return accNum.slice(0, 10);
 };
 
 const setServerResponse = (res, status, data) => {

@@ -1,38 +1,11 @@
 import faker from 'faker';
 
-const wrongTypeUser = {
-  firstname: faker.name.firstName(),
-  lastname: faker.name.lastName(),
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-  isStaff: faker.name.jobTitle(),
-  isAdmin: faker.name.jobTitle(),
-};
-
-const wrongEmailDetail = {
-  firstname: faker.name.firstName(),
-  lastname: faker.name.lastName(),
-  email: faker.name.firstName(),
-  password: faker.internet.password(),
-  isStaff: faker.name.jobTitle(),
-  isAdmin: faker.name.jobTitle(),
-};
-
 const clientUser = {
   firstname: faker.name.firstName(),
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
-  isStaff: true,
-  isAdmin: false,
-};
-
-const getUserStaff = {
-  firstname: faker.name.firstName(),
-  lastname: faker.name.lastName(),
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-  isStaff: true,
+  isStaff: false,
   isAdmin: false,
 };
 
@@ -45,135 +18,55 @@ const correctPasswordClient = {
   isAdmin: false,
 };
 
-const correctClient = {
-  firstname: faker.name.firstName(),
-  lastname: faker.name.lastName(),
-  email: 'rihannandukwe@gmail.com',
-  password: 'ndukwu',
-  isStaff: false,
-  isAdmin: false,
-};
-
 const staffUser = {
   firstname: faker.name.firstName(),
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
   isStaff: true,
-  isAdmin: false,
+  isAdmin: true,
 };
 
-const wrongAdminUser = {
+const adminUser = {
   firstname: faker.name.firstName(),
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
-  isStaff: false,
+  isStaff: true,
   isAdmin: true,
 };
 
 const accountUser = {
-  email: faker.internet.email(),
+  id: 1,
   accountType: 'savings',
   openingBalance: '1000',
 };
 
-const noEmailAccount = {
+const noIdAccount = {
   accountType: 'current',
   openingBalance: '100000',
 };
 
 const noTypeAccount = {
-  email: faker.internet.email(),
+  id: 1,
   openingBalance: '568900',
 };
 
 const noBalanceAccount = {
-  email: faker.internet.email(),
+  id: 1,
   accountType: 'current',
 };
 
 const stringOpeningBalance = {
-  email: faker.internet.email(),
+  id: 1,
   accountType: 'savings',
   openingBalance: 'hello world',
 };
 
 const invalidAccountType = {
-  email: faker.internet.email(),
+  id: 1,
   accountType: faker.name.jobTitle(),
   openingBalance: '8000',
-};
-
-const clientAccount = {
-  firstname: faker.name.firstName(),
-  lastname: faker.name.lastName(),
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-  isStaff: true,
-  isAdmin: false,
-  accountType: 'current',
-  openingBalance: 8000,
-};
-
-const adminAccount = {
-  firstname: faker.name.firstName(),
-  lastname: faker.name.lastName(),
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-  isStaff: true,
-  isAdmin: false,
-  accountType: 'current',
-  openingBalance: 8000,
-};
-
-const adminAccount2 = {
-  firstname: faker.name.firstName(),
-  lastname: faker.name.lastName(),
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-  isStaff: true,
-  isAdmin: false,
-  accountType: 'current',
-  openingBalance: 8000,
-};
-
-const staffAccount = {
-  firstname: faker.name.firstName(),
-  lastname: faker.name.lastName(),
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-  isStaff: true,
-  isAdmin: false,
-  accountType: 'current',
-  openingBalance: 8000,
-};
-
-const clientTransaction = {
-  firstname: faker.name.firstName(),
-  lastname: faker.name.lastName(),
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-  isStaff: true,
-  isAdmin: false,
-};
-
-const staffTransaction = {
-  firstname: faker.name.firstName(),
-  lastname: faker.name.lastName(),
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-  isStaff: true,
-  isAdmin: false,
-};
-
-const adminTransaction = {
-  firstname: faker.name.firstName(),
-  lastname: faker.name.lastName(),
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-  isStaff: true,
-  isAdmin: false,
 };
 
 const creditTransaction = {
@@ -208,41 +101,20 @@ const noCashierId = {
   transactionType: 'credit',
 };
 
-const clientTransfer = {
-  firstname: faker.name.firstName(),
-  lastname: faker.name.lastName(),
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-  isStaff: true,
-  isAdmin: false,
-};
-
 export {
-  wrongTypeUser,
-  wrongEmailDetail,
   correctPasswordClient,
-  correctClient,
-  getUserStaff,
   clientUser,
   staffUser,
-  wrongAdminUser,
+  adminUser,
   accountUser,
-  noEmailAccount,
+  noIdAccount,
   noBalanceAccount,
   noTypeAccount,
   stringOpeningBalance,
   invalidAccountType,
-  clientAccount,
-  staffAccount,
-  adminAccount,
-  adminAccount2,
-  clientTransaction,
-  staffTransaction,
-  adminTransaction,
   creditTransaction,
   debitTransaction,
   noAmountTransaction,
   noTransactionType,
   noCashierId,
-  clientTransfer,
 };
