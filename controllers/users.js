@@ -33,9 +33,7 @@ const createUser = async (req, res) => {
     delete user.password;
     return setServerResponse(res, 201, { data: [{ ...user, token }] });
   } catch (error) {
-    return setServerResponse(res, 500, {
-      error: "We're sorry about this. We're working to fix the problem.",
-    });
+    return setServerResponse(res, 500, { error: 'A fix is in progress' });
   }
 };
 
@@ -153,14 +151,14 @@ const updateUser = async (req, res) => {
     if (password) hashedPassword = await hashPassword(password);
     const data = {
       ...(hashedPassword && { password: hashedPassword }),
-      ...(dataToUpdateUser({ firstname, lastname, email })),
+      ...dataToUpdateUser({ firstname, lastname, email }),
       id: user.id,
     };
     const updatedUser = await Users.findOneAndUpdate(data);
     delete updatedUser.password;
     return setServerResponse(res, 200, { data: [{ ...updatedUser }] });
   } catch (error) {
-    return setServerResponse(res, 500, { error });
+    return setServerResponse(res, 500, { error: 'A fix is in progress' });
   }
 };
 
@@ -185,7 +183,7 @@ const deleteUser = async (req, res) => {
     });
   } catch (error) {
     return setServerResponse(res, 500, {
-      error: "We're sorry about this. We're working to fix the problem.",
+      error: 'A fix is in progress',
     });
   }
 };

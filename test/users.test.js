@@ -3,12 +3,9 @@
 import '@babel/polyfill';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
+import sinon from 'sinon';
 import server from '../index';
-import {
-  clientUser,
-  correctPasswordClient,
-  staffUser,
-} from '../fixtures';
+import { clientUser, correctPasswordClient, staffUser } from '../fixtures';
 import * as Users from '../models/users';
 import { generateToken } from '../utils';
 
@@ -219,7 +216,7 @@ describe('GET/ User', () => {
       });
   });
 
-  it('should return an error if requested user cannot be found', async () => {
+  it('should return an error if requested user cannot be found', (done) => {
     chai
       .request(server)
       .get('/api/v1/users/1000000')
@@ -229,6 +226,7 @@ describe('GET/ User', () => {
         expect(res.body).to.include.key('error');
         expect(res.body.error).to.equal('User not found');
         expect(err).to.be.null;
+        done();
       });
   });
 
@@ -367,6 +365,71 @@ describe('DELETE/ User', () => {
         expect(res.body).to.include.key('error');
         expect(res.body.error).to.equal('User with provided token not found');
         expect(err).to.be.null;
+        done();
+      });
+  });
+});
+
+describe('500 error', () => {
+  let client;
+  let staff;
+  let token;
+  let clientToken;
+  before(async () => {
+    await Users.deleteAll();
+    client = await Users.create(clientUser);
+    clientToken = generateToken({ id: client.id });
+    staff = await Users.create(staffUser);
+    token = generateToken({ id: staff.id });
+  });
+
+  it('should throw if it encounters an error on create', (done) => {
+    const stub = sinon.stub(Users, 'create');
+    const error = new Error('A fix is in progress');
+    stub.yields(error);
+    chai
+      .request(server)
+      .post('/api/v1/users/auth/signup')
+      .send(correctPasswordClient)
+      .end((err, res) => {
+        expect(res).to.have.status(500);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('A fix is in progress');
+        done();
+      });
+  });
+
+  it('should throw if it encounters an error on update', (done) => {
+    const stub = sinon.stub(Users, 'findOneAndUpdate');
+    const error = new Error('A fix is in progress');
+    stub.yields(error);
+    chai
+      .request(server)
+      .put(`/api/v1/users/${client.id}`)
+      .send({
+        firstname: 'Okwegba',
+      })
+      .set('authorization', `Bearer ${clientToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(500);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('A fix is in progress');
+        done();
+      });
+  });
+
+  it('should throw if it encounters an error on delete', (done) => {
+    const stub = sinon.stub(Users, 'findOneAndDelete');
+    const error = new Error('A fix is in progress');
+    stub.yields(error);
+    chai
+      .request(server)
+      .delete(`/api/v1/users/${staff.id}`)
+      .set('authorization', `Bearer ${token}`)
+      .end((err, res) => {
+        expect(res).to.have.status(500);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('A fix is in progress');
         done();
       });
   });

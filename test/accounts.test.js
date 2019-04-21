@@ -5,6 +5,7 @@
 import '@babel/polyfill';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
+import sinon from 'sinon';
 import server from '../index';
 import * as Users from '../models/users';
 import * as Accounts from '../models/accounts';
@@ -28,6 +29,10 @@ let clientToken;
 let staffToken;
 let client;
 let staff;
+let account;
+let account2;
+let admin;
+let adminToken;
 
 describe('POST accounts', () => {
 
@@ -38,8 +43,8 @@ describe('POST accounts', () => {
     staff = await Users.create(staffUser);
     clientToken = generateToken({ id: client.id });
     staffToken = generateToken({ id: staff.id });
-
   });
+
   it('should not create an account without authenticating login', (done) => {
     chai
       .request(server)
@@ -184,7 +189,7 @@ describe('POST accounts', () => {
       });
   });
 
-  it('should not create account if token does not belong to user with request if', async () => {
+  it('should not create account if token does not belong to user with request ID', async () => {
     const newUser = await Users.create(correctPasswordClient);
     const newToken = generateToken({ id: newUser.id });
     chai
@@ -205,9 +210,6 @@ describe('POST accounts', () => {
 });
 
 describe('PATCH accounts', () => {
-  let admin;
-  let adminToken;
-  let account;
   before(async () => {
     admin = await Users.create(adminUser);
     adminToken = generateToken({ id: admin.id });
@@ -217,7 +219,7 @@ describe('PATCH accounts', () => {
       openingBalance: 10000,
       status: 'dormant',
       accountNumber: generateAccountNumber(),
-      createdOn: (new Date()).toGMTString(),
+      createdOn: new Date().toGMTString(),
     });
   });
 
@@ -343,7 +345,17 @@ describe('PATCH accounts', () => {
   });
 });
 
-xdescribe('DELETE Account', () => {
+describe('DELETE Account', () => {
+  before(async () => {
+    account2 = await Accounts.create({
+      id: client.id,
+      accountType: 'current',
+      openingBalance: 10000000,
+      status: 'draft',
+      accountNumber: generateAccountNumber(),
+      createdOn: new Date().toGMTString(),
+    });
+  });
   it('should return an error if account ID params is not given', (done) => {
     chai
       .request(server)
@@ -359,14 +371,13 @@ xdescribe('DELETE Account', () => {
 
   it('should delete account if valid staff token is provided', (done) => {
     let deletedAccount;
-    const [account, ...rest] = allAccounts.slice(-1);
     chai
       .request(server)
       .delete(`/api/v1/accounts/${account.id}`)
       .send()
       .set('Authorization', `Bearer ${staffToken}`)
       .end((err, res) => {
-        Accounts.findOne('id', Number(account.id)).then((item) => {
+        Accounts.findOne(account.id).then((item) => {
           deletedAccount = item;
         });
         expect(res).to.have.status(200);
@@ -380,14 +391,13 @@ xdescribe('DELETE Account', () => {
 
   it('should delete account if valid admin token is provided', (done) => {
     let deletedAccount;
-    const [account, ...rest] = allAccounts;
     chai
       .request(server)
-      .delete(`/api/v1/accounts/${account.id}`)
+      .delete(`/api/v1/accounts/${account2.id}`)
       .send()
       .set('Authorization', `Bearer ${adminToken}`)
       .end((err, res) => {
-        Accounts.findOne('id', Number(account.id)).then((item) => {
+        Accounts.findOne(account2.id).then((item) => {
           deletedAccount = item;
         });
         expect(res).to.have.status(200);
@@ -400,7 +410,6 @@ xdescribe('DELETE Account', () => {
   });
 
   it('should return error if client token is provided', (done) => {
-    const [account, ...rest] = allAccounts;
     chai
       .request(server)
       .delete(`/api/v1/accounts/${account.id}`)
@@ -426,6 +435,75 @@ xdescribe('DELETE Account', () => {
         expect(res.body).to.include.key('error');
         expect(res.body.error).to.equal('Account not found');
         expect(err).to.be.null;
+        done();
+      });
+  });
+});
+
+describe('500 error', () => {
+  before(async () => {
+    account2 = await Accounts.create({
+      id: client.id,
+      accountType: 'current',
+      openingBalance: 10000000,
+      status: 'draft',
+      accountNumber: generateAccountNumber(),
+      createdOn: new Date().toGMTString(),
+    });
+  });
+
+  it('should throw if it encounters an error on create', (done) => {
+    const stub = sinon.stub(Accounts, 'create');
+    const error = new Error('A fix is in progress');
+    stub.yields(error);
+    chai
+      .request(server)
+      .post('/api/v1/accounts')
+      .send({
+        id: client.id,
+        accountType: 'current',
+        openingBalance: 10000,
+      })
+      .set('authorization', `Bearer ${clientToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(500);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('A fix is in progress');
+        done();
+      });
+  });
+
+  it('should throw if it encounters an error on update', (done) => {
+    const stub = sinon.stub(Accounts, 'findOneAndUpdate');
+    const error = new Error('A fix is in progress');
+    stub.yields(error);
+    chai
+      .request(server)
+      .patch(`/api/v1/accounts/${account2.id}`)
+      .send({
+        status: 'active',
+      })
+      .set('authorization', `Bearer ${adminToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(500);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('A fix is in progress');
+        done();
+      });
+  });
+
+  it('should throw if it encounters an error on delete', (done) => {
+    const stub = sinon.stub(Accounts, 'findOneAndDelete');
+    const error = new Error('A fix is in progress');
+    stub.yields(error);
+    chai
+      .request(server)
+      .delete(`/api/v1/accounts/${account2.id}`)
+      .set('authorization', `Bearer ${staffToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(500);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('A fix is in progress');
         done();
       });
   });
