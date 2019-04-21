@@ -35,7 +35,6 @@ let admin;
 let adminToken;
 
 describe('POST accounts', () => {
-
   before(async () => {
     await Users.deleteAll();
     await Accounts.deleteAll();
@@ -150,7 +149,7 @@ describe('POST accounts', () => {
         expect(res.body.data[0]).to.include.key('account_balance');
         expect(res.body.data[0]).to.include.key('account_type');
         expect(res.body.data[0]).to.include.key('status');
-        expect(res.body.data[0]).to.include.key('owner');
+        expect(res.body.data[0]).to.include.key('owner_id');
         expect(res.body.data[0]).to.include.key('created_on');
         expect(err).to.be.null;
       });
@@ -435,75 +434,6 @@ describe('DELETE Account', () => {
         expect(res.body).to.include.key('error');
         expect(res.body.error).to.equal('Account not found');
         expect(err).to.be.null;
-        done();
-      });
-  });
-});
-
-describe('500 error', () => {
-  before(async () => {
-    account2 = await Accounts.create({
-      id: client.id,
-      accountType: 'current',
-      openingBalance: 10000000,
-      status: 'draft',
-      accountNumber: generateAccountNumber(),
-      createdOn: new Date().toGMTString(),
-    });
-  });
-
-  it('should throw if it encounters an error on create', (done) => {
-    const stub = sinon.stub(Accounts, 'create');
-    const error = new Error('A fix is in progress');
-    stub.yields(error);
-    chai
-      .request(server)
-      .post('/api/v1/accounts')
-      .send({
-        id: client.id,
-        accountType: 'current',
-        openingBalance: 10000,
-      })
-      .set('authorization', `Bearer ${clientToken}`)
-      .end((err, res) => {
-        expect(res).to.have.status(500);
-        expect(res.body).to.include.key('error');
-        expect(res.body.error).to.equal('A fix is in progress');
-        done();
-      });
-  });
-
-  it('should throw if it encounters an error on update', (done) => {
-    const stub = sinon.stub(Accounts, 'findOneAndUpdate');
-    const error = new Error('A fix is in progress');
-    stub.yields(error);
-    chai
-      .request(server)
-      .patch(`/api/v1/accounts/${account2.id}`)
-      .send({
-        status: 'active',
-      })
-      .set('authorization', `Bearer ${adminToken}`)
-      .end((err, res) => {
-        expect(res).to.have.status(500);
-        expect(res.body).to.include.key('error');
-        expect(res.body.error).to.equal('A fix is in progress');
-        done();
-      });
-  });
-
-  it('should throw if it encounters an error on delete', (done) => {
-    const stub = sinon.stub(Accounts, 'findOneAndDelete');
-    const error = new Error('A fix is in progress');
-    stub.yields(error);
-    chai
-      .request(server)
-      .delete(`/api/v1/accounts/${account2.id}`)
-      .set('authorization', `Bearer ${staffToken}`)
-      .end((err, res) => {
-        expect(res).to.have.status(500);
-        expect(res.body).to.include.key('error');
-        expect(res.body.error).to.equal('A fix is in progress');
         done();
       });
   });

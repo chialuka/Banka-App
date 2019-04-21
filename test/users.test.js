@@ -75,7 +75,7 @@ describe('POST User', () => {
       .post('/api/v1/users/auth/signup')
       .send({
         ...clientUser,
-        email: 'test@test.com',
+        email: 'testmic@testmic.com',
         isAdmin: true,
       })
       .end((err, res) => {
@@ -100,62 +100,63 @@ describe('POST User', () => {
         done();
       });
   });
-});
 
-it('should not log user with wrong password in', (done) => {
-  Users.create(staffUser).then((user) => {
-    createdStaff = user;
-    chai
-      .request(server)
-      .post('/api/v1/users/auth/signin')
-      .send(createdStaff)
-      .end((err, res) => {
-        expect(res).to.have.status(401);
-        expect(res.body).to.include.key('error');
-        expect(res.body.error).to.equal('Incorrect password');
-        expect(err).to.be.null;
-        done();
-      });
-  });
-});
-
-it('should log in registered user with correct email and password', (done) => {
-  chai
-    .request(server)
-    .post('/api/v1/users/auth/signup')
-    .send(correctPasswordClient)
-    .end((err, res) => {
-      expect(res).to.have.status(201);
-      expect(res.body.data['0']).to.include.key('token');
-      expect(err).to.be.null;
+  it('should not log user with wrong password in', (done) => {
+    Users.create(staffUser).then((user) => {
+      createdStaff = user;
       chai
         .request(server)
         .post('/api/v1/users/auth/signin')
-        .send(correctPasswordClient)
+        .send(createdStaff)
         .end((err, res) => {
-          expect(res).to.have.status(200);
-          expect(res.body).to.include.key('data');
-          expect(res.body.data['0']).to.include.key('token');
+          expect(res).to.have.status(401);
+          expect(res.body).to.include.key('error');
+          expect(res.body.error).to.equal('Incorrect password');
           expect(err).to.be.null;
           done();
         });
     });
-});
+  });
 
-it('should not login user who is not registered', (done) => {
-  chai
-    .request(server)
-    .post('/api/v1/users/auth/signin')
-    .send({
-      ...clientUser,
-      isStaff: false,
-    })
-    .end((err, res) => {
-      expect(res).to.have.status(404);
-      expect(res.body).to.include.key('error');
-      expect(res.body).to.not.include.key('token');
-      done();
-    });
+  it('should log in registered user with correct email and password', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/users/auth/signup')
+      .send(correctPasswordClient)
+      .end((err, res) => {
+        expect(res).to.have.status(201);
+        expect(res.body.data['0']).to.include.key('token');
+        expect(err).to.be.null;
+        chai
+          .request(server)
+          .post('/api/v1/users/auth/signin')
+          .send(correctPasswordClient)
+          .end((err, res) => {
+            expect(res).to.have.status(200);
+            expect(res.body).to.include.key('data');
+            expect(res.body.data['0']).to.include.key('token');
+            expect(err).to.be.null;
+            done();
+          });
+      });
+  });
+
+  it('should not login user who is not registered', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/users/auth/signin')
+      .send({
+        ...clientUser,
+        isStaff: false,
+        email: 'nkeonyemetalumbu@gmail.com',
+      })
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        expect(res.body).to.include.key('error');
+        expect(res.body).to.not.include.key('token');
+        done();
+      });
+  });
 });
 
 describe('GET/ User', () => {

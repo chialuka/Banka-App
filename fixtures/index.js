@@ -24,7 +24,7 @@ const staffUser = {
   email: faker.internet.email(),
   password: faker.internet.password(),
   isStaff: true,
-  isAdmin: true,
+  isAdmin: false,
 };
 
 const adminUser = {

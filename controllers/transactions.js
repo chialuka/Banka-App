@@ -26,7 +26,7 @@ const mailSender = (email, firstname, data) => {
     <li>Description: ${data.description}</li>
     <li>Transaction Amount: ${data.amount}</li>
     <li>Transaction Date: ${data.date}</li>
-    <li>Account Balance: NGN${data.accountBalance}</li>
+    <li>Account Balance: NGN${data.newBalance}</li>
     </ul>
     <p>Thank you for choosing Banka</p>
     <p>Best wishes.</p>`,
@@ -45,28 +45,31 @@ const mailSender = (email, firstname, data) => {
  */
 const chargeAccount = async (res, account, reqBody) => {
   const { amount, transactionType } = reqBody;
-  const originalBalance = 'accountBalance' in account
-    ? account.accountBalance : account.openingBalance;
-  if (reqBody.transactionType === 'debit' && originalBalance < amount) {
+  const oldBalance = account.account_balance;
+  if (reqBody.transactionType === 'debit' && oldBalance < amount) {
     return setServerResponse(res, 400, { error: 'Overdraft disallowed' });
   }
-  const accountBalance = transactionType === 'credit'
-    ? originalBalance + amount : originalBalance - amount;
-  const newDate = new Date();
+  const newBalance = transactionType === 'credit'
+    ? Number(oldBalance) + Number(amount)
+    : Number(oldBalance) - Number(amount);
   const transactionData = {
-    ...reqBody, accountBalance, date: newDate.toDateString(),
+    ...reqBody,
+    newBalance,
+    date: new Date().toDateString(),
   };
-  delete account.openingBalance;
-  const accountData = { ...account, accountBalance };
+  const accountData = { account_balance: newBalance, id: account.id };
   await Accounts.findOneAndUpdate(accountData);
-  const user = await Users.findOne('email', account.email);
+  const user = await Users.findOneById(account.owner_id);
   if (!user) {
     return setServerResponse(res, 404, { error: 'Account owner not found' });
   }
-  const newTransaction = await Transactions.create(transactionData);
-  mailSender(account.email, user.firstname, transactionData);
+  const newTransaction = await Transactions.create({
+    ...transactionData,
+    oldBalance,
+  });
+  mailSender(account.email, user.first_name, transactionData);
   if (reqBody.senderAccount || reqBody.receiverAccount) return null;
-  return setServerResponse(res, 201, { data: { ...newTransaction } });
+  return setServerResponse(res, 201, { data: [{ ...newTransaction }] });
 };
 
 /**
@@ -79,7 +82,7 @@ const chargeAccount = async (res, account, reqBody) => {
  */
 const createTransaction = async (req, res) => {
   try {
-    const staff = await Users.findOne('id', Number(req.body.cashierId));
+    const staff = await Users.findOneById(req.body.cashierId);
     if (!staff) {
       return setServerResponse(res, 404, { error: 'Staff not found' });
     }
@@ -87,9 +90,7 @@ const createTransaction = async (req, res) => {
     if (staff.email !== tokenOwner.email) {
       return setServerResponse(res, 403, { error: 'User and token mismatch' });
     }
-    const account = await Accounts.findOne(
-      'accountNumber', Number(req.body.accountNumber),
-    );
+    const account = await Accounts.findOne(req.body.accountNumber);
     if (!account) {
       return setServerResponse(res, 404, { error: 'Account not found' });
     }
