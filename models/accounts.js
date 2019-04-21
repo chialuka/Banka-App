@@ -11,7 +11,8 @@ const create = async (data) => {
   } = data;
   const newItem = await db.query(
     `INSERT INTO accounts (
-      account_number, created_on, status, owner, account_type, account_balance
+      account_number, created_on, status, 
+      owner_id, account_type, account_balance
     ) 
     VALUES($1, $2, $3, $4, $5, $6) RETURNING *`,
     [accountNumber, createdOn, status, id, accountType, openingBalance],
@@ -26,17 +27,18 @@ const findAll = async () => {
 
 const findOne = async (param) => {
   const result = await db.query(
-    'SELECT * FROM accounts WHERE id = $1 OR account_number = $1',
+    'SELECT * FROM accounts WHERE account_number = $1 OR id = $1',
     [param],
   );
   return result.rows[0];
 };
 
-const findOneAndUpdate = async (data) => {
-  const { status, id } = data;
+const findOneAndUpdate = async (...args) => {
+  const [param] = args;
+  const item = Object.entries(param);
   const result = await db.query(
-    'UPDATE accounts SET status = $1 WHERE id = $2 RETURNING *',
-    [status, id],
+    `UPDATE accounts SET ${item[0][0]} = $1 WHERE id = $2 RETURNING *`,
+    [item[0][1], item[1][1]],
   );
   return result.rows[0];
 };

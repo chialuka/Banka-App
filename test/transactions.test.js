@@ -3,75 +3,73 @@ import '@babel/polyfill';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../index';
+import * as Transactions from '../models/transactions';
 import * as Accounts from '../models/accounts';
 import * as Users from '../models/users';
 import {
-  staffTransaction,
-  clientTransaction,
-  adminTransaction,
   creditTransaction,
   debitTransaction,
   noAmountTransaction,
   noTransactionType,
   noCashierId,
-  clientTransfer,
+  correctPasswordClient,
+  staffUser,
+  adminUser,
+  clientUser,
 } from '../fixtures';
 import { generateToken, generateAccountNumber } from '../utils';
 
 chai.use(chaiHttp);
 
-xdescribe('POST transactions and Transfers', () => {
-  let clientToken;
-  let staffToken;
-  let adminToken;
-  let createClient;
-  let createStaff;
-  let createAdmin;
-  let clientAccount;
-  let accountNumber;
-  let activatedAccount;
-  let userToBeCredited;
-  let accountToBeCredited;
-  let accountNumberCredited;
+let clientToken;
+let staffToken;
+let adminToken;
+let createClient;
+let createStaff;
+let createAdmin;
+let clientAccount;
+let accountNumber;
+let activatedAccount;
+let userToBeCredited;
+let accountToBeCredited;
+let accountNumberCredited;
 
+describe('POST transactions and Transfers', () => {
   before(async () => {
-    createClient = await Users.create(clientTransaction);
-    userToBeCredited = await Users.create(clientTransfer);
+    await Users.deleteAll();
+    createClient = await Users.create(correctPasswordClient);
+    userToBeCredited = await Users.create(clientUser);
     clientToken = generateToken({ id: createClient.id });
-    const { firstname, email, id } = createClient;
 
-    createStaff = await Users.create(staffTransaction);
+    createStaff = await Users.create(staffUser);
     staffToken = generateToken({ id: createStaff.id });
 
-    createAdmin = await Users.create(adminTransaction);
+    createAdmin = await Users.create(adminUser);
     adminToken = generateToken({ id: createAdmin.id });
 
     accountNumber = Number(generateAccountNumber());
     accountNumberCredited = Number(generateAccountNumber());
     clientAccount = await Accounts.create({
-      firstname,
-      email,
-      owner: id,
+      id: createClient.id,
       accountType: 'current',
       openingBalance: 5000,
+      status: 'draft',
+      createdOn: new Date().toGMTString(),
       accountNumber,
     });
 
     accountToBeCredited = await Accounts.create({
-      ...userToBeCredited,
-      owner: id,
+      id: userToBeCredited.id,
       accountType: 'savings',
       openingBalance: 5000,
+      status: 'draft',
+      createdOn: new Date().toGMTString(),
       accountNumber: accountNumberCredited,
     });
 
     activatedAccount = await Accounts.findOneAndUpdate({
-      ...clientAccount,
       status: 'active',
-    });
-    activatedCreditedAccount = await Accounts.findOneAndUpdate({
-      ...accountToBeCredited,
-      status: 'active',
+      id: clientAccount.id,
     });
   });
 
@@ -88,16 +86,17 @@ xdescribe('POST transactions and Transfers', () => {
       .end((err, res) => {
         expect(res).to.have.status(201);
         expect(res.body).to.be.an('object');
-        expect(res.body.data).to.be.an('object');
-        expect(res.body.data).to.include.key('id');
-        expect(res.body.data).to.include.key('accountNumber');
-        expect(res.body.data).to.include.key('description');
-        expect(res.body.data).to.include.key('date');
-        expect(res.body.data).to.include.key('cashierId');
-        expect(res.body.data).to.include.key('amount');
-        expect(res.body.data).to.include.key('transactionType');
-        expect(res.body.data.transactionType).to.equal('credit');
-        expect(res.body.data).to.include.key('accountBalance');
+        expect(res.body.data[0]).to.be.an('object');
+        expect(res.body.data[0]).to.include.key('id');
+        expect(res.body.data[0]).to.include.key('account_number');
+        expect(res.body.data[0]).to.include.key('description');
+        expect(res.body.data[0]).to.include.key('created_on');
+        expect(res.body.data[0]).to.include.key('cashier_id');
+        expect(res.body.data[0]).to.include.key('amount');
+        expect(res.body.data[0]).to.include.key('transaction_type');
+        expect(res.body.data[0].transaction_type).to.equal('credit');
+        expect(res.body.data[0]).to.include.key('old_balance');
+        expect(res.body.data[0]).to.include.key('new_balance');
         expect(err).to.be.null;
         done();
       });
@@ -116,22 +115,23 @@ xdescribe('POST transactions and Transfers', () => {
       .end((err, res) => {
         expect(res).to.have.status(201);
         expect(res.body).to.be.an('object');
-        expect(res.body.data).to.be.an('object');
-        expect(res.body.data).to.include.key('id');
-        expect(res.body.data).to.include.key('accountNumber');
-        expect(res.body.data).to.include.key('description');
-        expect(res.body.data).to.include.key('date');
-        expect(res.body.data).to.include.key('cashierId');
-        expect(res.body.data).to.include.key('amount');
-        expect(res.body.data).to.include.key('transactionType');
-        expect(res.body.data.transactionType).to.equal('debit');
-        expect(res.body.data).to.include.key('accountBalance');
+        expect(res.body.data[0]).to.be.an('object');
+        expect(res.body.data[0]).to.include.key('id');
+        expect(res.body.data[0]).to.include.key('account_number');
+        expect(res.body.data[0]).to.include.key('description');
+        expect(res.body.data[0]).to.include.key('created_on');
+        expect(res.body.data[0]).to.include.key('cashier_id');
+        expect(res.body.data[0]).to.include.key('amount');
+        expect(res.body.data[0]).to.include.key('transaction_type');
+        expect(res.body.data[0].transaction_type).to.equal('debit');
+        expect(res.body.data[0]).to.include.key('old_balance');
+        expect(res.body.data[0]).to.include.key('new_balance');
         expect(err).to.be.null;
         done();
       });
   });
 
-  it('should return 200 if token and valid details are provided', (done) => {
+  it('should return 200 if admin token and valid details are provided', (done) => {
     chai
       .request(server)
       .post('/api/v1/transactions')
@@ -144,16 +144,17 @@ xdescribe('POST transactions and Transfers', () => {
       .end((err, res) => {
         expect(res).to.have.status(201);
         expect(res.body).to.be.an('object');
-        expect(res.body.data).to.be.an('object');
-        expect(res.body.data).to.include.key('id');
-        expect(res.body.data).to.include.key('accountNumber');
-        expect(res.body.data).to.include.key('description');
-        expect(res.body.data).to.include.key('date');
-        expect(res.body.data).to.include.key('cashierId');
-        expect(res.body.data).to.include.key('amount');
-        expect(res.body.data).to.include.key('transactionType');
-        expect(res.body.data.transactionType).to.equal('debit');
-        expect(res.body.data).to.include.key('accountBalance');
+        expect(res.body.data[0]).to.be.an('object');
+        expect(res.body.data[0]).to.include.key('id');
+        expect(res.body.data[0]).to.include.key('account_number');
+        expect(res.body.data[0]).to.include.key('description');
+        expect(res.body.data[0]).to.include.key('created_on');
+        expect(res.body.data[0]).to.include.key('cashier_id');
+        expect(res.body.data[0]).to.include.key('amount');
+        expect(res.body.data[0]).to.include.key('transaction_type');
+        expect(res.body.data[0].transaction_type).to.equal('debit');
+        expect(res.body.data[0]).to.include.key('old_balance');
+        expect(res.body.data[0]).to.include.key('new_balance');
         expect(err).to.be.null;
         done();
       });
@@ -261,6 +262,32 @@ xdescribe('POST transactions and Transfers', () => {
       });
   });
 
+  it('should return an error if account is dormant', async () => {
+    const newAccountNumber = Number(generateAccountNumber());
+    const inActiveAccount = await Accounts.create({
+      id: createClient.id,
+      accountType: 'current',
+      openingBalance: 5000,
+      status: 'draft',
+      createdOn: new Date().toGMTString(),
+      accountNumber: newAccountNumber,
+    });
+    chai
+      .request(server)
+      .post('/api/v1/transactions/')
+      .send({
+        ...debitTransaction,
+        accountNumber: Number(inActiveAccount.account_number),
+        cashierId: createStaff.id,
+      })
+      .set('authorization', `Bearer ${staffToken}`)
+      .end((_, res) => {
+        expect(res).to.have.status(400);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('Account not activated');
+      });
+  });
+
   it('should return an error if cashier ID is omitted', (done) => {
     chai
       .request(server)
@@ -332,7 +359,7 @@ xdescribe('POST transactions and Transfers', () => {
       .send({
         ...debitTransaction,
         accountNumber,
-        cashierId: 10000000,
+        cashierId: 100000,
       })
       .set('authorization', `Bearer ${adminToken}`)
       .end((_, res) => {
@@ -359,7 +386,11 @@ xdescribe('POST transactions and Transfers', () => {
       });
   });
 
-  it('should transfer between clients', (done) => {
+  xit('should transfer between clients', async () => {
+    await Accounts.findOneAndUpdate({
+      status: 'active',
+      id: accountToBeCredited.id,
+    });
     const amount = 0;
     const receiverAccount = accountNumberCredited;
     chai
@@ -377,28 +408,6 @@ xdescribe('POST transactions and Transfers', () => {
         expect(res.body).to.include.key('Message');
         expect(res.body.Message).to.equal(`Transfer of N${0} successful`);
         expect(err).to.be.null;
-        done();
-      });
-  });
-  it('should return an error if account is dormant', async () => {
-    const deactivatedAccount = await Accounts.findOneAndUpdate({
-      ...activatedAccount,
-      status: 'dormant',
-    });
-    const accNumber = deactivatedAccount.accountNumber;
-    chai
-      .request(server)
-      .post('/api/v1/transactions/')
-      .send({
-        ...debitTransaction,
-        accountNumber: accNumber,
-        cashierId: createStaff.id,
-      })
-      .set('authorization', `Bearer ${staffToken}`)
-      .end((_, res) => {
-        expect(res).to.have.status(400);
-        expect(res.body).to.include.key('error');
-        expect(res.body.error).to.equal('Account not activated');
       });
   });
 });

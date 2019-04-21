@@ -54,7 +54,7 @@ const createAccount = async (req, res) => {
     sendNewAccountMail(user, accObj);
     return setServerResponse(res, 201, { data: [{ ...newAccount }] });
   } catch (error) {
-    return setServerResponse(res, 500, { error: 'A fix is in progress' });
+    return setServerResponse(res, 500, { error });
   }
 };
 
@@ -69,8 +69,9 @@ const sendDeactivationMail = (email, account) => {
     to: email,
     subject: 'Account Deactivation',
     message: `<h1>Account Deactivation</h1>
-    <p>We regret to inform you that your ${account.account_type} account 
-    with account number ${account.account_number} has been deactivated.</p>
+    <p>Your ${account.account_type} account 
+    with account number ${account.account_number} has been deactivated
+    and is dormant.</p>
     <p>Please note that you cannot make transactions until 
     your account is activated again. 
     Contact our nearest branch or reply this email for more information.</p>
@@ -87,18 +88,19 @@ const sendDeactivationMail = (email, account) => {
  * @returns {null}
  */
 const sendActivationMail = (email, account) => {
-  const composeActivationEmail = {
+  const activatedAccountEmail = {
     to: email,
     subject: 'Account Activation',
     message: `<h1>Account Activation</h1>
-    <p>We are pleased to inform you that your ${account.account_type} account 
+    <p>Dear esteemed customer, </p>
+    <p>Your ${account.account_type} account 
     with account number ${account.account_number} has been activated.</p>
     <p>You can now make transactions with your account 
     and with your issued ATM card.</p>
     <p>Thank you for choosing Banka.</p>
     <p> Best wishes.</p>`,
   };
-  sendMail(composeActivationEmail);
+  sendMail(activatedAccountEmail);
 };
 
 /**
@@ -116,7 +118,7 @@ const patchAccount = async (req, res) => {
     if (!account) {
       return setServerResponse(res, 404, { error: 'Account not found' });
     }
-    const user = await Users.findOneById(account.owner);
+    const user = await Users.findOneById(account.owner_id);
     if (!user) {
       return setServerResponse(res, 404, { error: 'Account owner not found' });
     }
@@ -129,7 +131,7 @@ const patchAccount = async (req, res) => {
     sendActivationMail(user.email, account);
     return setServerResponse(res, 200, { data: [{ ...patchedUser }] });
   } catch (error) {
-    return setServerResponse(res, 500, { error: 'A fix is in progress' });
+    return setServerResponse(res, 500, { error });
   }
 };
 
@@ -178,7 +180,7 @@ const deleteAccount = async (req, res) => {
       message: 'Account successfully deleted',
     });
   } catch (error) {
-    return setServerResponse(res, 500, { error: 'A fix is in progress' });
+    return setServerResponse(res, 500, { error });
   }
 };
 
