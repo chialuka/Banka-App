@@ -5,6 +5,7 @@
 import '@babel/polyfill';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
+import sinon from 'sinon';
 import server from '../index';
 import * as Users from '../models/users';
 import * as Accounts from '../models/accounts';
