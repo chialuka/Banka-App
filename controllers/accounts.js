@@ -54,7 +54,7 @@ const createAccount = async (req, res) => {
     sendNewAccountMail(user, accObj);
     return setServerResponse(res, 201, { data: [{ ...newAccount }] });
   } catch (error) {
-    return setServerResponse(res, 500, { error: 'A fix is in progress' });
+    return setServerResponse(res, 500, { error });
   }
 };
 
@@ -129,7 +129,7 @@ const patchAccount = async (req, res) => {
     sendActivationMail(user.email, account);
     return setServerResponse(res, 200, { data: [{ ...patchedUser }] });
   } catch (error) {
-    return setServerResponse(res, 500, { error: 'A fix is in progress' });
+    return setServerResponse(res, 500, { error });
   }
 };
 

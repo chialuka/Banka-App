@@ -35,6 +35,7 @@ let admin;
 let adminToken;
 
 describe('POST accounts', () => {
+
   before(async () => {
     await Users.deleteAll();
     await Accounts.deleteAll();
