@@ -162,6 +162,7 @@ const updateUser = async (req, res) => {
   }
 };
 
+
 /**
  * Delete a provided user from the database
  * @name deleteUser

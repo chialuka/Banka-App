@@ -51,12 +51,14 @@ const findOneAndUpdate = async (data) => {
 const findOneAndDelete = async (id) => {
   await db.query('DELETE FROM accounts WHERE owner_id = $1', [id]);
   await db.query('DELETE FROM users WHERE id = $1', [id]);
+  await db.query('DELETE FROM accounts WHERE owner = $1', [id]);
   return id;
 };
 
 const deleteAll = async () => {
   await db.query('DELETE FROM accounts');
   await db.query('DELETE FROM users');
+  await db.query('DELETE FROM accounts');
   return true;
 };
 
