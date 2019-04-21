@@ -54,7 +54,7 @@ const createAccount = async (req, res) => {
     sendNewAccountMail(user, accObj);
     return setServerResponse(res, 201, { data: [{ ...newAccount }] });
   } catch (error) {
-    return setServerResponse(res, 500, { error });
+    return setServerResponse(res, 500, { error: 'A fix is in progress' });
   }
 };
 
@@ -129,7 +129,7 @@ const patchAccount = async (req, res) => {
     sendActivationMail(user.email, account);
     return setServerResponse(res, 200, { data: [{ ...patchedUser }] });
   } catch (error) {
-    return setServerResponse(res, 500, { error });
+    return setServerResponse(res, 500, { error: 'A fix is in progress' });
   }
 };
 
@@ -165,7 +165,7 @@ const sendDeleteMail = (account) => {
  */
 const deleteAccount = async (req, res) => {
   try {
-    const account = await Accounts.findOne('id', Number(req.params.id));
+    const account = await Accounts.findOne(req.params.id);
     if (!account) {
       return setServerResponse(res, 404, { error: 'Account not found' });
     }
@@ -178,7 +178,7 @@ const deleteAccount = async (req, res) => {
       message: 'Account successfully deleted',
     });
   } catch (error) {
-    return setServerResponse(res, error.status, { error });
+    return setServerResponse(res, 500, { error: 'A fix is in progress' });
   }
 };
 

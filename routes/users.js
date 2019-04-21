@@ -49,8 +49,7 @@ export default (router) => {
     .put(
       validateBodyPayload({
         email: Joi.string()
-          .email({ minDomainAtoms: 2 })
-          .required(),
+          .email({ minDomainAtoms: 2 }),
         firstname: Joi.string(),
         lastname: Joi.string(),
         password: Joi.string().min(6),
