@@ -30,6 +30,7 @@ let client;
 let staff;
 
 describe('POST accounts', () => {
+
   before(async () => {
     await Users.deleteAll();
     await Accounts.deleteAll();
@@ -37,6 +38,7 @@ describe('POST accounts', () => {
     staff = await Users.create(staffUser);
     clientToken = generateToken({ id: client.id });
     staffToken = generateToken({ id: staff.id });
+
   });
   it('should not create an account without authenticating login', (done) => {
     chai

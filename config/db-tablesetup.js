@@ -15,7 +15,7 @@ const userTableQuery = `
 const accountTableQuery = `
   CREATE TABLE IF NOT EXISTS accounts(
     id SERIAL PRIMARY KEY,
-    owner INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    owner INTEGER NOT NULL,
     status VARCHAR(10) NOT NULL,
     account_type TEXT NOT NULL,
     account_number BIGINT NOT NULL,
