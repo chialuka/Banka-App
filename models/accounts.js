@@ -20,13 +20,13 @@ const create = async (data) => {
 };
 
 const findAll = async () => {
-  const results = await db.query('SELECT * FROM $1 ORDER BY id ASC');
+  const results = await db.query('SELECT * FROM accounts ORDER BY id ASC');
   return results.rows[0];
 };
 
 const findOne = async (param) => {
   const result = await db.query(
-    'SELECT * FROM $1 WHERE id = $1 OR account_number = $1',
+    'SELECT * FROM accounts WHERE id = $1 OR account_number = $1',
     [param],
   );
   return result.rows[0];
@@ -52,5 +52,10 @@ const deleteAll = async () => {
 };
 
 export {
-  create, findAll, findOne, findOneAndUpdate, findOneAndDelete, deleteAll,
+  create,
+  findAll,
+  findOne,
+  findOneAndUpdate,
+  findOneAndDelete,
+  deleteAll,
 };

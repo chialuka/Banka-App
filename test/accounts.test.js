@@ -20,26 +20,25 @@ import {
   adminUser,
   correctPasswordClient,
 } from '../fixtures';
-import { generateToken } from '../utils';
+import { generateToken, generateAccountNumber } from '../utils';
 
 chai.use(chaiHttp);
 
+let clientToken;
+let staffToken;
+let client;
+let staff;
+
 describe('POST accounts', () => {
-  let clientToken;
-  let staffToken;
-  let adminToken;
-  let client;
-  let staff;
-  let admin;
+
   before(async () => {
     await Users.deleteAll();
     await Accounts.deleteAll();
     client = await Users.create(clientUser);
     staff = await Users.create(staffUser);
-    admin = await Users.create(adminUser);
     clientToken = generateToken({ id: client.id });
     staffToken = generateToken({ id: staff.id });
-    adminToken = generateToken({ id: admin.id });
+
   });
   it('should not create an account without authenticating login', (done) => {
     chai
@@ -205,7 +204,23 @@ describe('POST accounts', () => {
   });
 });
 
-xdescribe('PATCH accounts', () => {
+describe('PATCH accounts', () => {
+  let admin;
+  let adminToken;
+  let account;
+  before(async () => {
+    admin = await Users.create(adminUser);
+    adminToken = generateToken({ id: admin.id });
+    account = await Accounts.create({
+      id: client.id,
+      accountType: 'savings',
+      openingBalance: 10000,
+      status: 'dormant',
+      accountNumber: generateAccountNumber(),
+      createdOn: (new Date()).toGMTString(),
+    });
+  });
+
   it('should return an error if account ID params is not given', (done) => {
     chai
       .request(server)
@@ -219,7 +234,6 @@ xdescribe('PATCH accounts', () => {
       });
   });
 
-  // should fail to return when invalid params are passed
   it('should return error on entering invalid params', (done) => {
     chai
       .request(server)
@@ -252,26 +266,21 @@ xdescribe('PATCH accounts', () => {
   });
 
   it('should fail if client token is used to make request', (done) => {
-    Accounts.findAll().then((accounts) => {
-      const allAccounts = accounts;
-      const [account, ...rest] = allAccounts;
-      chai
-        .request(server)
-        .patch(`/api/v1/accounts/${account.id}`)
-        .send({ status: 'active' })
-        .set('authorization', `Bearer ${clientToken}`)
-        .end((err, res) => {
-          expect(res).to.have.status(403);
-          expect(res.body).to.include.key('error');
-          expect(res.body.error).to.equal('User not authorized');
-          expect(err).to.be.null;
-          done();
-        });
-    });
+    chai
+      .request(server)
+      .patch(`/api/v1/accounts/${account.id}`)
+      .send({ status: 'active' })
+      .set('authorization', `Bearer ${clientToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(403);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('User not authorized');
+        expect(err).to.be.null;
+        done();
+      });
   });
 
   it('should fail if non-admin staff token is used to make request', (done) => {
-    const [account, ...rest] = allAccounts;
     chai
       .request(server)
       .patch(`/api/v1/accounts/${account.id}`)
@@ -289,54 +298,32 @@ xdescribe('PATCH accounts', () => {
   it('should activate account if valid admin token and account id are provided', (done) => {
     chai
       .request(server)
-      .post('/api/v1/users/auth/signup')
-      .send(adminAccount)
+      .patch(`/api/v1/accounts/${account.id}`)
+      .send({ status: 'active' })
+      .set('authorization', `Bearer ${adminToken}`)
       .end((err, res) => {
-        expect(res).to.have.status(201);
-        expect(res.body.data).to.include.key('token');
+        expect(res).to.have.status(200);
+        expect(res.body).to.include.key('data');
+        expect(res.body.data[0]).to.include.key('status');
+        expect(res.body.data[0].status).to.equal('active');
         expect(err).to.be.null;
-        adminToken = res.body.data.token;
-        const [account, ...rest] = allAccounts.slice(-1);
-        chai
-          .request(server)
-          .patch(`/api/v1/accounts/${account.id}`)
-          .send({ status: 'active' })
-          .set('authorization', `Bearer ${adminToken}`)
-          .end((err, res) => {
-            expect(res).to.have.status(200);
-            expect(res.body).to.include.key('data');
-            expect(res.body.data).to.include.key('status');
-            expect(res.body.data.status).to.equal('active');
-            expect(err).to.be.null;
-            done();
-          });
+        done();
       });
   });
 
   it('should deactivate account if valid admin token and account id are provided', (done) => {
     chai
       .request(server)
-      .post('/api/v1/users/auth/signin')
-      .send(adminAccount)
+      .patch(`/api/v1/accounts/${account.id}`)
+      .send({ status: 'dormant' })
+      .set('authorization', `Bearer ${adminToken}`)
       .end((err, res) => {
         expect(res).to.have.status(200);
-        expect(res.body.data).to.include.key('token');
+        expect(res.body).to.include.key('data');
+        expect(res.body.data[0]).to.include.key('status');
+        expect(res.body.data[0].status).to.equal('dormant');
         expect(err).to.be.null;
-        adminToken = res.body.data.token;
-        const [account, ...rest] = allAccounts.slice(-1);
-        chai
-          .request(server)
-          .patch(`/api/v1/accounts/${account.id}`)
-          .send({ status: 'dormant' })
-          .set('authorization', `Bearer ${adminToken}`)
-          .end((err, res) => {
-            expect(res).to.have.status(200);
-            expect(res.body).to.include.key('data');
-            expect(res.body.data).to.include.key('status');
-            expect(res.body.data.status).to.equal('dormant');
-            expect(err).to.be.null;
-            done();
-          });
+        done();
       });
   });
 
