@@ -21,7 +21,7 @@ const makeCharges = async (req, res, senderAccount, receiverAccount) => {
       Message: `Transfer of N${req.body.amount} successful`,
     });
   } catch (error) {
-    return setServerResponse(res, 500, { error: { ...error } });
+    return setServerResponse(res, 500, { error });
   }
 };
 
@@ -37,10 +37,7 @@ const makeCharges = async (req, res, senderAccount, receiverAccount) => {
  * @returns {function}
  */
 const validateReceiver = async (req, res, senderAccount) => {
-  const receiverAccount = await Accounts.findOne(
-    'accountNumber',
-    Number(req.body.receiverAccount),
-  );
+  const receiverAccount = await Accounts.findOne(req.body.receiverAccount);
   if (!receiverAccount) {
     return setServerResponse(res, 404, { error: 'Receiver account not found' });
   }
@@ -62,12 +59,13 @@ const validateReceiver = async (req, res, senderAccount) => {
  * @returns {function} validateReceiver
  */
 const validateSender = async (req, res) => {
-  const senderAccount = await Accounts.findOne(
-    'accountNumber',
-    Number(req.body.senderAccount),
-  );
+  const senderAccount = await Accounts.findOne(req.body.senderAccount);
   if (!senderAccount) {
     return setServerResponse(res, 404, { error: 'Sender account not found' });
+  }
+  const { tokenOwner } = res.locals;
+  if (tokenOwner.id !== senderAccount.owner_id) {
+    return setServerResponse(res, 403, { error: 'Token and user mismatch' });
   }
   if (senderAccount.status !== 'active') {
     return setServerResponse(res, 400, {

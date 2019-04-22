@@ -1,5 +1,5 @@
 ---
-engines:
+plugins:
   duplication:
     enabled: true
     checks:
@@ -8,18 +8,9 @@ engines:
     config:
       languages:
       - javascript
-  eslint:
-    enabled: true
-    config:
-    extensions:
-    - .es6
-    - .js
   fixme:
     enabled: true
-ratings:
-  paths:
-  - "src/**.js"
-exclude_paths:
+exclude_patterns:
 - dist/**/*
 - config/
 - db/
