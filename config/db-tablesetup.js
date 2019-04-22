@@ -62,10 +62,37 @@ const createTable = async (name, query) => {
   }
 };
 
+// const createRelation = async () => {
+//   const usersAccountsQuery = `
+//   ALTER TABLE accounts DROP CONSTRAINT IF EXISTS owner_id;
+
+//   ALTER TABLE accounts 
+//     ADD CONSTRAINT owner_id 
+//     FOREIGN KEY(id) REFERENCES users(id)
+//     ON DELETE CASCADE
+//   `;
+//   const accountsTransactionsQuery = `
+//     ALTER TABLE transactions DROP CONSTRAINT IF EXISTS account_id;
+    
+//     ALTER TABLE transactions 
+//       ADD CONSTRAINT account_id 
+//       FOREIGN KEY (id) REFERENCES accounts(id)
+//       ON DELETE CASCADE
+// `;
+//   try {
+//     await db.query(usersAccountsQuery);
+//     await db.query(accountsTransactionsQuery);
+//     return ('Relations successfully created');
+//   } catch (error) {
+//     return ('Error creating relationships');
+//   }
+// };
+
 const setupTables = async () => {
   await Promise.all(
     tableNames.map(({ name, query }) => createTable(name, query)),
   );
+  // await createRelation();
   await db.end();
 };
 
