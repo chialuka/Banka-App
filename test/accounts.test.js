@@ -235,6 +235,20 @@ describe('GET accounts', () => {
     });
   });
 
+  xit("should return account's transactions", (done) => {
+    const number = Number(activeAccount.account_number);
+    chai
+      .request(server)
+      .get(`api/v1/accounts/transactions/${number}`)
+      .set('Authorization', `Bearer ${staffToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.data).to.be.an('array');
+        expect(err).to.be.null;
+        done();
+      });
+  });
+
   it('should get active accounts if specified in the query string', (done) => {
     chai
       .request(server)

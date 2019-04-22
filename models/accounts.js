@@ -32,6 +32,19 @@ const findByStatus = async (status) => {
   return results.rows;
 };
 
+const findByTransaction = async (params) => {
+  const results = await db.query(
+    `SELECT transactions.id, transactions.created_on, 
+    transactions.transaction_type, accounts.account_number, 
+    transactions.old_balance, transactions.new_balance, transactions.amount 
+    FROM transactions INNER JOIN accounts 
+      ON transactions.account_number = accounts.account_number 
+      WHERE transactions.account_number = $1`,
+    [params],
+  );
+  return results.rows;
+};
+
 const findOne = async (param) => {
   const result = await db.query(
     'SELECT * FROM accounts WHERE account_number = $1 OR id = $1',
@@ -64,6 +77,7 @@ export {
   create,
   findAll,
   findByStatus,
+  findByTransaction,
   findOne,
   findOneAndUpdate,
   findOneAndDelete,
