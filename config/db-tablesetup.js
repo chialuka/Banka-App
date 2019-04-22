@@ -59,7 +59,6 @@ const createTable = async (name, query) => {
     await db.query(query);
     return `${name} table created successfully!`;
   } catch (error) {
-    console.log(error);
     return `${name} table Failed to create!`;
   }
 };
@@ -86,7 +85,6 @@ const createRelation = async () => {
     await db.query(accountsTransactionsQuery);
     return 'Relations successfully created';
   } catch (error) {
-    console.log(error);
     return 'Error creating relationships';
   }
 };
