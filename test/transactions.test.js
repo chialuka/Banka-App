@@ -116,16 +116,18 @@ describe('POST transactions and Transfers', () => {
         expect(res).to.have.status(201);
         expect(res.body).to.be.an('object');
         expect(res.body.data[0]).to.be.an('object');
-        expect(res.body.data[0]).to.include.key('id');
-        expect(res.body.data[0]).to.include.key('account_number');
-        expect(res.body.data[0]).to.include.key('description');
-        expect(res.body.data[0]).to.include.key('created_on');
-        expect(res.body.data[0]).to.include.key('cashier_id');
-        expect(res.body.data[0]).to.include.key('amount');
-        expect(res.body.data[0]).to.include.key('transaction_type');
+        expect(res.body.data[0]).to.have.all.keys(
+          'id',
+          'account_number',
+          'description',
+          'created_on',
+          'cashier_id',
+          'amount',
+          'transaction_type',
+          'old_balance',
+          'new_balance',
+        );
         expect(res.body.data[0].transaction_type).to.equal('debit');
-        expect(res.body.data[0]).to.include.key('old_balance');
-        expect(res.body.data[0]).to.include.key('new_balance');
         expect(err).to.be.null;
         done();
       });
@@ -145,16 +147,18 @@ describe('POST transactions and Transfers', () => {
         expect(res).to.have.status(201);
         expect(res.body).to.be.an('object');
         expect(res.body.data[0]).to.be.an('object');
-        expect(res.body.data[0]).to.include.key('id');
-        expect(res.body.data[0]).to.include.key('account_number');
-        expect(res.body.data[0]).to.include.key('description');
-        expect(res.body.data[0]).to.include.key('created_on');
-        expect(res.body.data[0]).to.include.key('cashier_id');
-        expect(res.body.data[0]).to.include.key('amount');
-        expect(res.body.data[0]).to.include.key('transaction_type');
+        expect(res.body.data[0]).to.have.all.keys(
+          'id',
+          'account_number',
+          'description',
+          'created_on',
+          'cashier_id',
+          'amount',
+          'transaction_type',
+          'old_balance',
+          'new_balance',
+        );
         expect(res.body.data[0].transaction_type).to.equal('debit');
-        expect(res.body.data[0]).to.include.key('old_balance');
-        expect(res.body.data[0]).to.include.key('new_balance');
         expect(err).to.be.null;
         done();
       });
