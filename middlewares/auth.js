@@ -67,4 +67,12 @@ const authorizeAdmin = async (req, res, next) => {
   return next();
 };
 
-export { authorizeStaff, authorizeClient, authorizeAdmin };
+const authenticateLogin = async (req, res, next) => {
+  const loggedInUser = await getUserFromToken(req, res);
+  if (!loggedInUser) return null;
+  return next();
+};
+
+export {
+  authorizeStaff, authorizeClient, authorizeAdmin, authenticateLogin,
+};

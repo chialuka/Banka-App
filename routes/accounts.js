@@ -3,6 +3,7 @@ import {
   createAccount,
   patchAccount,
   deleteAccount,
+  getAccountDetails,
 } from '../controllers/accounts';
 import {
   validateBodyPayload,
@@ -12,6 +13,7 @@ import {
   authorizeClient,
   authorizeAdmin,
   authorizeStaff,
+  authenticateLogin,
 } from '../middlewares/auth';
 
 export default (router) => {
@@ -39,5 +41,6 @@ export default (router) => {
       authorizeAdmin,
       patchAccount,
     )
-    .delete(validateIdParams, authorizeStaff, deleteAccount);
+    .delete(validateIdParams, authorizeStaff, deleteAccount)
+    .get(validateIdParams, authenticateLogin, getAccountDetails);
 };

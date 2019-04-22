@@ -46,9 +46,12 @@ const createAccount = async (req, res) => {
       return setServerResponse(res, 403, { error: 'Token and user mismatch' });
     }
     const accountNumber = Number(generateAccountNumber());
-    const createdOn = (new Date()).toGMTString();
+    const createdOn = new Date().toGMTString();
     const accObj = {
-      accountNumber, createdOn, status: 'draft', ...req.body,
+      accountNumber,
+      createdOn,
+      status: 'draft',
+      ...req.body,
     };
     const newAccount = await Accounts.create(accObj);
     sendNewAccountMail(user, accObj);
@@ -181,4 +184,22 @@ const deleteAccount = async (req, res) => {
   }
 };
 
-export { createAccount, patchAccount, deleteAccount };
+const getAccountDetails = async (req, res) => {
+  try {
+    const account = await Accounts.findOne(req.params.id);
+    if (!account) {
+      return setServerResponse(res, 404, { error: 'Account not found' });
+    }
+    const { tokenOwner } = res.locals;
+    if (!tokenOwner.is_staff && (tokenOwner.id !== account.owner_id)) {
+      return setServerResponse(res, 403, { error: 'Token and user mismatch' });
+    }
+    return setServerResponse(res, 200, { data: [account] });
+  } catch (error) {
+    return setServerResponse(res, 500, { error });
+  }
+};
+
+export {
+  createAccount, patchAccount, deleteAccount, getAccountDetails,
+};

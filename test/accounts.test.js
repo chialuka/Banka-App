@@ -28,11 +28,13 @@ chai.use(chaiHttp);
 let clientToken;
 let staffToken;
 let client;
+let newUser;
 let staff;
 let account;
 let account2;
 let admin;
 let adminToken;
+let newToken;
 
 describe('POST accounts', () => {
   before(async () => {
@@ -145,12 +147,15 @@ describe('POST accounts', () => {
       .end((err, res) => {
         expect(res).to.have.status(201);
         expect(res.body).to.include.key('data');
-        expect(res.body.data[0]).to.include.key('account_number');
-        expect(res.body.data[0]).to.include.key('account_balance');
-        expect(res.body.data[0]).to.include.key('account_type');
-        expect(res.body.data[0]).to.include.key('status');
-        expect(res.body.data[0]).to.include.key('owner_id');
-        expect(res.body.data[0]).to.include.key('created_on');
+        expect(res.body.data[0]).to.have.all.keys(
+          'account_number',
+          'account_balance',
+          'account_type',
+          'status',
+          'owner_id',
+          'created_on',
+          'id',
+        );
         expect(err).to.be.null;
       });
   });
@@ -189,8 +194,8 @@ describe('POST accounts', () => {
   });
 
   it('should not create account if token does not belong to user with request ID', async () => {
-    const newUser = await Users.create(correctPasswordClient);
-    const newToken = generateToken({ id: newUser.id });
+    newUser = await Users.create(correctPasswordClient);
+    newToken = generateToken({ id: newUser.id });
     chai
       .request(server)
       .post('/api/v1/accounts/')
@@ -204,6 +209,95 @@ describe('POST accounts', () => {
         expect(res.body).to.include.key('error');
         expect(res.body.error).to.equal('Token and user mismatch');
         expect(err).to.be.null;
+      });
+  });
+});
+
+describe('GET accounts', () => {
+  let newAccount;
+  before(async () => {
+    newAccount = await Accounts.create({
+      id: client.id,
+      accountType: 'savings',
+      openingBalance: 10000,
+      status: 'dormant',
+      accountNumber: generateAccountNumber(),
+      createdOn: new Date().toGMTString(),
+    });
+  });
+
+  it('should not get if client token does not belong to account owner', (done) => {
+    chai
+      .request(server)
+      .get(`/api/v1/accounts/${newAccount.id}`)
+      .set('Authorization', `Bearer ${newToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(403);
+        expect(res.body.error).to.equal('Token and user mismatch');
+        done();
+      });
+  });
+
+  it('should not get if account cannot be found', (done) => {
+    chai
+      .request(server)
+      .get('/api/v1/accounts/1000000')
+      .set('Authorization', `Bearer ${clientToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        expect(res.body.error).to.equal('Account not found');
+        done();
+      });
+  });
+
+  it('should not get if auth token is not provided', (done) => {
+    chai
+      .request(server)
+      .get('/api/v1/accounts/1')
+      .end((err, res) => {
+        expect(res).to.have.status(403);
+        expect(res.body.error).to.equal('Auth token not provided');
+        done();
+      });
+  });
+
+  it('should return user if client requests with valid token', (done) => {
+    chai
+      .request(server)
+      .get(`/api/v1/accounts/${newAccount.id}`)
+      .set('Authorization', `Bearer ${clientToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.data[0]).to.have.all.keys(
+          'owner_id',
+          'account_number',
+          'status',
+          'account_type',
+          'account_balance',
+          'created_on',
+          'id',
+        );
+        done();
+      });
+  });
+
+  it('should return user if staff requests with valid token', (done) => {
+    chai
+      .request(server)
+      .get(`/api/v1/accounts/${newAccount.id}`)
+      .set('Authorization', `Bearer ${staffToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.data[0]).to.have.all.keys(
+          'owner_id',
+          'account_number',
+          'status',
+          'account_type',
+          'account_balance',
+          'created_on',
+          'id',
+        );
+        done();
       });
   });
 });
