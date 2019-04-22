@@ -13,8 +13,16 @@ import * as Accounts from '../models/accounts';
  */
 const makeCharges = async (req, res, senderAccount, receiverAccount) => {
   try {
-    const debitClient = { ...req.body, transactionType: 'debit' };
-    const creditClient = { ...req.body, transactionType: 'credit' };
+    const debitClient = {
+      ...req.body,
+      transactionType: 'debit',
+      accountNumber: req.body.senderAccount,
+    };
+    const creditClient = {
+      ...req.body,
+      transactionType: 'credit',
+      accountNumber: req.body.receiverAccount,
+    };
     await chargeAccount(res, senderAccount, debitClient);
     await chargeAccount(res, receiverAccount, creditClient);
     return setServerResponse(res, 200, {

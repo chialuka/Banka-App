@@ -3,6 +3,7 @@ import '@babel/polyfill';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../index';
+import * as Transactions from '../models/transactions';
 import * as Accounts from '../models/accounts';
 import * as Users from '../models/users';
 import {
@@ -87,16 +88,18 @@ describe('POST transactions and Transfers', () => {
         expect(res).to.have.status(201);
         expect(res.body).to.be.an('object');
         expect(res.body.data[0]).to.be.an('object');
-        expect(res.body.data[0]).to.include.key('id');
-        expect(res.body.data[0]).to.include.key('account_number');
-        expect(res.body.data[0]).to.include.key('description');
-        expect(res.body.data[0]).to.include.key('created_on');
-        expect(res.body.data[0]).to.include.key('cashier_id');
-        expect(res.body.data[0]).to.include.key('amount');
-        expect(res.body.data[0]).to.include.key('transaction_type');
+        expect(res.body.data[0]).to.have.all.keys(
+          'id',
+          'account_number',
+          'description',
+          'created_on',
+          'cashier_id',
+          'amount',
+          'transaction_type',
+          'old_balance',
+          'new_balance',
+        );
         expect(res.body.data[0].transaction_type).to.equal('credit');
-        expect(res.body.data[0]).to.include.key('old_balance');
-        expect(res.body.data[0]).to.include.key('new_balance');
         expect(err).to.be.null;
         done();
       });
@@ -526,6 +529,112 @@ describe('POST transfers', () => {
         expect(res.body).to.include.key('error');
         expect(res.body.error).to.equal('Token and user mismatch');
         expect(err).to.be.null;
+        done();
+      });
+  });
+});
+
+describe('GET transactions', () => {
+  let transaction;
+  before(async () => {
+    const transactionData = {
+      ...creditTransaction,
+      accountNumber,
+      cashierId: createStaff.id,
+      oldBalance: 5000,
+      newBalance: 10000,
+      date: new Date().toGMTString(),
+    };
+    transaction = await Transactions.create(transactionData);
+  });
+
+  it('should not get if client token does not belong to account owner', (done) => {
+    chai
+      .request(server)
+      .get(`/api/v1/transactions/${transaction.id}`)
+      .set('Authorization', `Bearer ${receiverToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(403);
+        expect(res.body.error).to.equal('Token and user mismatch');
+        done();
+      });
+  });
+
+  it('should not get if account cannot be found', (done) => {
+    chai
+      .request(server)
+      .get('/api/v1/transactions/1000000')
+      .set('Authorization', `Bearer ${clientToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        expect(res.body.error).to.equal('Transaction not found');
+        done();
+      });
+  });
+
+  it('should not get if auth token is not provided', (done) => {
+    chai
+      .request(server)
+      .get('/api/v1/transactions/1')
+      .end((err, res) => {
+        expect(res).to.have.status(403);
+        expect(res.body.error).to.equal('Auth token not provided');
+        done();
+      });
+  });
+
+  it('should return transaction if client requests with valid token', (done) => {
+    chai
+      .request(server)
+      .get(`/api/v1/transactions/${transaction.id}`)
+      .set('Authorization', `Bearer ${clientToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.data).to.have.all.keys(
+          'amount',
+          'account_number',
+          'cashier_id',
+          'transaction_type',
+          'description',
+          'old_balance',
+          'new_balance',
+          'created_on',
+          'id',
+        );
+        done();
+      });
+  });
+
+  it('should return transaction if staff requests with valid token', (done) => {
+    chai
+      .request(server)
+      .get(`/api/v1/transactions/${transaction.id}`)
+      .set('Authorization', `Bearer ${staffToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.data).to.have.all.keys(
+          'amount',
+          'account_number',
+          'cashier_id',
+          'transaction_type',
+          'description',
+          'old_balance',
+          'new_balance',
+          'created_on',
+          'id',
+        );
+        done();
+      });
+  });
+
+  it('should return an array of all transactions if valid token is provided', (done) => {
+    chai
+      .request(server)
+      .get('/api/v1/transactions')
+      .set('Authorization', `Bearer ${staffToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.data).to.be.an('array');
         done();
       });
   });
