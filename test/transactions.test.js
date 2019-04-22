@@ -3,7 +3,6 @@ import '@babel/polyfill';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../index';
-import * as Transactions from '../models/transactions';
 import * as Accounts from '../models/accounts';
 import * as Users from '../models/users';
 import {
@@ -22,6 +21,7 @@ import { generateToken, generateAccountNumber } from '../utils';
 chai.use(chaiHttp);
 
 let clientToken;
+let receiverToken;
 let staffToken;
 let adminToken;
 let createClient;
@@ -29,7 +29,6 @@ let createStaff;
 let createAdmin;
 let clientAccount;
 let accountNumber;
-let activatedAccount;
 let userToBeCredited;
 let accountToBeCredited;
 let accountNumberCredited;
@@ -40,6 +39,7 @@ describe('POST transactions and Transfers', () => {
     createClient = await Users.create(correctPasswordClient);
     userToBeCredited = await Users.create(clientUser);
     clientToken = generateToken({ id: createClient.id });
+    receiverToken = generateToken({ id: userToBeCredited.id });
 
     createStaff = await Users.create(staffUser);
     staffToken = generateToken({ id: createStaff.id });
@@ -67,7 +67,7 @@ describe('POST transactions and Transfers', () => {
       accountNumber: accountNumberCredited,
     });
 
-    activatedAccount = await Accounts.findOneAndUpdate({
+    await Accounts.findOneAndUpdate({
       status: 'active',
       id: clientAccount.id,
     });
@@ -385,22 +385,117 @@ describe('POST transactions and Transfers', () => {
         done();
       });
   });
+});
 
-  xit('should transfer between clients', async () => {
-    await Accounts.findOneAndUpdate({
-      status: 'active',
-      id: accountToBeCredited.id,
-    });
-    const amount = 0;
-    const receiverAccount = accountNumberCredited;
+describe('POST transfers', () => {
+  const unknownSender = Number(generateAccountNumber());
+
+  it('should not transfer if sender account is not active', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/transfers')
+      .send({
+        senderAccount: accountNumberCredited,
+        receiverAccount: accountNumber,
+        description: 'Bride price',
+        amount: 0,
+      })
+      .set('Authorization', `Bearer ${receiverToken}`)
+      .end((_, res) => {
+        expect(res).to.have.status(400);
+        expect(res.body.error).to.equal('Sender account not activated');
+        done();
+      });
+  });
+
+  it('should not transfer if receiver account is not active', (done) => {
     chai
       .request(server)
       .post('/api/v1/transfers')
       .send({
         senderAccount: accountNumber,
-        receiverAccount,
+        receiverAccount: accountNumberCredited,
+        description: 'Bride price',
+        amount: 0,
+      })
+      .set('Authorization', `Bearer ${clientToken}`)
+      .end((_, res) => {
+        expect(res).to.have.status(400);
+        expect(res.body.error).to.equal('Receiver account not activated');
+        done();
+      });
+  });
+
+  it('should not transfer if it cannot find sender account', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/transfers')
+      .send({
+        senderAccount: unknownSender,
+        receiverAccount: accountNumberCredited,
+        description: 'Bride price',
+        amount: 0,
+      })
+      .set('Authorization', `Bearer ${clientToken}`)
+      .end((_, res) => {
+        expect(res).to.have.status(404);
+        expect(res.body.error).to.equal('Sender account not found');
+        done();
+      });
+  });
+
+  it('should not transfer if it cannot find receiver account', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/transfers')
+      .send({
+        senderAccount: accountNumber,
+        receiverAccount: unknownSender,
+        description: 'Bride price',
+        amount: 0,
+      })
+      .set('Authorization', `Bearer ${clientToken}`)
+      .end((_, res) => {
+        expect(res).to.have.status(404);
+        expect(res.body.error).to.equal('Receiver account not found');
+        done();
+      });
+  });
+
+  it('should transfer between active client accounts', async () => {
+    const activeAccount = await Accounts.create({
+      id: createClient.id,
+      accountType: 'current',
+      openingBalance: 5000,
+      status: 'draft',
+      createdOn: new Date().toGMTString(),
+      accountNumber: unknownSender,
+    });
+    await Accounts.findOneAndUpdate({
+      status: 'active',
+      id: activeAccount.id,
+    });
+    const newNumber = Number(generateAccountNumber());
+    await Accounts.create({
+      id: createClient.id,
+      accountType: 'current',
+      openingBalance: 5000,
+      status: 'active',
+      createdOn: new Date().toGMTString(),
+      accountNumber: newNumber,
+    });
+    await Accounts.findOneAndUpdate({
+      status: 'active',
+      id: clientAccount.id,
+    });
+    chai
+      .request(server)
+      .post('/api/v1/transfers')
+      .send({
+        receiverAccount: Number(newNumber),
+        senderAccount: Number(unknownSender),
         description: 'bride price',
-        amount,
+        amount: 0,
       })
       .set('authorization', `Bearer ${clientToken}`)
       .end((err, res) => {
@@ -408,6 +503,26 @@ describe('POST transactions and Transfers', () => {
         expect(res.body).to.include.key('Message');
         expect(res.body.Message).to.equal(`Transfer of N${0} successful`);
         expect(err).to.be.null;
+      });
+  });
+
+  it('should not transfer if token does not belong to sender', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/transfers')
+      .send({
+        senderAccount: accountNumber,
+        receiverAccount: accountNumberCredited,
+        description: 'bride price',
+        amount: 0,
+      })
+      .set('authorization', `Bearer ${receiverToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(403);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('Token and user mismatch');
+        expect(err).to.be.null;
+        done();
       });
   });
 });

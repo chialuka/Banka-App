@@ -171,10 +171,7 @@ const deleteAccount = async (req, res) => {
     if (!account) {
       return setServerResponse(res, 404, { error: 'Account not found' });
     }
-    const deletedAccount = await Accounts.findOneAndDelete(req.params.id);
-    if (!deletedAccount) {
-      return setServerResponse(res, 500, { error: 'Error deleting account' });
-    }
+    await Accounts.findOneAndDelete(req.params.id);
     sendDeleteMail(account);
     return setServerResponse(res, 200, {
       message: 'Account successfully deleted',

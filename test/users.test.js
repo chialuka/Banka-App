@@ -14,9 +14,6 @@ chai.use(chaiHttp);
 let createdStaff;
 
 describe('GET / route', () => {
-  before(async () => {
-    await Users.deleteAll();
-  });
 
   it('should get / route', (done) => {
     chai
@@ -31,6 +28,11 @@ describe('GET / route', () => {
 });
 
 describe('POST User', () => {
+  before((done) => {
+    Users.deleteAll().then(res => res);
+    done();
+  });
+
   it('should create a user successfully', (done) => {
     chai
       .request(server)

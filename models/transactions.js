@@ -10,17 +10,17 @@ import db from '../config';
 const create = async (data) => {
   const {
     amount, description, accountNumber, oldBalance, newBalance,
-    cashierId, transactionType, date,
+    transactionType, date, cashierId,
   } = data;
   const newItem = await db.query(
     `INSERT INTO transactions(
       amount, description, account_number, old_balance, new_balance, 
-      cashier_id, transaction_type, created_on
+      transaction_type, created_on, cashier_id
       ) 
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
     [
       amount, description, accountNumber, oldBalance, newBalance,
-      cashierId, transactionType, date,
+      transactionType, date, cashierId,
     ],
   );
   return newItem.rows[0];
