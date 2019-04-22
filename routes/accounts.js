@@ -5,6 +5,7 @@ import {
   deleteAccount,
   getAccountDetails,
   getAllAccounts,
+  getAccountTransactions,
 } from '../controllers/accounts';
 import {
   validateBodyPayload,
@@ -47,4 +48,8 @@ export default (router) => {
     )
     .delete(validateIdParams, authorizeStaff, deleteAccount)
     .get(validateIdParams, authenticateLogin, getAccountDetails);
+
+  router
+    .route('/accounts/transactions/:id')
+    .get(validateIdParams, authenticateLogin, getAccountTransactions);
 };

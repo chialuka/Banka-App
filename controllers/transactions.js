@@ -35,28 +35,16 @@ const mailSender = (email, firstname, data) => {
 };
 
 /**
- * Charge the account of the provided client with the specified amount and save
- * @name chargeAccount
+ * Post transaction to the database with transaction details
+ * @name postTransaction
  * @async
- * @param {Object} res
- * @param {Object} account
- * @param {Object} reqBody
- * @return {JSON Object}
+ * @param {Object} postingDetails
+ * @returns {JSON Object}
  */
-const chargeAccount = async (res, account, reqBody) => {
-  const { amount, transactionType } = reqBody;
-  const oldBalance = account.account_balance;
-  if (reqBody.transactionType === 'debit' && oldBalance < amount) {
-    return setServerResponse(res, 400, { error: 'Overdraft disallowed' });
-  }
-  const newBalance = transactionType === 'credit'
-    ? Number(oldBalance) + Number(amount)
-    : Number(oldBalance) - Number(amount);
-  const transactionData = {
-    ...reqBody, newBalance, date: new Date().toDateString(),
-  };
-  const accountData = { account_balance: newBalance, id: account.id };
-  await Accounts.findOneAndUpdate(accountData);
+const postTransaction = async (postingDetails) => {
+  const {
+    res, transactionData, oldBalance, reqBody, account,
+  } = postingDetails;
   const user = await Users.findOneById(account.owner_id);
   if (!user) {
     return setServerResponse(res, 404, { error: 'Account owner not found' });
@@ -68,6 +56,37 @@ const chargeAccount = async (res, account, reqBody) => {
   mailSender(account.email, user.first_name, transactionData);
   if (reqBody.senderAccount || reqBody.receiverAccount) return null;
   return setServerResponse(res, 201, { data: [{ ...newTransaction }] });
+};
+
+/**
+ * Charge the account of the provided client with the specified amount and save
+ * @name chargeAccount
+ * @async
+ * @param {Object} res
+ * @param {Object} account
+ * @param {Object} reqBody
+ * @return {Null}
+ */
+const chargeAccount = async (res, account, reqBody) => {
+  const { amount, transactionType } = reqBody;
+  const oldBalance = account.account_balance;
+  if (reqBody.transactionType === 'debit' && oldBalance < amount) {
+    return setServerResponse(res, 400, { error: 'Overdraft disallowed' });
+  }
+  const newBalance = transactionType === 'credit'
+    ? Number(oldBalance) + Number(amount)
+    : Number(oldBalance) - Number(amount);
+  const transactionData = {
+    ...reqBody,
+    newBalance,
+    date: new Date().toDateString(),
+  };
+  const accountData = { account_balance: newBalance, id: account.id };
+  await Accounts.findOneAndUpdate(accountData);
+  const postingDetails = {
+    res, transactionData, oldBalance, reqBody, account,
+  };
+  return postTransaction(postingDetails);
 };
 
 /**
