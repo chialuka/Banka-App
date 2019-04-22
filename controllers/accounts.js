@@ -208,7 +208,6 @@ const getAccountDetails = async (req, res) => {
   }
 };
 
-
 /**
  * Get accounts with the status given in the request query string
  * @name getQueryString
@@ -255,6 +254,16 @@ const getAllAccounts = async (req, res) => {
   }
 };
 
+const getAccountTransactions = async (req, res) => {
+  try {
+    const transactions = await Accounts.findByTransaction(
+      req.params.id,
+    );
+    return setServerResponse(res, 200, { data: transactions });
+  } catch (error) {
+    return setServerResponse(res, 500, { error });
+  }
+};
 
 export {
   createAccount,
@@ -262,4 +271,5 @@ export {
   deleteAccount,
   getAccountDetails,
   getAllAccounts,
+  getAccountTransactions,
 };
