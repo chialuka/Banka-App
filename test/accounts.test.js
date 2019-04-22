@@ -215,6 +215,7 @@ describe('POST accounts', () => {
 
 describe('GET accounts', () => {
   let newAccount;
+  let activeAccount;
   before(async () => {
     newAccount = await Accounts.create({
       id: client.id,
@@ -224,12 +225,60 @@ describe('GET accounts', () => {
       accountNumber: generateAccountNumber(),
       createdOn: new Date().toGMTString(),
     });
+    activeAccount = await Accounts.create({
+      id: client.id,
+      accountType: 'savings',
+      openingBalance: 10000,
+      status: 'active',
+      accountNumber: generateAccountNumber(),
+      createdOn: new Date().toGMTString(),
+    });
+  });
+
+  it('should get active accounts if specified in the query string', (done) => {
+    chai
+      .request(server)
+      .get('/api/v1/accounts/?status=active')
+      .set('Authorization', `Bearer ${staffToken}`)
+      .end((err, res) => {
+        console.log(res.body);
+        expect(res).to.have.status(200);
+        expect(res.body.data[0].status).to.equal('active');
+        expect(err).to.be.null;
+        done();
+      });
+  });
+
+  it('should get dormant accounts if specified in the query string', (done) => {
+    chai
+      .request(server)
+      .get('/api/v1/accounts/?status=dormant')
+      .set('Authorization', `Bearer ${staffToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.data[0].status).to.equal('dormant');
+        expect(err).to.be.null;
+        done();
+      });
+  });
+
+  it('should return an error if invalid query string is given', (done) => {
+    chai
+      .request(server)
+      .get('/api/v1/accounts/?status=thisguy')
+      .set('Authorization', `Bearer ${staffToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        expect(res.body.error).to.equal('Invalid query');
+        expect(err).to.be.null;
+        done();
+      });
   });
 
   it('should not get if client token does not belong to account owner', (done) => {
     chai
       .request(server)
-      .get(`/api/v1/accounts/${newAccount.id}`)
+      .get(`/api/v1/accounts/${activeAccount.id}`)
       .set('Authorization', `Bearer ${newToken}`)
       .end((err, res) => {
         expect(res).to.have.status(403);
@@ -299,6 +348,32 @@ describe('GET accounts', () => {
         );
         done();
       });
+  });
+
+  it('should return an array of all bank accounts if valid token is provided', (done) => {
+    chai
+      .request(server)
+      .get('/api/v1/accounts')
+      .set('Authorization', `Bearer ${staffToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.data).to.be.an('array');
+        done();
+      });
+  });
+
+  it('should return nothing if no accounts have been created', (done) => {
+    Accounts.deleteAll().then(() => {
+      chai
+        .request(server)
+        .get('/api/v1/accounts')
+        .set('Authorization', `Bearer ${staffToken}`)
+        .end((err, res) => {
+          expect(res).to.have.status(404);
+          expect(res.body.error).to.equal('No accounts opened yet');
+          done();
+        });
+    });
   });
 });
 

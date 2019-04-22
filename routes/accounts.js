@@ -4,6 +4,7 @@ import {
   patchAccount,
   deleteAccount,
   getAccountDetails,
+  getAllAccounts,
 } from '../controllers/accounts';
 import {
   validateBodyPayload,
@@ -17,17 +18,20 @@ import {
 } from '../middlewares/auth';
 
 export default (router) => {
-  router.route('/accounts').post(
-    validateBodyPayload({
-      accountType: Joi.string()
-        .valid('savings', 'current')
-        .required(),
-      id: Joi.number().required(),
-      openingBalance: Joi.number().required(),
-    }),
-    authorizeClient,
-    createAccount,
-  );
+  router
+    .route('/accounts')
+    .post(
+      validateBodyPayload({
+        accountType: Joi.string()
+          .valid('savings', 'current')
+          .required(),
+        id: Joi.number().required(),
+        openingBalance: Joi.number().required(),
+      }),
+      authorizeClient,
+      createAccount,
+    )
+    .get(authorizeStaff, getAllAccounts);
 
   router
     .route('/accounts/:id')

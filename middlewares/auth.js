@@ -59,9 +59,9 @@ const authorizeStaff = async (req, res, next) => {
 };
 
 const authorizeAdmin = async (req, res, next) => {
-  const user = await getUserFromToken(req, res);
-  if (!user) return null;
-  if (!user.is_admin) {
+  const owner = await getUserFromToken(req, res);
+  if (!owner) return null;
+  if (!owner.is_admin) {
     return setServerResponse(res, 403, { error: 'User not authorized' });
   }
   return next();
