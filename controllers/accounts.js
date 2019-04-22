@@ -50,7 +50,7 @@ const createAccount = async (req, res) => {
     const accObj = {
       accountNumber,
       createdOn,
-      status: 'draft',
+      status: 'dormant',
       ...req.body,
     };
     const newAccount = await Accounts.create(accObj);
@@ -184,6 +184,14 @@ const deleteAccount = async (req, res) => {
   }
 };
 
+/**
+ * Get details of an individual account on providing a valid account id
+ * @name getAccountDetails
+ * @async
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {JSON}
+ */
 const getAccountDetails = async (req, res) => {
   try {
     const account = await Accounts.findOne(req.params.id);
@@ -200,8 +208,43 @@ const getAccountDetails = async (req, res) => {
   }
 };
 
+
+/**
+ * Get accounts with the status given in the request query string
+ * @name getQueryString
+ * @async
+ * @param {Object} queryString
+ * @param {Object} res
+ * @returns {JSON}
+ */
+const getQueryString = async (queryString, res) => {
+  try {
+    const { status } = queryString;
+    const validQueries = ['active', 'dormant'];
+    if (!status || validQueries.indexOf(status) < 0) {
+      return setServerResponse(res, 400, { error: 'Invalid query' });
+    }
+    const accounts = await Accounts.findByStatus(status);
+    return setServerResponse(res, 200, { data: accounts });
+  } catch (error) {
+    return setServerResponse(res, 500, { error });
+  }
+};
+
+/**
+ * Get all accounts in the database
+ * @name getAllAccounts
+ * @async
+ * @param {Object} req
+ * @param {Object} res
+ * @returns
+ */
 const getAllAccounts = async (req, res) => {
   try {
+    if (Object.keys(req.query).length) {
+      getQueryString(req.query, res);
+      return null;
+    }
     const accounts = await Accounts.findAll();
     if (accounts.length === 0) {
       return setServerResponse(res, 404, { error: 'No accounts opened yet' });
@@ -211,6 +254,7 @@ const getAllAccounts = async (req, res) => {
     return setServerResponse(res, 500, { error });
   }
 };
+
 
 export {
   createAccount,

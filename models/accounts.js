@@ -25,6 +25,13 @@ const findAll = async () => {
   return results.rows;
 };
 
+const findByStatus = async (status) => {
+  const results = await db.query('SELECT * FROM accounts WHERE status = $1', [
+    status,
+  ]);
+  return results.rows;
+};
+
 const findOne = async (param) => {
   const result = await db.query(
     'SELECT * FROM accounts WHERE account_number = $1 OR id = $1',
@@ -56,6 +63,7 @@ const deleteAll = async () => {
 export {
   create,
   findAll,
+  findByStatus,
   findOne,
   findOneAndUpdate,
   findOneAndDelete,
