@@ -300,6 +300,32 @@ describe('GET accounts', () => {
         done();
       });
   });
+
+  it('should return an array of all bank accounts if valid token is provided', (done) => {
+    chai
+      .request(server)
+      .get('/api/v1/accounts')
+      .set('Authorization', `Bearer ${staffToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.data).to.be.an('array');
+        done();
+      });
+  });
+
+  it('should return nothing if no accounts have been created', (done) => {
+    Accounts.deleteAll().then(() => {
+      chai
+        .request(server)
+        .get('/api/v1/accounts')
+        .set('Authorization', `Bearer ${staffToken}`)
+        .end((err, res) => {
+          expect(res).to.have.status(404);
+          expect(res.body.error).to.equal('No accounts opened yet');
+          done();
+        });
+    });
+  });
 });
 
 describe('PATCH accounts', () => {

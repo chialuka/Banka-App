@@ -22,7 +22,7 @@ const create = async (data) => {
 
 const findAll = async () => {
   const results = await db.query('SELECT * FROM accounts ORDER BY id ASC');
-  return results.rows[0];
+  return results.rows;
 };
 
 const findOne = async (param) => {

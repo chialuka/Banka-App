@@ -191,7 +191,7 @@ const getAccountDetails = async (req, res) => {
       return setServerResponse(res, 404, { error: 'Account not found' });
     }
     const { tokenOwner } = res.locals;
-    if (!tokenOwner.is_staff && (tokenOwner.id !== account.owner_id)) {
+    if (!tokenOwner.is_staff && tokenOwner.id !== account.owner_id) {
       return setServerResponse(res, 403, { error: 'Token and user mismatch' });
     }
     return setServerResponse(res, 200, { data: [account] });
@@ -200,6 +200,22 @@ const getAccountDetails = async (req, res) => {
   }
 };
 
+const getAllAccounts = async (req, res) => {
+  try {
+    const accounts = await Accounts.findAll();
+    if (accounts.length === 0) {
+      return setServerResponse(res, 404, { error: 'No accounts opened yet' });
+    }
+    return setServerResponse(res, 200, { data: accounts });
+  } catch (error) {
+    return setServerResponse(res, 500, { error });
+  }
+};
+
 export {
-  createAccount, patchAccount, deleteAccount, getAccountDetails,
+  createAccount,
+  patchAccount,
+  deleteAccount,
+  getAccountDetails,
+  getAllAccounts,
 };
