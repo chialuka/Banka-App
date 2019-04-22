@@ -9,8 +9,14 @@ import db from '../config';
  */
 const create = async (data) => {
   const {
-    amount, description, accountNumber, oldBalance, newBalance,
-    transactionType, date, cashierId,
+    amount,
+    description,
+    accountNumber,
+    oldBalance,
+    newBalance,
+    transactionType,
+    date,
+    cashierId,
   } = data;
   const newItem = await db.query(
     `INSERT INTO transactions(
@@ -19,21 +25,29 @@ const create = async (data) => {
       ) 
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
     [
-      amount, description, accountNumber, oldBalance, newBalance,
-      transactionType, date, cashierId,
+      amount,
+      description,
+      accountNumber,
+      oldBalance,
+      newBalance,
+      transactionType,
+      date,
+      cashierId,
     ],
   );
   return newItem.rows[0];
 };
 
 const findAll = async () => {
-  const results = await db.query('SELECT * FROM $1 ORDER BY id ASC');
+  const results = await db.query('SELECT * FROM transactions ORDER BY id ASC');
   return results.rows;
 };
 
 const findOne = async (param) => {
-  const result = await db.query('SELECT * FROM $1 WHERE id = $1', [param]);
-  return result.rows;
+  const result = await db.query('SELECT * FROM transactions WHERE id = $1', [
+    param,
+  ]);
+  return result.rows[0];
 };
 
 export { create, findAll, findOne };

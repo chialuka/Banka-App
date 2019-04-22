@@ -241,7 +241,6 @@ describe('GET accounts', () => {
       .get('/api/v1/accounts/?status=active')
       .set('Authorization', `Bearer ${staffToken}`)
       .end((err, res) => {
-        console.log(res.body);
         expect(res).to.have.status(200);
         expect(res.body.data[0].status).to.equal('active');
         expect(err).to.be.null;

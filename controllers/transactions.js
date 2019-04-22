@@ -53,9 +53,7 @@ const chargeAccount = async (res, account, reqBody) => {
     ? Number(oldBalance) + Number(amount)
     : Number(oldBalance) - Number(amount);
   const transactionData = {
-    ...reqBody,
-    newBalance,
-    date: new Date().toDateString(),
+    ...reqBody, newBalance, date: new Date().toDateString(),
   };
   const accountData = { account_balance: newBalance, id: account.id };
   await Accounts.findOneAndUpdate(accountData);
@@ -103,6 +101,35 @@ const createTransaction = async (req, res) => {
   }
 };
 
-export { chargeAccount };
+const getTransactionDetails = async (req, res) => {
+  try {
+    const transaction = await Transactions.findOne(req.params.id);
+    if (!transaction) {
+      return setServerResponse(res, 404, { error: 'Transaction not found' });
+    }
+    const account = await Accounts.findOne(transaction.account_number);
+    const { tokenOwner } = res.locals;
+    if (!tokenOwner.is_staff && tokenOwner.id !== account.owner_id) {
+      return setServerResponse(res, 403, { error: 'Token and user mismatch' });
+    }
+    return setServerResponse(res, 200, { data: transaction });
+  } catch (error) {
+    return setServerResponse(res, 500, { error });
+  }
+};
 
-export default createTransaction;
+const getAllTransactions = async (req, res) => {
+  try {
+    const transactions = await Transactions.findAll();
+    return setServerResponse(res, 200, { data: transactions });
+  } catch (error) {
+    return setServerResponse(res, 500, { error });
+  }
+};
+
+export {
+  createTransaction,
+  chargeAccount,
+  getTransactionDetails,
+  getAllTransactions,
+};
