@@ -14,7 +14,6 @@ chai.use(chaiHttp);
 let createdStaff;
 
 describe('GET / route', () => {
-
   it('should get / route', (done) => {
     chai
       .request(server)
@@ -156,6 +155,20 @@ describe('POST User', () => {
         expect(res).to.have.status(404);
         expect(res.body).to.include.key('error');
         expect(res.body).to.not.include.key('token');
+        done();
+      });
+  });
+
+  it("should return a user's accounts", (done) => {
+    const token = generateToken({ id: createdStaff.id });
+    chai
+      .request(server)
+      .get(`/api/v1/users/accounts/${createdStaff.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.data).to.be.an('array');
+        expect(err).to.be.null;
         done();
       });
   });

@@ -256,9 +256,9 @@ const getAllAccounts = async (req, res) => {
 
 const getAccountTransactions = async (req, res) => {
   try {
-    const transactions = await Accounts.findByTransaction(
-      req.params.id,
-    );
+    const account = await Accounts.findOne(req.params.id);
+    const number = account.account_number;
+    const transactions = await Accounts.findByTransaction(number);
     return setServerResponse(res, 200, { data: transactions });
   } catch (error) {
     return setServerResponse(res, 500, { error });

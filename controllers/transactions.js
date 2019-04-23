@@ -90,6 +90,25 @@ const chargeAccount = async (res, account, reqBody) => {
 };
 
 /**
+ * Get account owner and pass details to function for making charge
+ * @name getAccountOwner
+ * @async
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {Function}
+ */
+const getAccountOwner = async (req, res) => {
+  const account = await Accounts.findOne(req.body.accountNumber);
+  if (!account) {
+    return setServerResponse(res, 404, { error: 'Account not found' });
+  }
+  if (account.status !== 'active') {
+    return setServerResponse(res, 400, { error: 'Account not activated' });
+  }
+  return chargeAccount(res, account, req.body);
+};
+
+/**
  * Identify account, validate and send request off for charging
  * @name createTransaction
  * @async
@@ -107,14 +126,7 @@ const createTransaction = async (req, res) => {
     if (staff.email !== tokenOwner.email) {
       return setServerResponse(res, 403, { error: 'User and token mismatch' });
     }
-    const account = await Accounts.findOne(req.body.accountNumber);
-    if (!account) {
-      return setServerResponse(res, 404, { error: 'Account not found' });
-    }
-    if (account.status !== 'active') {
-      return setServerResponse(res, 400, { error: 'Account not activated' });
-    }
-    return chargeAccount(res, account, req.body);
+    return getAccountOwner(req, res);
   } catch (error) {
     return setServerResponse(res, 500, { error });
   }

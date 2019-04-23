@@ -235,16 +235,14 @@ describe('GET accounts', () => {
     });
   });
 
-  xit("should return account's transactions", (done) => {
-    const number = Number(activeAccount.account_number);
+  it('should return transactions made with an account', (done) => {
     chai
       .request(server)
-      .get(`api/v1/accounts/transactions/${number}`)
-      .set('Authorization', `Bearer ${staffToken}`)
+      .get(`/api/v1/accounts/transactions/${activeAccount.id}`)
+      .set('Authorization', `Bearer ${newToken}`)
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body.data).to.be.an('array');
-        expect(err).to.be.null;
         done();
       });
   });
