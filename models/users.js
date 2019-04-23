@@ -1,5 +1,12 @@
 import db from '../config';
 
+/**
+ * Create a new user in the database using the insert query
+ * @async
+ * @name create
+ * @param {Object} data
+ * @returns {Array}
+ */
 const create = async (data) => {
   const {
     firstname, lastname, email, password, isStaff, isAdmin,
@@ -14,16 +21,36 @@ const create = async (data) => {
   return newItem.rows[0];
 };
 
+/**
+ * Find all users in the database
+ * @async
+ * @name findAll
+ * @returns {Object}
+ */
 const findAll = async () => {
   const results = await db.query('SELECT * FROM users ORDER BY id ASC');
   return results.rows;
 };
 
+/**
+ * Find a single user on providing the user's id
+ * @async
+ * @name findOneById
+ * @param {Number} id
+ * @returns {Array}
+ */
 const findOneById = async (id) => {
   const result = await db.query('SELECT * FROM users WHERE id = $1', [id]);
   return result.rows[0];
 };
 
+/**
+ * Find the user in the database with the provided email
+ * @name findOneByEmail
+ * @async
+ * @param {String} email
+ * @returns {Array}
+ */
 const findOneByEmail = async (email) => {
   const result = await db.query('SELECT * FROM users WHERE email = $1', [
     email,
@@ -31,6 +58,28 @@ const findOneByEmail = async (email) => {
   return result.rows[0];
 };
 
+/**
+ * Find all bank accounts that belong to the user with the provided ID
+ * @async
+ * @name findUserAccounts
+ * @param {Number} id
+ * @returns {Array}
+ */
+const findUserAccounts = async (id) => {
+  const result = await db.query('SELECT * FROM accounts WHERE owner_id = $1', [
+    id,
+  ]);
+  return result.rows;
+};
+
+/**
+ * Find the user with the id in the arguments object and update the user's
+ * details with other provided details
+ * @async
+ * @name findOneAndUpdate
+ * @param {Object} data
+ * @returns {Array}
+ */
 const findOneAndUpdate = async (data) => {
   const {
     firstname, lastname, password, email, id,
@@ -48,12 +97,26 @@ const findOneAndUpdate = async (data) => {
   return result.rows[0];
 };
 
+/**
+ * Find the user with the given ID and delete the user's record from
+ * the database. Delete any account owned by the user as well
+ * @async
+ * @name findOneAndDelete
+ * @param {Number} id
+ * @returns {Number} id
+ */
 const findOneAndDelete = async (id) => {
   await db.query('DELETE FROM accounts WHERE owner_id = $1', [id]);
   await db.query('DELETE FROM users WHERE id = $1', [id]);
   return id;
 };
 
+/**
+ * Delete all users in the database
+ * @async
+ * @name deleteAll
+ * @returns {Boolean}
+ */
 const deleteAll = async () => {
   await db.query('DELETE FROM accounts');
   await db.query('DELETE FROM users');
@@ -65,6 +128,7 @@ export {
   findAll,
   findOneById,
   findOneByEmail,
+  findUserAccounts,
   findOneAndUpdate,
   findOneAndDelete,
   deleteAll,

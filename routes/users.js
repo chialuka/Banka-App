@@ -1,16 +1,22 @@
 import Joi from 'joi';
-import createUser, {
+import {
+  createUser,
   getUsers,
   getUser,
   updateUser,
   deleteUser,
   loginUser,
+  getUserAccounts,
 } from '../controllers/users';
 import {
   validateBodyPayload,
   validateIdParams,
 } from '../middlewares/validators';
-import { authorizeClient, authorizeStaff } from '../middlewares/auth';
+import {
+  authorizeClient,
+  authorizeStaff,
+  authenticateLogin,
+} from '../middlewares/auth';
 
 export default (router) => {
   router.route('/users').get(authorizeStaff, getUsers);
@@ -44,12 +50,15 @@ export default (router) => {
   );
 
   router
+    .route('/users/accounts/:id')
+    .get(validateIdParams, authenticateLogin, getUserAccounts);
+
+  router
     .route('/users/:id')
     .get(validateIdParams, authorizeStaff, getUser)
     .put(
       validateBodyPayload({
-        email: Joi.string()
-          .email({ minDomainAtoms: 2 }),
+        email: Joi.string().email({ minDomainAtoms: 2 }),
         firstname: Joi.string(),
         lastname: Joi.string(),
         password: Joi.string().min(6),
