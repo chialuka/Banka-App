@@ -83,6 +83,23 @@ const getUser = async (req, res) => {
 };
 
 /**
+ * Get all of a user's bank accounts
+ * @async
+ * @name getUserAccounts
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {JSON}
+ */
+const getUserAccounts = async (req, res) => {
+  try {
+    const accounts = await Users.findUserAccounts(req.params.id);
+    return setServerResponse(res, 200, { data: accounts });
+  } catch (error) {
+    return setServerResponse(res, 500, { error });
+  }
+};
+
+/**
  * Provide token for signed up user to login
  * @name loginUser
  * @async
@@ -162,7 +179,6 @@ const updateUser = async (req, res) => {
   }
 };
 
-
 /**
  * Delete a provided user from the database
  * @name deleteUser
@@ -189,7 +205,11 @@ const deleteUser = async (req, res) => {
 };
 
 export {
-  getUsers, getUser, updateUser, deleteUser, loginUser,
+  createUser,
+  getUsers,
+  getUser,
+  updateUser,
+  deleteUser,
+  loginUser,
+  getUserAccounts,
 };
-
-export default createUser;

@@ -254,11 +254,19 @@ const getAllAccounts = async (req, res) => {
   }
 };
 
+/**
+ * Get all transactions performed on an account
+ * @name getAccountTransactions
+ * @async
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {JSON}
+ */
 const getAccountTransactions = async (req, res) => {
   try {
-    const transactions = await Accounts.findByTransaction(
-      req.params.id,
-    );
+    const account = await Accounts.findOne(req.params.id);
+    const number = account.account_number;
+    const transactions = await Accounts.findByTransaction(number);
     return setServerResponse(res, 200, { data: transactions });
   } catch (error) {
     return setServerResponse(res, 500, { error });
