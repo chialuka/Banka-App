@@ -16,17 +16,21 @@ if (!supportedEnv.includes(NODE_ENV)) {
 const config = {
   test: {
     url: DB_URI_TEST,
+    ssl: false,
   },
   development: {
     url: DB_URI_DEV,
+    ssl: false,
   },
   production: {
     url: DB_URI_PROD,
+    ssl: true,
   },
 };
-const connectionString = config[NODE_ENV.toLowerCase()].url;
+const connectionString = config[NODE_ENV.toLowerCase()];
 
 const db = new Pool({
-  connectionString,
+  connectionString: connectionString.url,
+  ssl: connectionString.ssl,
 });
 export default db;
