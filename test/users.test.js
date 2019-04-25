@@ -8,6 +8,7 @@ import server from '../index';
 import { clientUser, correctPasswordClient, staffUser } from '../fixtures';
 import * as Users from '../models/users';
 import { generateToken } from '../utils';
+import { checkEnv } from '../config';
 
 chai.use(chaiHttp);
 

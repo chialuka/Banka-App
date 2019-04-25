@@ -53,8 +53,10 @@ const postTransaction = async (postingDetails) => {
     ...transactionData,
     oldBalance,
   });
+  if (reqBody.senderAccount || reqBody.receiverAccount || reqBody.phoneNumber) {
+    return null;
+  }
   mailSender(account.email, user.first_name, transactionData);
-  if (reqBody.senderAccount || reqBody.receiverAccount) return null;
   return setServerResponse(res, 201, { data: [{ ...newTransaction }] });
 };
 
@@ -84,7 +86,11 @@ const chargeAccount = async (res, account, reqBody) => {
   const accountData = { account_balance: newBalance, id: account.id };
   await Accounts.findOneAndUpdate(accountData);
   const postingDetails = {
-    res, transactionData, oldBalance, reqBody, account,
+    res,
+    transactionData,
+    oldBalance,
+    reqBody,
+    account,
   };
   return postTransaction(postingDetails);
 };

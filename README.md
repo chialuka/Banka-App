@@ -31,6 +31,8 @@ npm start
 ## Usage
 Banka is hosted on Heroku [here](https://banka-platform.herokuapp.com/). Click on the link to access Banka easily.
 
+The Banka UI is also hosted [here](https://github.com/LukasChiama/Banka-App)
+
 You can also use Postman to make requests. A sample of [Postman requests](https://documenter.getpostman.com/view/5824922/S1ENyyag#intro) is published online as well. You can take a look at it to see examples of requests made to Banka and the responses gotten.
 
 To use the API, make requests to the endpoints supported by Banka and get your responses as clear and concise JSON objects.

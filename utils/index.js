@@ -1,7 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import * as Users from '../models/users';
 
 dotenv.config();
 const { SECRET } = process.env;
@@ -29,14 +28,6 @@ const setServerResponse = (res, status, data) => {
   });
 };
 
-const checkExistingUser = async (res, id, param) => {
-  const user = Users.findOneById(id);
-  if (!user) {
-    return setServerResponse(res, 404, { error: `${param} not found` });
-  }
-  return user;
-};
-
 export {
   capitalize,
   hashPassword,
@@ -44,5 +35,4 @@ export {
   comparePassword,
   setServerResponse,
   generateAccountNumber,
-  checkExistingUser,
 };

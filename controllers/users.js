@@ -48,9 +48,6 @@ const createUser = async (req, res) => {
 const getUsers = async (_, res) => {
   try {
     const users = await Users.findAll();
-    if (!users) {
-      return setServerResponse(res, 404, { error: 'No users yet.' });
-    }
     return setServerResponse(res, 200, { data: [users] });
   } catch (error) {
     return setServerResponse(res, 500, {
