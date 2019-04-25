@@ -18,7 +18,7 @@
     "instrument": false
   },
   "scripts": {
-    "test": "cross-env NODE_ENV=test nyc mocha --exit",
+    "test": "cross-env NODE_ENV=test nyc mocha --timeout 10000 --exit",
     "test:watch": "mocha -w test/",
     "dev": "cross-env NODE_ENV=development nodemon index.js --exec babel-node",
     "start": "babel-node index.js",
@@ -60,6 +60,7 @@
     "joi": "^14.3.1",
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.9.1",
+    "node-fetch": "^2.3.0",
     "nodemailer": "^6.1.0",
     "pg": "^7.9.0"
   },

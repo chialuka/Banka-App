@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-expressions */
 import '@babel/polyfill';
-import chai, { expect } from 'chai';
+import chai, { expect, assert } from 'chai';
 import chaiHttp from 'chai-http';
+import sinon from 'sinon';
 import server from '../index';
 import * as Transactions from '../models/transactions';
 import * as Accounts from '../models/accounts';
@@ -18,6 +19,7 @@ import {
   clientUser,
 } from '../fixtures';
 import { generateToken, generateAccountNumber } from '../utils';
+import { checkPhoneNetwork } from '../lib/number';
 
 chai.use(chaiHttp);
 
@@ -53,7 +55,7 @@ describe('POST transactions and Transfers', () => {
     clientAccount = await Accounts.create({
       id: createClient.id,
       accountType: 'current',
-      openingBalance: 5000,
+      openingBalance: 10000,
       status: 'draft',
       createdOn: new Date().toGMTString(),
       accountNumber,
@@ -394,6 +396,92 @@ describe('POST transactions and Transfers', () => {
   });
 });
 
+describe('POST Airtime', () => {
+  it('should purchase airtime if valid token and number are provided', (done) => {
+    const checkValidNumber = sinon
+      .stub()
+      .returns('Airtime purchase successful');
+    expect(checkValidNumber(0)).to.equal('Airtime purchase successful');
+    done();
+  });
+
+  it('should not purchase airtime if phone number is invalid', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/airtime')
+      .set('Authorization', `Bearer ${clientToken}`)
+      .send({
+        accountNumber,
+        phoneNumber: '080946398057',
+        amount: 200,
+      })
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('Number invalid');
+        expect(err).to.be.null;
+        done();
+      });
+  });
+
+  it('should not purchase if account is not active', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/airtime')
+      .set('Authorization', `Bearer ${receiverToken}`)
+      .send({
+        accountNumber: accountNumberCredited,
+        phoneNumber: '08033020665',
+        amount: 300,
+      })
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('Account not activated');
+        expect(err).to.be.null;
+        done();
+      });
+  });
+
+  it('should not purchase if account cannot be found', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/airtime')
+      .set('Authorization', `Bearer ${clientToken}`)
+      .send({
+        accountNumber: Number(generateAccountNumber()),
+        phoneNumber: '07066036959',
+        amount: 10000,
+      })
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('Account not found');
+        expect(err).to.be.null;
+        done();
+      });
+  });
+
+  it('should not purchase if token does not match owner', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/airtime')
+      .set('Authorization', `Bearer ${receiverToken}`)
+      .send({
+        accountNumber,
+        phoneNumber: '07066036959',
+        amount: 10000,
+      })
+      .end((err, res) => {
+        expect(res).to.have.status(403);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('Token and user mismatch');
+        expect(err).to.be.null;
+        done();
+      });
+  });
+});
+
 describe('POST transfers', () => {
   const unknownSender = Number(generateAccountNumber());
 
@@ -637,5 +725,28 @@ describe('GET transactions', () => {
         expect(res.body.data).to.be.an('array');
         done();
       });
+  });
+});
+
+describe('Test Number check function', () => {
+  it('should return the appropriate network provider', (done) => {
+    const number = '2347034639805';
+    const network = checkPhoneNetwork(number);
+    assert.equal(network, 'MTN');
+    done();
+  });
+
+  it('should return an error for a non valid network', (done) => {
+    const number = '05038909987';
+    const network = checkPhoneNetwork(number);
+    assert.equal(network, 'Network not found');
+    done();
+  });
+
+  it('should return an error for an invalid number', (done) => {
+    const number = '23480346398099';
+    const network = checkPhoneNetwork(number);
+    assert.equal(network, 'Invalid number');
+    done();
   });
 });

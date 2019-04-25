@@ -162,6 +162,7 @@ const sendDeleteMail = (account) => {
 };
 
 /**
+ * Delete account on provision of a valid account ID
  * @name deleteAccount
  * @async
  * @param {Object} req
@@ -220,7 +221,7 @@ const getQueryString = async (queryString, res) => {
   try {
     const { status } = queryString;
     const validQueries = ['active', 'dormant'];
-    if (!status || validQueries.indexOf(status) < 0) {
+    if (!status || !validQueries.includes(status)) {
       return setServerResponse(res, 400, { error: 'Invalid query' });
     }
     const accounts = await Accounts.findByStatus(status);
@@ -245,9 +246,6 @@ const getAllAccounts = async (req, res) => {
       return null;
     }
     const accounts = await Accounts.findAll();
-    if (accounts.length === 0) {
-      return setServerResponse(res, 404, { error: 'No accounts opened yet' });
-    }
     return setServerResponse(res, 200, { data: accounts });
   } catch (error) {
     return setServerResponse(res, 500, { error });
