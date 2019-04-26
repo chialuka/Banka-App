@@ -9,7 +9,10 @@ import * as Accounts from '../models/accounts';
  * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {JSON Object}
+ * @param {Object} senderAccount
+ * @param {Object} receiverAccount
+ * @returns {JSON} mesage informing client of the success of their
+ * transfer or the error encountered in the process
  */
 const makeCharges = async (req, res, senderAccount, receiverAccount) => {
   try {
@@ -42,7 +45,8 @@ const makeCharges = async (req, res, senderAccount, receiverAccount) => {
  * @param {Object} req
  * @param {Object} res
  * @param {Object} senderAccount
- * @returns {function}
+ * @returns {function} makeCharges function that makes charge on
+ * accounts of both customers
  */
 const validateReceiver = async (req, res, senderAccount) => {
   const receiverAccount = await Accounts.findOne(req.body.receiverAccount);
@@ -64,7 +68,7 @@ const validateReceiver = async (req, res, senderAccount) => {
  * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {function} validateReceiver
+ * @returns {function} validateReceiver function
  */
 const validateSender = async (req, res) => {
   const senderAccount = await Accounts.findOne(req.body.senderAccount);
@@ -89,7 +93,7 @@ const validateSender = async (req, res) => {
  * @async
  * @param {Object} req
  * @param {Object} res
- * @returns @function validateReceiver
+ * @returns {Function} validateSender function
  */
 const createTransfer = async (req, res) => validateSender(req, res);
 

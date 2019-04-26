@@ -54,6 +54,13 @@ const tableNames = [
   },
 ];
 
+/**
+ * Function for creating tables if they don't exist
+ * @name createTable
+ * @param {String} name
+ * @param {Object} query
+ * @returns {String} message detailing success or failure of table creation
+ */
 const createTable = async (name, query) => {
   try {
     await db.query(query);
@@ -63,6 +70,11 @@ const createTable = async (name, query) => {
   }
 };
 
+/**
+ * Create relationships after tables have been created
+ * @name createRelation
+ * @returns {String} details of table relation creation
+ */
 const createRelation = async () => {
   const usersAccountsQuery = `
   ALTER TABLE accounts DROP CONSTRAINT IF EXISTS owner_id;
@@ -88,6 +100,12 @@ const createRelation = async () => {
     return 'Error creating relationships';
   }
 };
+
+/**
+ * Call functions that create tables and relationships
+ * @name setupTables
+ * @returns {Null} Null
+ */
 const setupTables = async () => {
   await Promise.all(
     tableNames.map(({ name, query }) => createTable(name, query)),

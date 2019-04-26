@@ -14,7 +14,8 @@ import sendMail from '../lib/mail';
  * @param {Object} reqBody
  * @param {Object} user
  * @param {String} carrier
- * @returns {Null}
+ * @returns {Null} Sends email to client informing them of
+ * their successful airtime purchase
  */
 const sendAirtimeEmail = (account, reqBody, user, carrier) => {
   const composeMail = {
@@ -41,7 +42,8 @@ const sendAirtimeEmail = (account, reqBody, user, carrier) => {
  * @param {Object} res
  * @param {Object} account
  * @param {Object} reqBody
- * @returns {Function}
+ * @returns {JSON} message informing the user that their airtime purchase
+ * was either successful or not
  */
 const checkValidNumber = async (res, account, reqBody) => {
   const formattedNumber = `0${reqBody.phoneNumber.slice(-10)}`;
@@ -66,7 +68,8 @@ const checkValidNumber = async (res, account, reqBody) => {
  * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {Function}
+ * @returns {Function} function that deducts airtime amount from
+ * the client's account
  */
 const purchaseAirtime = async (req, res) => {
   try {

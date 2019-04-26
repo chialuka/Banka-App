@@ -5,7 +5,7 @@ import db from '../config';
  * @async
  * @name create
  * @param {Object} data
- * @returns {Array}
+ * @returns {Array} New account created
  */
 const create = async (data) => {
   const {
@@ -31,7 +31,7 @@ const create = async (data) => {
  * Find all accounts in the database
  * @async
  * @name findAll
- * @returns {Array}
+ * @returns {Array} all accounts in the database
  */
 const findAll = async () => {
   const results = await db.query('SELECT * FROM accounts ORDER BY id ASC');
@@ -43,7 +43,7 @@ const findAll = async () => {
  * @async
  * @name findByStatus
  * @param {String} status
- * @returns {Array}
+ * @returns {Array} users sorted by the given status
  */
 const findByStatus = async (status) => {
   const results = await db.query('SELECT * FROM accounts WHERE status = $1', [
@@ -58,7 +58,7 @@ const findByStatus = async (status) => {
  * @async
  * @authorname findByTransaction
  * @param {Number} params
- * @returns {Array}
+ * @returns {Array} transactions performed on a particular account
  */
 const findByTransaction = async (params) => {
   const results = await db.query(
@@ -74,12 +74,12 @@ const findByTransaction = async (params) => {
 };
 
 /**
- * Find ac account using the argument provided. The argument could either be
+ * Find account using the argument provided. The argument could either be
  * an email or an id
  * @async
  * @name findOne
  * @param {Number} param
- * @returns {Array}
+ * @returns {Array} account with the given ID or account number
  */
 const findOne = async (param) => {
   const result = await db.query(
@@ -94,7 +94,7 @@ const findOne = async (param) => {
  * which could be either active or dormant
  * @async
  * @name findOneAndDelete
- * @returns {Array}
+ * @returns {Array} account that has been updated
  */
 const findOneAndUpdate = async (...args) => {
   const [param] = args;
@@ -110,7 +110,8 @@ const findOneAndUpdate = async (...args) => {
  * Find the account with the given id and delete it
  * @async
  * @name findOneAndDelete
- * @returns {Number}
+ * @param {Number} id
+ * @returns {Number} ID of deleted account
  */
 const findOneAndDelete = async (id) => {
   await db.query('DELETE FROM accounts WHERE id = $1', [id]);
@@ -121,7 +122,7 @@ const findOneAndDelete = async (id) => {
  * Delete all accounts in the database
  * @async
  * @name deleteAll
- * @returns {Boolean}
+ * @returns {Boolean} true when all accounts are deleted
  */
 const deleteAll = async () => {
   await db.query('DELETE FROM accounts');

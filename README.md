@@ -40,16 +40,27 @@ To use the API, make requests to the endpoints supported by Banka and get your r
 ## Features
 Make requests to the following endpoints:
 
-1. POST - Sign Up [/api/v1/users/auth/signup](https://documenter.getpostman.com/view/5824922/S1ENyyag#b843b5f1-e098-4468-9274-b4df6a61d883)
-2. POST - Sign In [/api/v1/users/auth/signin](https://documenter.getpostman.com/view/5824922/S1ENyyag#71a524ab-16af-4d42-b35f-ceae0609f92a)
-3. GET - Get all users (requires staff token) [/api/v1/users](https://documenter.getpostman.com/view/5824922/S1ENyyag#375c022c-7337-4098-b5d0-19b957782640)
-4. GET - Get single user (requires staff token) [/api/v1/users/:user_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#c93321b2-cc11-4659-b779-aaa92f56a339)
-5. PUT - Edit user details (requires user token) [/api/v1/users/:user_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#569b1f4a-6b5c-46ae-8fdf-f3bfac5a25d6)
-6. DELETE - Delete user (requires staff token) [/api/v1/users/:user_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#0a2bffa4-1dc4-4736-aa75-2b5f0b898e36)
-7. POST - Create bank account (requires user token) [/api/v1/accounts](https://documenter.getpostman.com/view/5824922/S1ENyyag#0149a2f1-be9b-4d3b-99cc-6c4e546d3748)
-8. PATCH - Activate or deactivate account (requires admin token) [/api/v1/accounts/:accounts_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#ce38bfe8-6fd9-4cd7-880e-f707fef2f768)
-9. DELETE - Delete bank account (requires staff token) [/api/v1/accounts/:accounts_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#ebaf56e7-fe43-47f9-89b2-642d52bceed1)
-10. POST - Credit or debit an account (requires staff token) [/api/v1/transactions](https://documenter.getpostman.com/view/5824922/S1ENyyag#0149a2f1-be9b-4d3b-99cc-6c4e546d3748)
+| Request Type    | Function    | Enpoint       | Postman Collection |
+| ----------------|-------------|---------------|--------------------|
+| POST            | Sign Up     | /api/v1/users/auth/signup |[/api/v1/users/auth/signup](https://documenter.getpostman.com/view/5824922/S1ENyyag#b843b5f1-e098-4468-9274-b4df6a61d883)|
+| POST            | Sign In     | /api/v1/users/auth/signin | [/api/v1/users/auth/signin](https://documenter.getpostman.com/view/5824922/S1ENyyag#71a524ab-16af-4d42-b35f-ceae0609f92a) |
+| GET             | Get all users | /api/v1/users | [/api/v1/users](https://documenter.getpostman.com/view/5824922/S1ENyyag#375c022c-7337-4098-b5d0-19b957782640) |
+| GET             | Get single user | /api/v1/users/:user_id | [/api/v1/users/:user_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#c93321b2-cc11-4659-b779-aaa92f56a339) |
+| GET             | Get all accounts owned by a user | /api/v1/users/accounts/:id | [/api/v1/users/accounts/](https://documenter.getpostman.com/view/5824922/S1ENyyag#a74807e3-f4e1-4db9-992a-8d7b59f9780f)
+| PUT             | Edit user details | /api/v1/users/:user_id | [/api/v1/users/:user_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#569b1f4a-6b5c-46ae-8fdf-f3bfac5a25d6) |
+| DELETE          | Delete user       | /api/v1/users/:user_id | [/api/v1/users/:user_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#0a2bffa4-1dc4-4736-aa75-2b5f0b898e36) |
+| POST            | Create bank account | /api/v1/accounts | [/api/v1/accounts](https://documenter.getpostman.com/view/5824922/S1ENyyag#0149a2f1-be9b-4d3b-99cc-6c4e546d3748) |
+| GET             | Get account details | /api/v1/accounts/:id | [/api/v1/accounts/:id](https://documenter.getpostman.com/view/5824922/S1ENyyag#b4e1cb2d-b1ab-40bd-a338-a8efdae44c96)
+| GET             | Get all accounts    | /api/v1/accounts     | [/api/v1/accounts](https://documenter.getpostman.com/view/5824922/S1ENyyag#8b7844c6-414d-4171-8b6b-6bfd35b1bea7)
+| GET             | Get active or dormant accounts | /api/v1/accounts/?status='' | [/api/v1/accounts/?status=dormant](https://documenter.getpostman.com/view/5824922/S1ENyyag#80cc105d-39d2-49a3-89f2-2b6fa6dc4796)
+| PATCH           | Activate or deactivate account | /api/v1/accounts/:accounts_id | [/api/v1/accounts/:accounts_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#ce38bfe8-6fd9-4cd7-880e-f707fef2f768) |
+| GET             | Get all transactions on an account | /api/v1/accounts/transactions/:id  | [/api/v1/accounts/transactions/:id](https://documenter.getpostman.com/view/5824922/S1ENyyag#fab0e90d-59ea-408b-90ef-52f4682b1b4b)
+| DELETE          | Delete bank account        | /api/v1/accounts/:accounts_id | [/api/v1/accounts/:accounts_id](https://documenter.getpostman.com/view/5824922/S1ENyyag#ebaf56e7-fe43-47f9-89b2-642d52bceed1) |
+| POST            | Credit or debit an account | /api/v1/transactions | [/api/v1/transactions](https://documenter.getpostman.com/view/5824922/S1ENyyag#0149a2f1-be9b-4d3b-99cc-6c4e546d3748) |
+| GET             | Get all transactions       | /api/v1/transactions | [/api/v1/transactions](https://documenter.getpostman.com/view/5824922/S1ENyyag#73acf7ac-9ce0-4372-bfc6-dc08156be84c)
+| GET             | Get a particular transaction | /api/v1/transactions/:id | [/api/v1/transactions/:id](https://documenter.getpostman.com/view/5824922/S1ENyyag#bd2ff9dc-7f2b-414c-9ce2-91209ef40647)
+| POST            | Make a transfer             | /api/v1/transfers   | [/api/v1/transfers](https://documenter.getpostman.com/view/5824922/S1ENyyag#39a5fc0e-6aad-4f5a-b722-0deecef0f2c3)
+| POST            | Make an airtime purchase    | /api/v1/airtime     | [/api/v1/airtime](https://documenter.getpostman.com/view/5824922/S1ENyyag#4d0e5413-6418-4d13-b470-b447f36ef679)
 
 
 

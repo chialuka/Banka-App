@@ -55,6 +55,7 @@
     "bcrypt-nodejs": "0.0.3",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
     "dotenv": "^7.0.0",
     "express": "^4.16.4",
     "joi": "^14.3.1",
@@ -62,7 +63,9 @@
     "morgan": "^1.9.1",
     "node-fetch": "^2.3.0",
     "nodemailer": "^6.1.0",
-    "pg": "^7.9.0"
+    "pg": "^7.9.0",
+    "swagger-jsdoc": "^3.2.9",
+    "swagger-ui-express": "^4.0.2"
   },
   "nodemonConfig": {
     "ignore": [

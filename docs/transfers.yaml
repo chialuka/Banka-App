@@ -1,0 +1,47 @@
+paths:
+  /api/v1/transfers:
+    post:
+      tags:
+      - client
+      summary: Allows transfers between accounts
+      description: Clients with active bank accounts can transfer money to and fro once they are logged in
+      security:
+      - bearerAuth: []
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: transfer
+        description: transfer to be effected
+        schema:
+          $ref: '#/definitions/Transfers'
+      responses:
+        200:
+          description: Transfer successful
+        400:
+          description: Account not activated. Either sender's account or receiver's account is not activated
+        404:
+          description: Account not found
+        403:
+          description: User and token mismatch. Token must be for client who is initiating the transfer
+definitions:
+  Transfers:
+    type: object
+    required:
+    - senderAccount
+    - receiverAccount
+    - amount
+    - description
+    properties:
+      amount:
+        type: integer
+        example: 5
+      senderAccount:
+        type: integer
+        example: 5995885775
+      receiverAccount:
+        type: integer
+        example: 5665555443
+      description:
+        type: string
+        example: Bride price

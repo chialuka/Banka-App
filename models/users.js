@@ -5,7 +5,7 @@ import db from '../config';
  * @async
  * @name create
  * @param {Object} data
- * @returns {Array}
+ * @returns {Array} new user created
  */
 const create = async (data) => {
   const {
@@ -25,7 +25,7 @@ const create = async (data) => {
  * Find all users in the database
  * @async
  * @name findAll
- * @returns {Object}
+ * @returns {Object} all users in the database
  */
 const findAll = async () => {
   const results = await db.query('SELECT * FROM users ORDER BY id ASC');
@@ -37,7 +37,7 @@ const findAll = async () => {
  * @async
  * @name findOneById
  * @param {Number} id
- * @returns {Array}
+ * @returns {Array} user with the given ID
  */
 const findOneById = async (id) => {
   const result = await db.query('SELECT * FROM users WHERE id = $1', [id]);
@@ -49,7 +49,7 @@ const findOneById = async (id) => {
  * @name findOneByEmail
  * @async
  * @param {String} email
- * @returns {Array}
+ * @returns {Array} user with the given email address
  */
 const findOneByEmail = async (email) => {
   const result = await db.query('SELECT * FROM users WHERE email = $1', [
@@ -63,7 +63,7 @@ const findOneByEmail = async (email) => {
  * @async
  * @name findUserAccounts
  * @param {Number} id
- * @returns {Array}
+ * @returns {Array} all accounts owned by the specified user
  */
 const findUserAccounts = async (id) => {
   const result = await db.query('SELECT * FROM accounts WHERE owner_id = $1', [
@@ -78,7 +78,7 @@ const findUserAccounts = async (id) => {
  * @async
  * @name findOneAndUpdate
  * @param {Object} data
- * @returns {Array}
+ * @returns {Array} user whose details have been updated
  */
 const findOneAndUpdate = async (data) => {
   const {
@@ -103,7 +103,7 @@ const findOneAndUpdate = async (data) => {
  * @async
  * @name findOneAndDelete
  * @param {Number} id
- * @returns {Number} id
+ * @returns {Number} id of the account deleted
  */
 const findOneAndDelete = async (id) => {
   await db.query('DELETE FROM accounts WHERE owner_id = $1', [id]);
@@ -115,7 +115,7 @@ const findOneAndDelete = async (id) => {
  * Delete all users in the database
  * @async
  * @name deleteAll
- * @returns {Boolean}
+ * @returns {Boolean} true when all accounts are deleted
  */
 const deleteAll = async () => {
   await db.query('DELETE FROM accounts');

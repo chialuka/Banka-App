@@ -1,0 +1,95 @@
+paths:
+  /api/v1/transactions:
+    post:
+      tags:
+      - staff
+      summary: create a new credit or debit transaction
+      description: If an active account is provided, it can be either credited or debited with the amount specified, provided it will not leave account with a negative balance
+      security:
+      - bearerAuth: []
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: transaction
+        description: transaction to be created
+        schema:
+          $ref: '#/definitions/Transactions'
+      responses:
+        201:
+          description: Transaction successful
+        400:
+          description: Overdraft disallowed
+        404:
+          description: Staff with provided staff ID not found
+        403:
+          description: User not authorized
+    get:
+      tags:
+      - staff
+      - admin
+      summary: Get all transactions
+      description: On provision of a valid staff or admin token, get all transactions performed
+      security:
+      - bearerAuth: []
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: ID
+        description: Transaction ID
+        type: integer
+        required: true
+      responses:
+        200:
+          description: Success
+        403:
+          description: User not authorized
+  /api/v1/transactions/{id}:
+    get:
+      tags:
+      - users
+      summary: Get details of transaction whose ID is provided
+      description: Allows clients view details of any transaction they've performed and allows staff and admin view details of any transaction
+      security:
+      - bearerAuth: []
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: ID
+        description: Transaction ID
+        type: integer
+        required: true
+      responses:
+        200:
+          description: Transaction details successfully retrieved
+        404:
+          description: Transaction not found
+        403:
+          description: User and token mismatch. Client is trying to access another client's transaction details
+definitions:
+  Transactions:
+    type: object
+    required:
+    - amount
+    - transactionType
+    - accountNumber
+    - description
+    - cashierId
+    properties:
+      amount:
+        type: integer
+        example: 2
+      transactionType:
+        type: string
+        example: debit
+      accountNumber:
+        type: integer
+        example: 5115965660
+      description:
+        type: string
+        example: Bride price
+      cashierId:
+        type: integer
+        example: 8
