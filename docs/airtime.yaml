@@ -1,0 +1,43 @@
+paths:
+  /api/v1/airtime:
+    post:
+      tags:
+      - client
+      summary: Allows airtime purchase from client account
+      description: Clients with active bank accounts can purchase airtime for any Nigerian valid mobile number
+      security:
+      - bearerAuth: []
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: airtime
+        description: airtime to be purchased
+        schema:
+          $ref: '#/definitions/Airtime'
+      responses:
+        200:
+          description: Airtime purchase successful
+        400:
+          description: Number invalid. Phone number provided is invalid
+        404:
+          description: Account not found
+        403:
+          description: User and token mismatch. Token must be for client who is purchasing airtime
+definitions:
+  Airtime:
+    type: object
+    required:
+    - accountNumber
+    - phoneNumber
+    - amount
+    properties:
+      amount:
+        type: integer
+        example: 500
+      accountNumber:
+        type: integer
+        example: 5995885775
+      phoneNumber:
+        type: string
+        example: 07037432665

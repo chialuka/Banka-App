@@ -12,7 +12,7 @@ import {
  * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {JSON Object}
+ * @returns {JSON} details of the newly created user
  */
 const createUser = async (req, res) => {
   try {
@@ -43,9 +43,9 @@ const createUser = async (req, res) => {
  * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {JSON Object}
+ * @returns {JSON} all users registered
  */
-const getUsers = async (_, res) => {
+const getUsers = async (req, res) => {
   try {
     const users = await Users.findAll();
     return setServerResponse(res, 200, { data: [users] });
@@ -62,7 +62,7 @@ const getUsers = async (_, res) => {
  * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {JSON Object}
+ * @returns {JSON} details of the specified user
  */
 const getUser = async (req, res) => {
   try {
@@ -85,7 +85,7 @@ const getUser = async (req, res) => {
  * @name getUserAccounts
  * @param {Object} req
  * @param {Object} res
- * @returns {JSON}
+ * @returns {JSON} all accounts that belong to a specified user
  */
 const getUserAccounts = async (req, res) => {
   try {
@@ -102,7 +102,8 @@ const getUserAccounts = async (req, res) => {
  * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {JSON Object}
+ * @returns {JSON} response for user who logged in successfully
+ * or any error encountered in the process
  */
 const loginUser = async (req, res) => {
   try {
@@ -132,7 +133,7 @@ const loginUser = async (req, res) => {
  * @param {String} firstname
  * @param {String} lastname
  * @param {String} email
- * @returns {Object}
+ * @returns {Object} details of the client to be updated
  */
 const dataToUpdateUser = ({ firstname, lastname, email }) => ({
   ...(firstname && { firstname }),
@@ -146,7 +147,7 @@ const dataToUpdateUser = ({ firstname, lastname, email }) => ({
  * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {JSON Object}
+ * @returns {JSON} details of the user that was updated
  */
 const updateUser = async (req, res) => {
   try {
@@ -182,7 +183,8 @@ const updateUser = async (req, res) => {
  * @async
  * @param {Object} req,
  * @param {Object} res,
- * @returns {JSON Object}
+ * @returns {JSON} message informing user that the selected user
+ * has been deleted or that an error has occured
  */
 const deleteUser = async (req, res) => {
   try {

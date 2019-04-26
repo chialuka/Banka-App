@@ -7,6 +7,13 @@ dotenv.config();
 
 const { SECRET } = process.env;
 
+/**
+ * Verify the token provided by user and
+ * get the user whose ID the token was used to sign in
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {Object} user object of the owner token was assigned to
+ */
 const verifyJwt = async (req, res) => {
   try {
     const header = req.headers.authorization;
@@ -24,12 +31,18 @@ const verifyJwt = async (req, res) => {
     res.locals.tokenOwner = tokenOwner;
     return tokenOwner;
   } catch (error) {
-    return setServerResponse(res, 403, {
+    return setServerResponse(res, 401, {
       error: 'Invalid Token. Please login',
     });
   }
 };
 
+/**
+  * calls function that gets the user from the token
+  * @param {Object} req
+  * @param {Object} res
+  * @returns {function} verifyJwt function
+  */
 const getUserFromToken = async (req, res) => {
   try {
     return verifyJwt(req, res);
@@ -40,6 +53,14 @@ const getUserFromToken = async (req, res) => {
   }
 };
 
+/**
+ * Find if the token provided is for the client making the request
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ * @returns {Function} next function on the middleware chain if the token
+ * was assigned to a client.
+ */
 const authorizeClient = async (req, res, next) => {
   const tokenOwner = await getUserFromToken(req, res);
   if (!tokenOwner) return null;
@@ -49,6 +70,15 @@ const authorizeClient = async (req, res, next) => {
   return next();
 };
 
+/**
+ * Middleware to authorize staff
+ * @name authorizeStaff
+ * @async
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ * @returns {Function} the next function that calls the next function
+ */
 const authorizeStaff = async (req, res, next) => {
   const user = await getUserFromToken(req, res);
   if (!user) return null;
@@ -58,6 +88,15 @@ const authorizeStaff = async (req, res, next) => {
   return next();
 };
 
+/**
+ * Middleware for authorizing admin
+ * @name authorizeAdmin
+ * @async
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Object} next
+ * @returns {Function} next function to show authentication is successful
+ */
 const authorizeAdmin = async (req, res, next) => {
   const owner = await getUserFromToken(req, res);
   if (!owner) return null;
@@ -67,6 +106,16 @@ const authorizeAdmin = async (req, res, next) => {
   return next();
 };
 
+/**
+ * For paths accessible to all users but require login
+ * @name authenticateLogin
+ * @aync
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Object} next
+ * @returns {Function} next function that shows the user
+ * passed the authentication
+ */
 const authenticateLogin = async (req, res, next) => {
   const loggedInUser = await getUserFromToken(req, res);
   if (!loggedInUser) return null;

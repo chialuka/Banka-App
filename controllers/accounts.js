@@ -8,7 +8,7 @@ import sendMail from '../lib/mail';
  * @name sendNewAccountMail
  * @param {Object} user
  * @param {Object} accObj
- * @returns {null}
+ * @returns {Null} Function sends email to client
  */
 const sendNewAccountMail = (user, accObj) => {
   const composeEmail = {
@@ -33,7 +33,8 @@ const sendNewAccountMail = (user, accObj) => {
  * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {JSON Object}
+ * @returns {Object} JSON Object with data of the newly created account
+ * or the error that was encountered while trying to create it
  */
 const createAccount = async (req, res) => {
   try {
@@ -64,8 +65,10 @@ const createAccount = async (req, res) => {
 /**
  * send email to client whose account was deactivated
  * @name sendDeactivationMail
+ * @param {String} email
  * @param {Object} account
- * @return {null}
+ * @return {Null} Sends email informing client of their account
+ * deactivation
  */
 const sendDeactivationMail = (email, account) => {
   const deactivationEmail = {
@@ -87,8 +90,10 @@ const sendDeactivationMail = (email, account) => {
 /**
  * send email to client whose account was activated
  * @name sendActivationMail
+ * @param {String} email
  * @param {Object} account
- * @returns {null}
+ * @returns {Null} sends email informing client that their account
+ * has been activated
  */
 const sendActivationMail = (email, account) => {
   const activatedAccountEmail = {
@@ -113,7 +118,8 @@ const sendActivationMail = (email, account) => {
  * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {JSON Object}
+ * @returns {Object} JSON Object with either details of the updated account
+ * or the error encountered while making the request
  */
 const patchAccount = async (req, res) => {
   try {
@@ -142,7 +148,8 @@ const patchAccount = async (req, res) => {
  * send email to customer whose account was deleted
  * @name sendDeleteMail
  * @param {Object} account
- * @returns {null}
+ * @returns {Null} Sends an email to the client informing them
+ * that their account has been deleted
  */
 const sendDeleteMail = (account) => {
   const composeEmail = {
@@ -167,7 +174,8 @@ const sendDeleteMail = (account) => {
  * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {JSON Object}
+ * @returns {Object} JSON Object informing user whether delete
+ * was successful or not
  */
 const deleteAccount = async (req, res) => {
   try {
@@ -191,7 +199,8 @@ const deleteAccount = async (req, res) => {
  * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {JSON}
+ * @returns {JSON} details of the account requested or the error that
+ * prevented the GET
  */
 const getAccountDetails = async (req, res) => {
   try {
@@ -215,7 +224,7 @@ const getAccountDetails = async (req, res) => {
  * @async
  * @param {Object} queryString
  * @param {Object} res
- * @returns {JSON}
+ * @returns {JSON} accounts sorted by the provided condition in the query
  */
 const getQueryString = async (queryString, res) => {
   try {
@@ -237,7 +246,7 @@ const getQueryString = async (queryString, res) => {
  * @async
  * @param {Object} req
  * @param {Object} res
- * @returns
+ * @returns {JSON} array containing all accounts
  */
 const getAllAccounts = async (req, res) => {
   try {
@@ -258,7 +267,7 @@ const getAllAccounts = async (req, res) => {
  * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {JSON}
+ * @returns {JSON} details of transactions perfomed on any account
  */
 const getAccountTransactions = async (req, res) => {
   try {

@@ -1,0 +1,208 @@
+paths:
+  /api/v1/users/auth/signup:
+    post:
+      tags:
+      - users
+      summary: Creates a new user
+      description: |
+        By passing in the required parameters, you can sign up for an account on Banka
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: user
+        description: User to be created
+        schema:
+          $ref: '#/definitions/UserSignUp'      
+      responses:
+        201:
+          description: new user created
+        409:
+          description: Conflict. User with provided email already exists
+        500:
+          description: Internal server error
+  /api/v1/users/auth/signin:
+    post:
+      tags:
+      - users
+      summary: Signs in a user
+      description: As a registered user, you can sign in to use the app.
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: login
+        description: login details
+        schema:
+          $ref: '#/definitions/UserLogin'
+      responses:
+        200:
+          description: Success
+        401:
+          description: incorrect password
+        404:
+          description: Incorrect email. User nto found
+  /api/v1/users/{id}:
+    get:
+      tags:
+      - staff
+      - admin
+      summary: Gets a user by id
+      security:
+      - bearerAuth: []
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        description: User ID
+        type: integer
+        required: true
+      responses:
+        200: 
+          description: Success
+        404:
+          description: User not found
+    put:
+      tags:
+      - client
+      summary: Updates a user's details
+      description: Allows users access to update their firstname, lastname, password or email
+      security:
+      - bearerAuth: []
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        description: User ID
+        type: integer
+        required: true
+      - in: body
+        name: update user
+        description: update user's details
+        schema: '#/definitions/UserUpdate'
+      responses:
+        200:
+          description: User update successful
+        404:
+          description: Cannot find user
+        403:
+          description: User and token mismatch
+    delete:
+      tags:
+      - staff
+      - admin
+      summary: Deletes a user from the database
+      description: Allows staff and admin to delete any user by specifying their user ID
+      security:
+      - bearerAuth: []
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        description: User ID
+        type: integer
+        required: true
+      responses:
+        200:
+          description: User delete successful
+        404:
+          description: User with provided ID not found
+  /api/v1/users:
+    get:
+      tags:
+      - staff
+      - admin
+      summary: Gets all registered users
+      security:
+      - bearerAuth: []
+      produces:
+      - application/json
+      responses:
+        200: 
+          description: Success
+        500:
+          description: Internal server error
+  /api/v1/users/accounts/{id}:
+    get:
+      tags:
+      - users
+      summary: Gets all acounts owned by a specified user
+      description: Allows clients to view all their accounts and staff and admin to see all accounts owned by a particular user
+      security:
+      - bearerAuth: []
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        description: User ID
+        type: integer
+        required: true
+      responses:
+        200: 
+          description: Success
+        400:
+          description: Invalid ID. Provide an integer
+        401:
+          description: Invalid token. Log in
+        500:
+          description: Internal server error
+definitions:
+  UserSignUp:
+    type: object
+    required:
+    - firstname
+    - lastname
+    - email
+    - password
+    - isStaff
+    - isAdmin
+    properties:
+      firstname:
+        type: string
+        example: Obialije
+      lastname:
+        type: string
+        example: Nweuna
+      email:
+        type: string
+        example: obialije@gmail.com
+      password: 
+        type: string
+        example: jukwaese890
+      isStaff:
+        type: boolean
+        example: true
+      isAdmin:
+        type: boolean
+        example: false
+  UserLogin:
+    required:
+    - email
+    - password
+    properties:
+      email:
+        type: string
+        example: rihanna.adebayo@gmail.com
+      password:
+        type: string
+        example: isigidika5890
+  UserUpdate:
+    properties:
+      email:
+        type: string
+        example: ronaldo.nduka@yahoo.com
+      password:
+        type: string
+        example: openSecret2020
+      firstname:
+        type: string
+        example: Okoko
+      lastname:
+        type: string
+        example: Flower

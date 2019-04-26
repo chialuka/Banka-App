@@ -10,7 +10,8 @@ import { setServerResponse, capitalize } from '../utils';
  * @param {String} email
  * @param {String} firstname
  * @param {Object} data
- * @returns {null}
+ * @returns {Null} sends email to client informing them of the transaction
+ * that occured on their account
  */
 const mailSender = (email, firstname, data) => {
   const composeEmail = {
@@ -39,7 +40,7 @@ const mailSender = (email, firstname, data) => {
  * @name postTransaction
  * @async
  * @param {Object} postingDetails
- * @returns {JSON Object}
+ * @returns {JSON} array containing details of the newly created account
  */
 const postTransaction = async (postingDetails) => {
   const {
@@ -67,7 +68,7 @@ const postTransaction = async (postingDetails) => {
  * @param {Object} res
  * @param {Object} account
  * @param {Object} reqBody
- * @return {Null}
+ * @returns {Function} function that creates the transaction on client's account
  */
 const chargeAccount = async (res, account, reqBody) => {
   const { amount, transactionType } = reqBody;
@@ -101,7 +102,7 @@ const chargeAccount = async (res, account, reqBody) => {
  * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {Function}
+ * @returns {Function} function that makes charge on client's account
  */
 const getAccountOwner = async (req, res) => {
   const account = await Accounts.findOne(req.body.accountNumber);
@@ -120,7 +121,8 @@ const getAccountOwner = async (req, res) => {
  * @async
  * @param {Object} req
  * @param {Object} res
- * @returns {JSON Object}
+ * @returns {JSON} function that ensures account owner is valid or error
+ * encountered while verifying
  */
 const createTransaction = async (req, res) => {
   try {
@@ -138,6 +140,14 @@ const createTransaction = async (req, res) => {
   }
 };
 
+/**
+ * Get details of a single transaction.
+ * @name getTransactionDetails
+ * @async
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {JSON} array containing the details of the requested transaction
+ */
 const getTransactionDetails = async (req, res) => {
   try {
     const transaction = await Transactions.findOne(req.params.id);
@@ -155,6 +165,14 @@ const getTransactionDetails = async (req, res) => {
   }
 };
 
+/**
+ * Get all transactions
+ * @name getAllTransactions
+ * @async
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {JSON} array containing all transactions performed
+ */
 const getAllTransactions = async (req, res) => {
   try {
     const transactions = await Transactions.findAll();

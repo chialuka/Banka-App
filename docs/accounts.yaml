@@ -1,0 +1,156 @@
+paths:
+  /api/v1/accounts:
+    post:
+      tags:
+      - client
+      summary: Creates a new bank account for clients
+      description: On providing valid parameters, a new account is opened for a client who is registered to use the app
+      security:
+      - bearerAuth: []
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: account
+        description: account to be created
+        schema:
+          $ref: '#/definitions/Account'
+      responses:
+        201:
+          description: New account created successfully
+        404:
+          description: User making request not found
+        403:
+          description: Token and user mismatch
+    get:
+      tags:
+      - staff
+      - admin
+      summary: Gets all bank accounts
+      description: Allows staff and admin see all bank accounts opened with the app
+      security:
+      - bearerAuth: []
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Success
+        403:
+          description: User not authorized
+  /api/v1/accounts/{id}:
+    patch:
+      tags:
+      - admin
+      summary: Changes an account's status
+      description: New accounts are dormant by default. Requests to this endpoint can switch accounts from dormant to active and vice versa
+      security:
+      - bearerAuth: []
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: id
+        description: Account ID
+        type: integer
+        required: true
+      - in: body
+        name: status
+        description: New account status
+        schema:
+          $ref: '#/definitions/Status'
+      responses:
+        200:
+          description: Status changed successfully
+        404:
+          description: Account owner not found
+        403:
+          description: User not authorized.
+        400:
+          description: Provided ID is invalid
+    delete:
+      tags:
+      - staff
+      - admin
+      summary: Deletes the account whose ID is provided
+      security:
+      - bearerAuth: []
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: id
+        description: Account ID
+        type: integer
+        required: true
+      responses:
+        200:
+          description: Account deleted successfully
+        403:
+          description: Invalid token. Please login
+    get:
+      tags:
+      - users
+      summary: Gets the details of an account
+      description: Provides clients with details of their own account and staff with details of any account
+      security:
+      - bearerAuth: []
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: id
+        description: Account ID
+        type: integer
+        required: true
+      responses:
+        200:
+          description: Success
+        403:
+          description: User not authorized. Client is probably trying to access account that does not belong to them
+  /api/v1/accounts/transactions/{id}:
+    get:
+      tags:
+      - users
+      summary: Gets all transactions performed on an account
+      description: Provides clients with all transactions performed on their account and staff with details of transactions performed on any account
+      security:
+      - bearerAuth: []
+      produces:
+      - application/json
+      parameters:
+      - in: path
+        name: id
+        description: Account ID
+        type: integer
+        required: true
+      responses:
+        200:
+          description: success
+        403:
+          description: User not authorized. Client might be trying to view transactions on an account that doesn't belong to them
+definitions:
+  Account:
+    type: object
+    required:
+    - id
+    - accountType
+    - openingBalance
+    properties:
+      id:
+        type: integer
+        example: 5
+      accountType:
+        type: string
+        example: savings
+      openingBalance:
+        type: integer
+        example: 50
+  Status:
+    type: object
+    required:
+    - status
+    properties:
+      status:
+        type: string
+        example: dormant
+        

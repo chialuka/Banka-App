@@ -9,6 +9,11 @@ const {
 
 const supportedEnv = ['development', 'test', 'production'];
 
+/**
+ * Check NODE_ENV to ensure the environment is supported
+ * @name checkEnv
+ * @returns {Object} configu details for chosen NODE_ENV
+ */
 const checkEnv = () => {
   if (!supportedEnv.includes(NODE_ENV)) {
     throw new Error('Env not supported');

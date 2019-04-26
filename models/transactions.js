@@ -5,7 +5,7 @@ import db from '../config';
  * @name create
  * @async
  * @param {Object} data
- * @returns {Array}
+ * @returns {Array} new transaction created
  */
 const create = async (data) => {
   const {
@@ -30,7 +30,7 @@ const create = async (data) => {
  * Find all transactions saved to the database
  * @async
  * @name findAll
- * @returns {Array}
+ * @returns {Array} all transactions
  */
 const findAll = async () => {
   const results = await db.query('SELECT * FROM transactions ORDER BY id ASC');
@@ -42,7 +42,7 @@ const findAll = async () => {
  * @async
  * @name findOne
  * @param {Number} param
- * @returns {Array}
+ * @returns {Array} transaction with the given ID
  */
 const findOne = async (param) => {
   const result = await db.query('SELECT * FROM transactions WHERE id = $1', [
