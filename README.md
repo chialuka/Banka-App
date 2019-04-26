@@ -98,7 +98,10 @@ Sample response
 }
 ```
 
-Click on the Postman [collection](https://documenter.getpostman.com/view/5824922/S1ENyyag#intro) to see more examples.
+## Documentation
+Documentation for this app is available at: https://banka-platform.herokuapp.com/api-docs
+
+You can also find the Postman [collection](https://documenter.getpostman.com/view/5824922/S1ENyyag#intro) to see more examples.
 
 ## Tests
 ```Bash
