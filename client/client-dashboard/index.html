@@ -3,6 +3,10 @@
   <head>
     <title>Client Dashboard</title>
     <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Roboto"
+      rel="stylesheet"
+    />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="Chukwualuka Chiama" />
@@ -17,13 +21,17 @@
     </header>
     <main>
       <div class="buttons-class">
-        <button class="edit-profile"><a href="../edit-profile/index.html">Edit Profile</a></button>
+        <button class="edit-profile">
+          <a href="../edit-profile/index.html">Edit Profile</a>
+        </button>
         <button id="history"></button>
-        <button id="logout" onclick=logOut()>Log out</button>
+        <button id="logout" onclick="logOut()">Log out</button>
       </div>
-      <p id="user"></p>
-      <div id="accountHeading"></div>
-      <div id="account"></div>
+      <div class="account-details">
+        <p id="user"></p>
+        <div id="accountHeading"></div>
+        <div id="account"></div>
+      </div>
     </main>
     <footer class="footer">
       <p class="footer-item">&copy;Banka Nig Plc 2019</p>

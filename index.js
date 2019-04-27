@@ -1,4 +1,5 @@
 import express, { Router } from 'express';
+import cors from 'cors';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import swaggerJSDoc from 'swagger-jsdoc';
@@ -39,9 +40,11 @@ const options = {
 
 const swaggerData = swaggerJSDoc(options);
 
+app.use(cors());
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerData));
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(bodyParser.json());
 

@@ -3,6 +3,16 @@
   <head>
     <title>Banka Client Login</title>
     <link rel="stylesheet" href="../public-css/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Roboto|Source+Sans+Pro"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+      crossorigin="anonymous"
+    />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="Chukwualuka Chiama" />
@@ -10,16 +20,27 @@
       name="description"
       content="The Client Login page of the Banka App houses a form that allows Clients login to their accounts"
     />
-    <script src="script.js"></script>
   </head>
   <body>
-    <header class="header">
-      <h1 class="logo"><a href="../index.html">Banka</a></h1>
-    </header>
+    <div class="navbar">
+        <div class="col-2 logo"><a href="../index.html">Banka</a></div>
+        <div class="menu-icon col-2" onclick="menuFunction(this)">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </div>
+      <div class="menu-items">
+        <div class="col-4">
+          <a href="../about/index.html">About</a>
+          <a href="../contact/index.html">Contact Us</a>
+          <a href="../client-signup/index.html">Sign Up</a>
+        </div>
+      </div>
+    </div>
     <main class="content-wrapper">
-      <form id="login-client" onsubmit="return validateForm()" method="POST">
+      <form id="login-client" onsubmit="return validateLoginForm()" method="POST">
         <div class="form-header">
-          <h1>Login</h1>
+          <h1 class="title">Login</h1>
         </div>
         <div class="form-body">
           <div class="col-75">
@@ -44,7 +65,7 @@
           </div>
           <p class="link">
             Don't have an account?
-            <a href="../client-signup/index.html">Sign Up here</a>
+            <a href="../client-signup/index.html">signup here</a>
           </p>
         </div>
       </form>
@@ -52,5 +73,7 @@
     <footer class="footer">
       <p class="footer-item">&copy;Banka Nig Plc 2019</p>
     </footer>
+    <script src="../script.js"></script>
+    <script src="../utils.js"></script>
   </body>
 </html>
