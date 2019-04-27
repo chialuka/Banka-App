@@ -37,6 +37,9 @@ const serverRequest = async (url, data) => {
     return null;
   }
   const token = localStorage.setItem('token', response.data[0].token);
+  if (response.data[0].is_staff) {
+    window.location.href = '../staff-dashboard/index.html';
+  }
   window.location.href = '../client-dashboard/index.html';
 };
 
@@ -61,7 +64,6 @@ const validateSignUpForm = () => {
   const url = 'http://localhost:2800/api/v1/users/auth/signup';
   return serverRequest(url, formData);
 };
-
 
 function validateLoginForm() {
   event.preventDefault();
