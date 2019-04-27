@@ -86,7 +86,6 @@ header {
   padding: 5px 5px;
   font-size: 1.3em;
   color: rgba(33, 103, 253, 0.9);
-  background-color: var(--nav);
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
 }
