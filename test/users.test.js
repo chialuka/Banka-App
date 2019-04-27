@@ -121,7 +121,7 @@ describe('POST User', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.includes('email must be a valid email');
+          .that.includes('firstname is required');
         done();
       });
   });

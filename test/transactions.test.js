@@ -250,7 +250,7 @@ describe('POST transactions and Transfers', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.contains('transactionType is required');
+          .that.contains('accoutNumber is required');
         done();
       });
   });
@@ -308,7 +308,7 @@ describe('POST transactions and Transfers', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.contains('cashierId is required');
+          .that.contains('accountNumber is required');
         done();
       });
   });
@@ -356,7 +356,7 @@ describe('POST transactions and Transfers', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.includes('cashierId must be a number');
+          .that.includes('accountNumber is required');
         done();
       });
   });
