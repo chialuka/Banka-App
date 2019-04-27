@@ -8,6 +8,10 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background:   linear-gradient(
+    rgba(255, 255, 255, 0.8), 
+    rgba(247, 247, 247, 0.8)
+  ), url('../images/banking.jpg') no-repeat;
 }
 
 * {
@@ -26,7 +30,7 @@ header {
 
 a {
   text-decoration: none;
-  color: rgb(180, 201, 245);
+  color: rgba(33, 103, 253, 0.9);
 }
 
 fieldset {
@@ -57,21 +61,6 @@ fieldset {
   }
   .form-title {
     font-size: 18px
-  }
-}
-
-
-@media screen and (min-width: 650px) {
-  main {
-    max-width: 550px
-  }
-  form button {
-    width: 25%;
-    margin-top: 10px;
-    float: right;
-  }
-  .footer {
-    font-size: 12px
   }
 }
 
@@ -111,4 +100,24 @@ footer {
 
 footer a {
   padding: 10px;
+}
+
+@media (min-width: 768px) {
+  main {
+    max-width: 550px
+  }
+  form button {
+    width: 25%;
+    margin-top: 10px;
+    float: right;
+  }
+  .footer {
+    font-size: 12px
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    background-size: cover;
+  }
 }

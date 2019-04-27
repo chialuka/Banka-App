@@ -5,3 +5,8 @@ coverage
 .env
 .vscode
 data
+config
+.vscode
+coverage
+.env
+.coveralls
