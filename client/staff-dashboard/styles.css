@@ -4,11 +4,16 @@ html {
 
 body {
   margin: 0;
+  font-family: 'Montserrat', sans-serif, 'Roboto', sans-serif;
+  background:   linear-gradient(
+    rgba(255, 255, 255, 0.7), 
+    rgba(247, 247, 247, 0.7)
+  ), url('../images/banking.jpg');
 }
 
 #logo {
   cursor: pointer;
-  color: rgb(143, 176, 245);
+  color: rgba(33, 103, 253, 0.9);
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
 }
@@ -26,25 +31,31 @@ main {
   align-items: center;
 }
 
-@media screen and (min-width: 500px) {
-  .footer {
-    font-size: 10px;
-  }
-}
-
-@media screen and (min-width: 650px) {
-  .footer {
-    font-size: 12px;
-  }
-}
-
 #admin {
   display: none;
   cursor: pointer;
 }
 
+a {
+  text-decoration: none;
+  background-color: rgb(47, 47, 224);
+  padding: 15px;
+  color: whitesmoke;
+  border-radius: 5px;
+}
+
 .list {
   padding: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  background-color: #cfcaca;
+  border: 20px;
+  border-radius: 5px;
+  list-style-type: none;
+  color: #3b75f1;
+}
+
+.list:hover {
+  box-shadow: 4px 4px 8px 4px rgba(0,0,0,0.2);
 }
 
 .item {
@@ -53,7 +64,6 @@ main {
 }
 
 .item:hover {
-  color: #3b75f1;
   font-weight: bold;
 }
 
@@ -69,4 +79,35 @@ footer {
 
 footer a {
   padding: 10px;
+}
+
+
+@media screen and (min-width: 425px) {
+  .footer {
+    font-size: 10px;
+  }
+}
+
+@media screen and (min-width: 600px) {
+  .footer {
+    font-size: 12px;
+  }
+  #accounts {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+  }
+  .list {
+    padding: 15px;
+    margin: 15px;
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    background-size: cover;
+  }
+  #logo {
+    font-size: 2.5em;
+  }
 }

@@ -1,3 +1,9 @@
+:root {
+  --red: #f00f00;
+  --blue: #2c1fe2;
+  --white: #d3d2e9;
+  --black: #272727;
+}
 html {
   margin: 0;
 }
@@ -7,27 +13,33 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  font-family: 'Roboto', sans-serif;
+  color: var(--black);
+  background:   linear-gradient(
+    rgba(255, 255, 255, 0.7), 
+    rgba(247, 247, 247, 0.7)
+  ), url('../images/banking.jpg') no-repeat;
 }
 
 header {
   height: 80px;
-  text-align: center
+  text-align: center;
 }
 
-#header{
-  text-align: center
+#header {
+  text-align: center;
 }
 
 .logo {
   cursor: pointer;
   align-items: center;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-weight: bold
+  font-weight: bold;
 }
 
 a {
   text-decoration: none;
-  color: rgb(143, 176, 245);
+  color: rgba(33, 103, 253, 0.9);
 }
 
 main {
@@ -36,40 +48,21 @@ main {
   align-items: center;
   padding-bottom: 20px;
   min-height: calc(100vh - 160px);
+  width: 100%;
 }
 
-.top-buttons {
+.buttons {
   display: flex;
-  flex-direction: row
+  flex-direction: row;
 }
 
-@media screen and (min-width: 500px) {
-  .footer {
-    font-size: 10px;
-  }
-  .list .item {
-    font-size: 17px;
-  }
-  #account {
-    font-size: 18px;
-  }
-}
-
-@media screen and (min-width: 650px) {
-  .footer {
-    font-size: 12px;
-  }
-  .list .item {
-    font-size: 19px;
-  }
-  #account {
-    font-size: 21px;
-  }
+#account {
+  text-align: center;
 }
 
 #activate {
   display: none;
-  background-color: #3d1dee;
+  background-color: var(--blue);
 }
 
 .list {
@@ -78,7 +71,9 @@ main {
   display: flex;
   flex-direction: column;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  list-style-type: none
+  background-color: rgba(185, 185, 184, 0.8);
+  list-style-type: none;
+  font-family: 'Monteserrat', sans-serif;
 }
 
 .item {
@@ -91,14 +86,13 @@ input {
   margin: 10px 0 10px 0;
   display: inline-block;
   border: none;
-  background: #f1f1f1;
+  background: var(--white);
   width: 40%;
 }
 
 .amount-inputs {
   display: flex;
   flex-direction: column;
-  width: 400px;
   align-items: center;
 }
 
@@ -109,34 +103,39 @@ button {
   border: none;
   border-radius: 4px;
   font-weight: bold;
-  color: white;
+  color: var(--white);
 }
 
-button:hover, 
+button:hover,
 button:focus {
-  cursor: pointer
+  cursor: pointer;
 }
 
 button:disabled {
-  background-color: #ccc;
+  background-color: var(--white);
   cursor: not-allowed;
 }
 
 .delete {
-  background-color: red;
+  background-color: var(--red);
 }
 
 .credit {
-  background-color: #3d1dee;
+  background-color: var(--blue);
 }
 
 .debit {
-  background-color: red;
+  background-color: var(--red);
 }
 
 #error {
-  color: red;
+  color: var(--red);
   font-size: 15px;
+}
+
+.bottom-buttons {
+  display: flex;
+  flex-direction: row;
 }
 
 footer {
@@ -151,4 +150,64 @@ footer {
 
 footer a {
   padding: 8px;
+}
+
+@media screen and (min-width: 425px) {
+  .footer {
+    font-size: 10px;
+  }
+  .list .item {
+    font-size: 17px;
+  }
+  #account {
+    font-size: 18px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  main {
+    flex-direction: row;
+    justify-content: space-evenly;
+  }
+  .buttons {
+    flex-direction: column;
+  }
+  #activate {
+    width: 100%;
+    font-size: 15px;
+  }
+  .delete {
+    width: 100%;
+    font-size: 1.1em;
+  }
+  #account-details {
+    display: flex;
+    justify-content: center;
+  }
+  .footer {
+    font-size: 12px;
+  }
+  input {
+    width: 100%;
+  }
+  .list .item {
+    font-size: 19px;
+  }
+  #account {
+    font-size: 21px;
+  }
+  .bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    background-size: cover;
+  }
+  a {
+    font-size: 1.5em;
+  }
 }
