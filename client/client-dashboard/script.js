@@ -1,32 +1,35 @@
-const email = localStorage.getItem('loggedInUser');
-const users = JSON.parse(localStorage.getItem('clientToken')) || [];
-const findUser = users.find(item => item['Email'] === email);
+/* eslint-disable require-jsdoc */
+/* eslint-disable func-names */
+const token = localStorage.getItem('token');
+const client = JSON.parse(localStorage.getItem('client'));
 
-(function() {
-  const user = document.getElementById('user');
+console.log(client);
+
+const checkAccount = async () => {
   const account = document.getElementById('account');
   const accountHeading = document.getElementById('accountHeading');
 
-  if (!email) {
+  if (!token) {
     window.location.href = '../index.html';
   }
 
-  const date = new Date();
-  const time = date.getHours();
+  const { id } = client;
 
-  if (time < 12) {
-    user.innerHTML = 'Good morning, ' + findUser['Name'];
-  }
+  const options = {
+    method: 'get',
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+      Authorization: `Bearer ${token}`
+    }
+  };
 
-  if (time > 11 && time < 17) {
-    user.innerHTML = 'Good afternoon, ' + findUser['Name'];
-  }
+  const url = `http://localhost:2800/api/v1/users/accounts/${id}`;
 
-  if (time > 16) {
-    user.innerHTML = 'Good evening, ' + findUser['Name'];
-  }
+  const response = (await fetch(url, options)).json();
 
-  if (!findUser['Account Number']) {
+  const accounts = await response;
+
+  if (!accounts.data.length) {
     const link = document.createElement('a');
     link.setAttribute('href', '../client-create-account/index.html');
     link.setAttribute('class', 'link');
@@ -36,12 +39,14 @@ const findUser = users.find(item => item['Email'] === email);
   } else {
     const ul = document.createElement('ul');
     ul.setAttribute('class', 'list');
-    account.appendChild(ul);
-    Object.entries(findUser).forEach(function([key, value]) {
-      const li = document.createElement('li');
-      li.innerHTML = `${key}: ${value}`;
-      li.setAttribute('class', 'item');
-      ul.appendChild(li);
+    account.appendChild(ul); 
+    accounts.data.map((item) => {
+      Object.entries(item).forEach(([key, value]) => {
+        const li = document.createElement('li');
+        li.innerHTML = `${key}: ${value}`;
+        li.setAttribute('class', 'item');
+        ul.appendChild(li);
+      });
     });
     accountHeading.innerHTML = 'Your account details:';
     const history = document.getElementById('history');
@@ -51,9 +56,29 @@ const findUser = users.find(item => item['Email'] === email);
     link.innerHTML = 'View history';
     history.appendChild(link);
   }
-})();
+};
+
+(function () {
+  const firstName = client.first_name;
+  const user = document.getElementById('user');
+  const date = new Date();
+  const time = date.getHours();
+
+  if (time < 12) {
+    user.innerHTML = `Good morning, ${firstName}`;
+  }
+
+  if (time > 11 && time < 17) {
+    user.innerHTML = `Good afternoon, ${firstName}`;
+  }
+
+  if (time > 16) {
+    user.innerHTML = `Good evening, ${firstName}`;
+  }
+  checkAccount();
+}());
 
 function logOut() {
-  localStorage.removeItem('loggedInUser');
+  localStorage.removeItem('token');
   location.reload();
 }
