@@ -114,7 +114,7 @@ describe('POST accounts', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.includes('accountType must be one of [savings, current]');
+          .that.includes('accountType must be one of [Savings, Current]');
         done();
       });
   });
@@ -199,7 +199,7 @@ describe('GET accounts', () => {
   before(async () => {
     newAccount = await Accounts.create({
       id: client.id,
-      accountType: 'savings',
+      accountType: 'Savings',
       openingBalance: 10000,
       status: 'dormant',
       accountNumber: generateAccountNumber(),
@@ -207,7 +207,7 @@ describe('GET accounts', () => {
     });
     activeAccount = await Accounts.create({
       id: client.id,
-      accountType: 'savings',
+      accountType: 'Savings',
       openingBalance: 10000,
       status: 'active',
       accountNumber: generateAccountNumber(),
@@ -360,7 +360,7 @@ describe('PATCH accounts', () => {
     adminToken = generateToken({ id: admin.id });
     account = await Accounts.create({
       id: client.id,
-      accountType: 'savings',
+      accountType: 'Savings',
       openingBalance: 10000,
       status: 'dormant',
       accountNumber: generateAccountNumber(),

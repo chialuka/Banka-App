@@ -63,7 +63,7 @@ describe('POST transactions and Transfers', () => {
 
     accountToBeCredited = await Accounts.create({
       id: userToBeCredited.id,
-      accountType: 'savings',
+      accountType: 'Savings',
       openingBalance: 5000,
       status: 'draft',
       createdOn: new Date().toGMTString(),

@@ -24,7 +24,7 @@ export default (router) => {
     .post(
       validateBodyPayload({
         accountType: Joi.string()
-          .valid('savings', 'current')
+          .valid('Savings', 'Current')
           .required(),
         openingBalance: Joi.number().positive().integer().required(),
       }),
