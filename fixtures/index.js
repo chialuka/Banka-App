@@ -5,8 +5,6 @@ const clientUser = {
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
-  isStaff: false,
-  isAdmin: false,
 };
 
 const correctPasswordClient = {
@@ -14,8 +12,6 @@ const correctPasswordClient = {
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: 'ndukwu',
-  isStaff: false,
-  isAdmin: false,
 };
 
 const staffUser = {
@@ -32,12 +28,10 @@ const adminUser = {
   lastname: faker.name.lastName(),
   email: faker.internet.email(),
   password: faker.internet.password(),
-  isStaff: true,
   isAdmin: true,
 };
 
 const accountUser = {
-  id: 1,
   accountType: 'savings',
   openingBalance: '1000',
 };
@@ -48,23 +42,19 @@ const noIdAccount = {
 };
 
 const noTypeAccount = {
-  id: 1,
   openingBalance: '568900',
 };
 
 const noBalanceAccount = {
-  id: 1,
   accountType: 'current',
 };
 
 const stringOpeningBalance = {
-  id: 1,
   accountType: 'savings',
   openingBalance: 'hello world',
 };
 
 const invalidAccountType = {
-  id: 1,
   accountType: faker.name.jobTitle(),
   openingBalance: '8000',
 };

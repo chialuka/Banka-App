@@ -1,31 +1,7 @@
 import * as Accounts from '../models/accounts';
 import * as Users from '../models/users';
 import { setServerResponse, generateAccountNumber } from '../utils';
-import sendMail from '../lib/mail';
-
-/**
- * send off an email to client's registered email once account is opened
- * @name sendNewAccountMail
- * @param {Object} user
- * @param {Object} accObj
- * @returns {Null} Function sends email to client
- */
-const sendNewAccountMail = (user, accObj) => {
-  const composeEmail = {
-    to: user.email,
-    subject: 'New Banka Account',
-    text: 'You have opened a new Banka account',
-    message: `<h1>New Banka Account</h1>
-    <p>Hi ${user.first_name},</p>
-    <p>This is to inform you that your new ${accObj.accountType} account with
-    account number: ${Number(accObj.accountNumber)}
-    and opening balance: N${accObj.openingBalance}
-    has been successfully opened with Banka.</p>
-    <p>Thank you for choosing Banka.</p>
-    <p> Best wishes.</p>`,
-  };
-  sendMail(composeEmail);
-};
+import * as Mailer from './mailer';
 
 /**
  * ensure user exists, create account and call function to send email to user
@@ -38,78 +14,22 @@ const sendNewAccountMail = (user, accObj) => {
  */
 const createAccount = async (req, res) => {
   try {
-    const user = await Users.findOneById(req.body.id);
-    if (!user) {
-      return setServerResponse(res, 404, { error: 'Account owner not found' });
-    }
     const { tokenOwner } = res.locals;
-    if (tokenOwner.email !== user.email) {
-      return setServerResponse(res, 403, { error: 'Token and user mismatch' });
-    }
+    const { id } = tokenOwner;
+    const user = await Users.findOneById(id);
     const accountNumber = Number(generateAccountNumber());
     const createdOn = new Date().toGMTString();
     const accObj = {
-      accountNumber,
-      createdOn,
-      status: 'dormant',
-      ...req.body,
+      accountNumber, createdOn, status: 'dormant', id, ...req.body,
     };
     const newAccount = await Accounts.create(accObj);
-    sendNewAccountMail(user, accObj);
+    Mailer.sendNewAccountMail(user, accObj);
     return setServerResponse(res, 201, { data: [{ ...newAccount }] });
   } catch (error) {
     return setServerResponse(res, 500, { error });
   }
 };
 
-/**
- * send email to client whose account was deactivated
- * @name sendDeactivationMail
- * @param {String} email
- * @param {Object} account
- * @return {Null} Sends email informing client of their account
- * deactivation
- */
-const sendDeactivationMail = (email, account) => {
-  const deactivationEmail = {
-    to: email,
-    subject: 'Account Deactivation',
-    message: `<h1>Account Deactivation</h1>
-    <p>Your ${account.account_type} account 
-    with account number ${account.account_number} has been deactivated
-    and is dormant.</p>
-    <p>Please note that you cannot make transactions until 
-    your account is activated again. 
-    Contact our nearest branch or reply this email for more information.</p>
-    <p>Thank you for choosing Banka.</p>
-    <p> Best wishes.</p>`,
-  };
-  sendMail(deactivationEmail);
-};
-
-/**
- * send email to client whose account was activated
- * @name sendActivationMail
- * @param {String} email
- * @param {Object} account
- * @returns {Null} sends email informing client that their account
- * has been activated
- */
-const sendActivationMail = (email, account) => {
-  const activatedAccountEmail = {
-    to: email,
-    subject: 'Account Activation',
-    message: `<h1>Account Activation</h1>
-    <p>Dear esteemed customer, </p>
-    <p>Your ${account.account_type} account 
-    with account number ${account.account_number} has been activated.</p>
-    <p>You can now make transactions with your account 
-    and with your issued ATM card.</p>
-    <p>Thank you for choosing Banka.</p>
-    <p> Best wishes.</p>`,
-  };
-  sendMail(activatedAccountEmail);
-};
 
 /**
  * Activate or deactivate client account
@@ -127,7 +47,7 @@ const patchAccount = async (req, res) => {
     if (!account) {
       return setServerResponse(res, 404, { error: 'Account not found' });
     }
-    const user = await Users.findOneById(account.owner_id);
+    const user = await Users.findOneById(account.owner);
     if (!user) {
       return setServerResponse(res, 404, { error: 'Account owner not found' });
     }
@@ -135,38 +55,15 @@ const patchAccount = async (req, res) => {
     const data = { status, id: account.id };
     const patchedUser = await Accounts.findOneAndUpdate(data);
     if (status === 'dormant') {
-      sendDeactivationMail(user.email, account);
+      Mailer.sendDeactivationMail(user.email, account);
     }
-    sendActivationMail(user.email, account);
+    Mailer.sendActivationMail(user.email, account);
     return setServerResponse(res, 200, { data: [{ ...patchedUser }] });
   } catch (error) {
     return setServerResponse(res, 500, { error });
   }
 };
 
-/**
- * send email to customer whose account was deleted
- * @name sendDeleteMail
- * @param {Object} account
- * @returns {Null} Sends an email to the client informing them
- * that their account has been deleted
- */
-const sendDeleteMail = (account) => {
-  const composeEmail = {
-    to: account.email,
-    subject: 'New Banka Account',
-    message: `<h1>New Banka Account</h1>
-    <p>Dear esteemed customer,</p>
-    <p>This is to inform you that your ${account.accountType} account with
-    account number: ${Number(account.accountNumber)}
-    has been deleted from Banka.</p>
-    <p>Please visit a branch nearest to you 
-    or reply this email for more details.</p>
-    <p>Thank you for choosing Banka.</p>
-    <p> Best wishes.</p>`,
-  };
-  sendMail(composeEmail);
-};
 
 /**
  * Delete account on provision of a valid account ID
@@ -184,9 +81,9 @@ const deleteAccount = async (req, res) => {
       return setServerResponse(res, 404, { error: 'Account not found' });
     }
     await Accounts.findOneAndDelete(req.params.id);
-    sendDeleteMail(account);
+    Mailer.sendDeleteAccountMail(account);
     return setServerResponse(res, 200, {
-      message: 'Account successfully deleted',
+      message: 'Account successfully deleted'
     });
   } catch (error) {
     return setServerResponse(res, 500, { error });
@@ -209,7 +106,7 @@ const getAccountDetails = async (req, res) => {
       return setServerResponse(res, 404, { error: 'Account not found' });
     }
     const { tokenOwner } = res.locals;
-    if (!tokenOwner.is_staff && tokenOwner.id !== account.owner_id) {
+    if (!tokenOwner.is_staff && tokenOwner.id !== account.owner) {
       return setServerResponse(res, 403, { error: 'Token and user mismatch' });
     }
     return setServerResponse(res, 200, { data: [account] });
@@ -286,5 +183,5 @@ export {
   deleteAccount,
   getAccountDetails,
   getAllAccounts,
-  getAccountTransactions,
+  getAccountTransactions
 };

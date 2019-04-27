@@ -15,6 +15,7 @@ import {
 import {
   authorizeClient,
   authorizeStaff,
+  authorizeAdmin,
   authenticateLogin,
 } from '../middlewares/auth';
 
@@ -31,9 +32,23 @@ export default (router) => {
       password: Joi.string()
         .min(6)
         .required(),
-      isStaff: Joi.boolean().required(),
+    }),
+    createUser,
+  );
+
+  router.route('/staff/auth/signup').post(
+    validateBodyPayload({
+      firstname: Joi.string().required(),
+      lastname: Joi.string().required(),
+      email: Joi.string()
+        .email({ minDomainAtoms: 2 })
+        .required(),
+      password: Joi.string()
+        .min(6)
+        .required(),
       isAdmin: Joi.boolean().required(),
     }),
+    authorizeAdmin,
     createUser,
   );
 

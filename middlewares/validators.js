@@ -9,12 +9,11 @@ const validateBodyPayload = schema => async (req, res, next) => {
   try {
     const payload = await Joi.validate(req.body, schema, {
       abortEarly: false,
-      allowUnknown: true,
     });
     req.body = payload;
     next();
   } catch (error) {
-    const errors = error.details.map(item => item.message);
+    const errors = error.details.map(item => item.message.replace(/([\\"])/g, ''));
     res.status(400).json({
       status: 400,
       errors,

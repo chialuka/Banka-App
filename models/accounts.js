@@ -19,7 +19,7 @@ const create = async (data) => {
   const newItem = await db.query(
     `INSERT INTO accounts (
       account_number, created_on, status, 
-      owner_id, account_type, account_balance
+      owner, account_type, account_balance
     ) 
     VALUES($1, $2, $3, $4, $5, $6) RETURNING *`,
     [accountNumber, createdOn, status, id, accountType, openingBalance],

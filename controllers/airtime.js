@@ -1,37 +1,9 @@
 import * as Users from '../models/users';
 import * as Accounts from '../models/accounts';
 import { checkNumberValidity } from '../lib/number';
-import { setServerResponse, capitalize } from '../utils';
+import { setServerResponse } from '../utils';
 import { chargeAccount } from './transactions';
-import sendMail from '../lib/mail';
-
-/**
- * Send email informing client of the debit transaction that occured
- * on their account and the purpose of the debit
- * @name sendAirtimeEmail
- * @async
- * @param {Object} account
- * @param {Object} reqBody
- * @param {Object} user
- * @param {String} carrier
- * @returns {Null} Sends email to client informing them of
- * their successful airtime purchase
- */
-const sendAirtimeEmail = (account, reqBody, user, carrier) => {
-  const composeMail = {
-    to: user.email,
-    subject: 'Banka Aitime alert',
-    message: `<h3>Banka Transaction Service<h3>
-    <p>Dear ${capitalize(user.first_name)}, </p>
-    <p>Your airtime purchase of ${reqBody.amount}
-    on your ${account.account_type} account for 
-    the ${carrier} number- 
-    ${reqBody.phoneNumber} was successful</p>
-    <p>Thank you for choosing Banka</p>
-    <p>Best wishes</p>`,
-  };
-  sendMail(composeMail);
-};
+import * as Mailer from './mailer';
 
 /**
  * Call API lib function that checks number validity. If number is valid
@@ -46,19 +18,25 @@ const sendAirtimeEmail = (account, reqBody, user, carrier) => {
  * was either successful or not
  */
 const checkValidNumber = async (res, account, reqBody) => {
-  const formattedNumber = `0${reqBody.phoneNumber.slice(-10)}`;
-  const validNumber = await checkNumberValidity(formattedNumber, res);
-  if (!validNumber.valid) {
+  const number = reqBody.phoneNumber;
+  if (number.length !== 11 && number.length !== 13) {
     return setServerResponse(res, 400, { error: 'Number invalid' });
   }
-  const network = validNumber.carrier.split(' ')[0];
-  const carrier = network !== 'Emerging' ? network : 'Etisalat';
-  const user = await Users.findOneById(account.owner_id);
-  await chargeAccount(res, account, reqBody);
-  sendAirtimeEmail(account, reqBody, user, validNumber);
-  return setServerResponse(res, 200, {
-    message: `${carrier} airtime purchase of ${reqBody.amount} successful`,
-  });
+  const formattedNumber = `0${number.slice(-10)}`;
+  const validNumber = await checkNumberValidity(formattedNumber, res);
+  if (validNumber !== 'Network not found' || validNumber.valid) {
+    const network = validNumber.carrier
+      ? validNumber.carrier.split(' ')[0]
+      : validNumber;
+    const carrier = network !== 'Emerging' ? network : 'Etisalat';
+    const user = await Users.findOneById(account.owner);
+    await chargeAccount(res, account, reqBody);
+    Mailer.sendAirtimeEmail(account, reqBody, user, validNumber);
+    return setServerResponse(res, 200, {
+      message: `${carrier} airtime purchase of ${reqBody.amount} successful`
+    });
+  }
+  return setServerResponse(res, 400, { error: 'Number invalid' });
 };
 
 /**
@@ -78,12 +56,12 @@ const purchaseAirtime = async (req, res) => {
       return setServerResponse(res, 404, { error: 'Account not found' });
     }
     const { tokenOwner } = res.locals;
-    if (tokenOwner.id !== account.owner_id) {
+    if (tokenOwner.id !== account.owner) {
       return setServerResponse(res, 403, { error: 'Token and user mismatch' });
     }
     if (account.status !== 'active') {
       return setServerResponse(res, 400, {
-        error: 'Account not activated',
+        error: 'Account not activated'
       });
     }
     req.body.transactionType = 'debit';

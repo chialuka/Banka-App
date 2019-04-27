@@ -1,39 +1,9 @@
 import * as Transactions from '../models/transactions';
 import * as Accounts from '../models/accounts';
 import * as Users from '../models/users';
-import sendMail from '../lib/mail';
-import { setServerResponse, capitalize } from '../utils';
+import * as Mailer from './mailer';
+import { setServerResponse } from '../utils';
 
-/**
- * Send an email to the specified client stating the transaction that occured
- * @name mailSender
- * @param {String} email
- * @param {String} firstname
- * @param {Object} data
- * @returns {Null} sends email to client informing them of the transaction
- * that occured on their account
- */
-const mailSender = (email, firstname, data) => {
-  const composeEmail = {
-    to: email,
-    subject: 'Banka Transaction alert',
-    message: `<h3>Banka Transaction Alert Service</h3>
-    <p>Dear ${capitalize(firstname)}, </p>
-    <p>Please be informed that a ${capitalize(data.transactionType)} transaction
-    occured on your account</p>
-    <p>Kindly find details of the transaction below</p>
-    <ul>
-    <li>Account Number: ${data.accountNumber}</li>
-    <li>Description: ${data.description}</li>
-    <li>Transaction Amount: ${data.amount}</li>
-    <li>Transaction Date: ${data.date}</li>
-    <li>Account Balance: NGN${data.newBalance}</li>
-    </ul>
-    <p>Thank you for choosing Banka</p>
-    <p>Best wishes.</p>`,
-  };
-  sendMail(composeEmail);
-};
 
 /**
  * Post transaction to the database with transaction details
@@ -46,7 +16,7 @@ const postTransaction = async (postingDetails) => {
   const {
     res, transactionData, oldBalance, reqBody, account,
   } = postingDetails;
-  const user = await Users.findOneById(account.owner_id);
+  const user = await Users.findOneById(account.owner);
   if (!user) {
     return setServerResponse(res, 404, { error: 'Account owner not found' });
   }
@@ -57,7 +27,7 @@ const postTransaction = async (postingDetails) => {
   if (reqBody.senderAccount || reqBody.receiverAccount || reqBody.phoneNumber) {
     return null;
   }
-  mailSender(account.email, user.first_name, transactionData);
+  Mailer.sendTransactionEmail(account.email, user.first_name, transactionData);
   return setServerResponse(res, 201, { data: [{ ...newTransaction }] });
 };
 
@@ -156,7 +126,7 @@ const getTransactionDetails = async (req, res) => {
     }
     const account = await Accounts.findOne(transaction.account_number);
     const { tokenOwner } = res.locals;
-    if (!tokenOwner.is_staff && tokenOwner.id !== account.owner_id) {
+    if (!tokenOwner.is_staff && tokenOwner.id !== account.owner) {
       return setServerResponse(res, 403, { error: 'Token and user mismatch' });
     }
     return setServerResponse(res, 200, { data: transaction });

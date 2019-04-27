@@ -1,14 +1,23 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable import/no-extraneous-dependencies */
 import '@babel/polyfill';
+import dotenv from 'dotenv';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import sinon from 'sinon';
 import server from '../index';
-import { clientUser, correctPasswordClient, staffUser } from '../fixtures';
+import {
+  clientUser,
+  correctPasswordClient,
+  staffUser,
+  adminUser
+} from '../fixtures';
 import * as Users from '../models/users';
 import { generateToken } from '../utils';
-import { checkEnv } from '../config';
+
+dotenv.config();
+
+const { USER_NAME, PASSWORD } = process.env;
 
 chai.use(chaiHttp);
 
@@ -19,6 +28,17 @@ describe('GET / route', () => {
     chai
       .request(server)
       .get('/')
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(err).to.be.null;
+        done();
+      });
+  });
+
+  it('should get /api-docs route', (done) => {
+    chai
+      .request(server)
+      .get('/api-docs')
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(err).to.be.null;
@@ -37,7 +57,12 @@ describe('POST User', () => {
     chai
       .request(server)
       .post('/api/v1/users/auth/signup')
-      .send(clientUser)
+      .send({
+        firstname: 'Odogwu',
+        lastname: 'Malaysia',
+        email: 'odogwuone@gmail.com',
+        password: 'odogwuodogwu'
+      })
       .end((err, res) => {
         expect(res).to.have.status(201);
         expect(res).to.be.json;
@@ -53,20 +78,50 @@ describe('POST User', () => {
       });
   });
 
+  it('should log super admin in', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/users/auth/signin')
+      .send({
+        email: `${USER_NAME}`,
+        password: `${PASSWORD}`
+      })
+      .end((_, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.data[0]).to.include.key('token');
+        done();
+      });
+  });
+
+  it('should allow super admin create other admin', (done) => {
+    const adminToken = generateToken({ id: 1 });
+    chai
+      .request(server)
+      .post('/api/v1/staff/auth/signup')
+      .send(adminUser)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .end((err, res) => {
+        expect(res).to.have.status(201);
+        expect(res.body.data[0]).to.include.key('token');
+        expect(err).to.be.null;
+        done();
+      });
+  });
+
   it('should not create a user if email is invalid', (done) => {
     chai
       .request(server)
       .post('/api/v1/users/auth/signup')
       .send({
         clientUser,
-        email: 'howareyou',
+        email: 'howareyou'
       })
       .end((_, res) => {
         expect(res).to.have.status(400);
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.includes('"email" must be a valid email');
+          .that.includes('email must be a valid email');
         done();
       });
   });
@@ -78,11 +133,11 @@ describe('POST User', () => {
       .send({
         ...clientUser,
         email: 'testmic@testmic.com',
-        isAdmin: true,
+        isAdmin: true
       })
       .end((err, res) => {
-        expect(res).to.have.status(201);
-        expect(res.body.data[0].is_admin).to.equal(false);
+        expect(res).to.have.status(400);
+        expect(res.body.errors).to.include('isAdmin is not allowed');
         expect(err).to.be.null;
         done();
       });
@@ -92,12 +147,15 @@ describe('POST User', () => {
     chai
       .request(server)
       .post('/api/v1/users/auth/signup')
-      .send(clientUser)
+      .send({
+        ...clientUser,
+        email: `${USER_NAME}`
+      })
       .end((_, res) => {
         expect(res).to.have.status(409);
         expect(res.body).to.include.key('error');
         expect(res.body.error).to.include(
-          'User with provided email already exists',
+          'User with provided email already exists'
         );
         done();
       });
@@ -109,7 +167,10 @@ describe('POST User', () => {
       chai
         .request(server)
         .post('/api/v1/users/auth/signin')
-        .send(createdStaff)
+        .send({
+          email: createdStaff.email,
+          password: createdStaff.password
+        })
         .end((err, res) => {
           expect(res).to.have.status(401);
           expect(res.body).to.include.key('error');
@@ -132,7 +193,10 @@ describe('POST User', () => {
         chai
           .request(server)
           .post('/api/v1/users/auth/signin')
-          .send(correctPasswordClient)
+          .send({
+            email: correctPasswordClient.email,
+            password: correctPasswordClient.password
+          })
           .end((err, res) => {
             expect(res).to.have.status(200);
             expect(res.body).to.include.key('data');
@@ -148,9 +212,8 @@ describe('POST User', () => {
       .request(server)
       .post('/api/v1/users/auth/signin')
       .send({
-        ...clientUser,
-        isStaff: false,
-        email: 'nkeonyemetalumbu@gmail.com',
+        password: clientUser.password,
+        email: 'nkeonyemetalumbu@gmail.com'
       })
       .end((err, res) => {
         expect(res).to.have.status(404);
@@ -212,7 +275,7 @@ describe('GET/ User', () => {
         expect(res).to.not.include.key('data');
         expect(res.body).to.include.key('error');
         expect(res.body.error).to.equal(
-          'Provided id is invalid. Please provide a positive integer',
+          'Provided id is invalid. Please provide a positive integer'
         );
         done();
       });
@@ -282,7 +345,7 @@ describe('PUT/ User', () => {
         firstname: 'Rihanna',
         lastname: 'Okonkwo',
         password: 'mangohead',
-        email: 'testingthisemail@testing.com',
+        email: 'testingthisemail@testing.com'
       })
       .end((err, res) => {
         expect(res).to.have.status(200);
@@ -303,7 +366,7 @@ describe('PUT/ User', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         lastname: 'Udara',
-        email: 'otakagu.dikagu@gmail.com',
+        email: 'otakagu.dikagu@gmail.com'
       })
       .end((err, res) => {
         expect(res).to.have.status(404);
@@ -321,7 +384,7 @@ describe('PUT/ User', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         firstname: 'Omo',
-        email: 'ncha_bu_omo@gmail.com',
+        email: 'ncha_bu_omo@gmail.com'
       })
       .end((err, res) => {
         expect(res).to.have.status(403);
@@ -365,7 +428,7 @@ describe('DELETE/ User', () => {
         expect(res).to.have.status(200);
         expect(res.body).to.include.key('message');
         expect(res.body.message).to.equal(
-          `User with ID ${staff.id} deleted successfully`,
+          `User with ID ${staff.id} deleted successfully`
         );
         expect(err).to.be.null;
         done();
@@ -424,7 +487,7 @@ describe('500 error', () => {
       .request(server)
       .put(`/api/v1/users/${client.id}`)
       .send({
-        firstname: 'Okwegba',
+        firstname: 'Okwegba'
       })
       .set('authorization', `Bearer ${clientToken}`)
       .end((err, res) => {

@@ -1,4 +1,9 @@
+import dotenv from 'dotenv';
 import db from '.';
+
+dotenv.config();
+
+const { USER_NAME, PASSWORD } = process.env;
 
 const userTableQuery = `
   CREATE TABLE IF NOT EXISTS users(
@@ -7,15 +12,15 @@ const userTableQuery = `
     last_name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
-    is_staff BOOLEAN NOT NULL,
-    is_admin BOOLEAN NOT NULL
+    is_staff BOOLEAN,
+    is_admin BOOLEAN
   )
 `;
 
 const accountTableQuery = `
   CREATE TABLE IF NOT EXISTS accounts(
     id SERIAL,
-    owner_id INTEGER NOT NULL,
+    owner INTEGER NOT NULL,
     status VARCHAR(10) NOT NULL,
     account_type TEXT NOT NULL,
     account_number BIGINT NOT NULL UNIQUE,
@@ -42,16 +47,16 @@ const transactionTableQuery = `
 const tableNames = [
   {
     name: 'users',
-    query: userTableQuery,
+    query: userTableQuery
   },
   {
     name: 'accounts',
-    query: accountTableQuery,
+    query: accountTableQuery
   },
   {
     name: 'transactions',
-    query: transactionTableQuery,
-  },
+    query: transactionTableQuery
+  }
 ];
 
 /**
@@ -77,11 +82,11 @@ const createTable = async (name, query) => {
  */
 const createRelation = async () => {
   const usersAccountsQuery = `
-  ALTER TABLE accounts DROP CONSTRAINT IF EXISTS owner_id;
+  ALTER TABLE accounts DROP CONSTRAINT IF EXISTS owner;
 
   ALTER TABLE accounts
-    ADD CONSTRAINT owner_id
-    FOREIGN KEY(owner_id) REFERENCES users(id)
+    ADD CONSTRAINT owner
+    FOREIGN KEY(owner) REFERENCES users(id)
     ON DELETE CASCADE
   `;
   const accountsTransactionsQuery = `
@@ -102,15 +107,40 @@ const createRelation = async () => {
 };
 
 /**
+ * Insert super admin after tables are created
+ * @name insertSuperAdmin
+ * @returns {String} details of insert
+ */
+const insertSuperAdmin = async () => {
+  const adminInsert = `
+  INSERT INTO users(
+    first_name, last_name, email, password, is_staff, is_admin
+  )
+  VALUES (
+    'Mazi', 'Odogwu', '${USER_NAME}', '${PASSWORD}', 'true', 'true'
+    )
+  ON CONFLICT (email)
+  DO NOTHING;
+`;
+  try {
+    await db.query(adminInsert);
+    return ('insert succeeded');
+  } catch (error) {
+    return (error);
+  }
+};
+
+/**
  * Call functions that create tables and relationships
  * @name setupTables
  * @returns {Null} Null
  */
 const setupTables = async () => {
   await Promise.all(
-    tableNames.map(({ name, query }) => createTable(name, query)),
+    tableNames.map(({ name, query }) => createTable(name, query))
   );
   await createRelation();
+  await insertSuperAdmin();
   await db.end();
 };
 
