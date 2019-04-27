@@ -54,7 +54,7 @@ describe('POST transactions and Transfers', () => {
     accountNumberCredited = Number(generateAccountNumber());
     clientAccount = await Accounts.create({
       id: createClient.id,
-      accountType: 'current',
+      accountType: 'Current',
       openingBalance: 10000,
       status: 'draft',
       createdOn: new Date().toGMTString(),
@@ -63,7 +63,7 @@ describe('POST transactions and Transfers', () => {
 
     accountToBeCredited = await Accounts.create({
       id: userToBeCredited.id,
-      accountType: 'savings',
+      accountType: 'Savings',
       openingBalance: 5000,
       status: 'draft',
       createdOn: new Date().toGMTString(),
@@ -275,7 +275,7 @@ describe('POST transactions and Transfers', () => {
     const newAccountNumber = Number(generateAccountNumber());
     const inActiveAccount = await Accounts.create({
       id: createClient.id,
-      accountType: 'current',
+      accountType: 'Current',
       openingBalance: 5000,
       status: 'draft',
       createdOn: new Date().toGMTString(),
@@ -578,7 +578,7 @@ describe('POST transfers', () => {
   it('should transfer between active client accounts', async () => {
     const activeAccount = await Accounts.create({
       id: createClient.id,
-      accountType: 'current',
+      accountType: 'Current',
       openingBalance: 5000,
       status: 'draft',
       createdOn: new Date().toGMTString(),
@@ -591,7 +591,7 @@ describe('POST transfers', () => {
     const newNumber = Number(generateAccountNumber());
     await Accounts.create({
       id: createClient.id,
-      accountType: 'current',
+      accountType: 'Current',
       openingBalance: 5000,
       status: 'active',
       createdOn: new Date().toGMTString(),
