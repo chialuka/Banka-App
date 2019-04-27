@@ -26,8 +26,7 @@ export default (router) => {
         accountType: Joi.string()
           .valid('savings', 'current')
           .required(),
-        id: Joi.number().required(),
-        openingBalance: Joi.number().required(),
+        openingBalance: Joi.number().positive().integer().required(),
       }),
       authorizeClient,
       createAccount,

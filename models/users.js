@@ -1,4 +1,9 @@
+import dotenv from 'dotenv';
 import db from '../config';
+
+dotenv.config();
+
+const { USER_NAME } = process.env;
 
 /**
  * Create a new user in the database using the insert query
@@ -9,14 +14,14 @@ import db from '../config';
  */
 const create = async (data) => {
   const {
-    firstname, lastname, email, password, isStaff, isAdmin,
+    firstname, lastname, email, password, isStaff, isAdmin
   } = data;
   const newItem = await db.query(
     `INSERT INTO users(
       first_name, last_name, email, password, is_staff, is_admin
       ) 
      VALUES($1, $2, $3, $4, $5, $6) RETURNING *`,
-    [firstname, lastname, email, password, isStaff, isAdmin],
+    [firstname, lastname, email, password, isStaff, isAdmin]
   );
   return newItem.rows[0];
 };
@@ -53,7 +58,7 @@ const findOneById = async (id) => {
  */
 const findOneByEmail = async (email) => {
   const result = await db.query('SELECT * FROM users WHERE email = $1', [
-    email,
+    email
   ]);
   return result.rows[0];
 };
@@ -66,8 +71,8 @@ const findOneByEmail = async (email) => {
  * @returns {Array} all accounts owned by the specified user
  */
 const findUserAccounts = async (id) => {
-  const result = await db.query('SELECT * FROM accounts WHERE owner_id = $1', [
-    id,
+  const result = await db.query('SELECT * FROM accounts WHERE owner = $1', [
+    id
   ]);
   return result.rows;
 };
@@ -82,7 +87,7 @@ const findUserAccounts = async (id) => {
  */
 const findOneAndUpdate = async (data) => {
   const {
-    firstname, lastname, password, email, id,
+    firstname, lastname, password, email, id
   } = data;
   const result = await db.query(
     `UPDATE users 
@@ -92,7 +97,7 @@ const findOneAndUpdate = async (data) => {
       password =  COALESCE($3, password),
       email = COALESCE($4, email)
     WHERE id = $5 RETURNING *`,
-    [firstname, lastname, password, email, id],
+    [firstname, lastname, password, email, id]
   );
   return result.rows[0];
 };
@@ -106,8 +111,11 @@ const findOneAndUpdate = async (data) => {
  * @returns {Number} id of the account deleted
  */
 const findOneAndDelete = async (id) => {
-  await db.query('DELETE FROM accounts WHERE owner_id = $1', [id]);
-  await db.query('DELETE FROM users WHERE id = $1', [id]);
+  await db.query('DELETE FROM accounts WHERE owner = $1', [id]);
+  await db.query('DELETE FROM users WHERE id = $1 AND email <> $2', [
+    id,
+    `${USER_NAME}`
+  ]);
   return id;
 };
 
@@ -119,7 +127,9 @@ const findOneAndDelete = async (id) => {
  */
 const deleteAll = async () => {
   await db.query('DELETE FROM accounts');
-  await db.query('DELETE FROM users');
+  await db.query('DELETE FROM users WHERE email <> $1', [
+    `${USER_NAME}`
+  ]);
   return true;
 };
 
@@ -131,5 +141,5 @@ export {
   findUserAccounts,
   findOneAndUpdate,
   findOneAndDelete,
-  deleteAll,
+  deleteAll
 };

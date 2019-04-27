@@ -15,13 +15,15 @@ export default (router) => {
     .route('/transactions')
     .post(
       validateBodyPayload({
-        amount: Joi.number().required(),
+        amount: Joi.number().positive().integer().required(),
         description: Joi.string().required(),
         accountNumber: Joi.number()
           .min(5000000000)
           .max(5999999999)
+          .positive()
+          .integer()
           .required(),
-        cashierId: Joi.number().required(),
+        cashierId: Joi.number().integer().positive().required(),
         transactionType: Joi.string()
           .valid('credit', 'debit')
           .required(),

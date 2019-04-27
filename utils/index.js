@@ -47,7 +47,7 @@ const generateToken = (data) => {
  * @returns {Number} account number generated
  */
 const generateAccountNumber = () => {
-  const accNum = `5${Math.floor(Math.random() * (10 ** 12))}`;
+  const accNum = `5${Math.floor(Math.random() * 10 ** 12)}`;
   return accNum.slice(0, 10);
 };
 
@@ -62,8 +62,23 @@ const generateAccountNumber = () => {
 const setServerResponse = (res, status, data) => {
   res.status(status).json({
     status,
-    ...data,
+    ...data
   });
+};
+
+/**
+ * Format user object before returning it by removing null values
+ * @name formatReturnedUser
+ * @param {Object} user
+ * @returns {Object} user object with null values removed
+ */
+const formatReturnedUser = (user) => {
+  if (!user.is_staff) {
+    delete user.is_staff;
+    delete user.is_admin;
+  }
+  delete user.password;
+  return user;
 };
 
 export {
@@ -73,4 +88,5 @@ export {
   comparePassword,
   setServerResponse,
   generateAccountNumber,
+  formatReturnedUser
 };

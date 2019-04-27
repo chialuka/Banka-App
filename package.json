@@ -18,7 +18,7 @@
     "instrument": false
   },
   "scripts": {
-    "test": "cross-env NODE_ENV=test nyc mocha --timeout 10000 --exit",
+    "test": "cross-env NODE_ENV=test nyc mocha --timeout 20000 --exit",
     "test:watch": "mocha -w test/",
     "dev": "cross-env NODE_ENV=development nodemon index.js --exec babel-node",
     "start": "babel-node index.js",

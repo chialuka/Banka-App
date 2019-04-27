@@ -59,21 +59,6 @@ describe('POST accounts', () => {
       });
   });
 
-  it('should return an error if od is omitted', (done) => {
-    chai
-      .request(server)
-      .post('/api/v1/accounts/')
-      .send(noIdAccount)
-      .end((_, res) => {
-        expect(res).to.have.status(400);
-        expect(res.body).to.include.key('errors');
-        expect(res.body.errors)
-          .to.be.an('array')
-          .that.includes('"id" is required');
-        done();
-      });
-  });
-
   it('should return an error if account type is omitted', (done) => {
     chai
       .request(server)
@@ -84,7 +69,7 @@ describe('POST accounts', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.includes('"accountType" is required');
+          .that.includes('accountType is required');
         done();
       });
   });
@@ -99,7 +84,7 @@ describe('POST accounts', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.includes('"openingBalance" is required');
+          .that.includes('openingBalance is required');
         done();
       });
   });
@@ -114,7 +99,7 @@ describe('POST accounts', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.includes('"openingBalance" must be a number');
+          .that.includes('openingBalance must be a number');
         done();
       });
   });
@@ -129,7 +114,7 @@ describe('POST accounts', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.includes('"accountType" must be one of [savings, current]');
+          .that.includes('accountType must be one of [savings, current]');
         done();
       });
   });
@@ -139,7 +124,6 @@ describe('POST accounts', () => {
       .request(server)
       .post('/api/v1/accounts/')
       .send({
-        id: client.id,
         accountType: 'current',
         openingBalance: 10000,
       })
@@ -152,7 +136,7 @@ describe('POST accounts', () => {
           'account_balance',
           'account_type',
           'status',
-          'owner_id',
+          'owner',
           'created_on',
           'id',
         );
@@ -181,19 +165,17 @@ describe('POST accounts', () => {
       .post('/api/v1/accounts/')
       .send({
         ...accountUser,
-        id: 100000000,
       })
-      .set('authorization', `Bearer ${clientToken}`)
+      .set('authorization', 'Bearer ojoro')
       .end((err, res) => {
-        expect(res).to.have.status(404);
+        expect(res).to.have.status(401);
         expect(res.body).to.include.key('error');
-        expect(res.body.error).to.equal('Account owner not found');
         expect(err).to.be.null;
         done();
       });
   });
 
-  it('should not create account if token does not belong to user with request ID', async () => {
+  it('should create account for token owner only', async () => {
     newUser = await Users.create(correctPasswordClient);
     newToken = generateToken({ id: newUser.id });
     chai
@@ -201,13 +183,11 @@ describe('POST accounts', () => {
       .post('/api/v1/accounts/')
       .send({
         ...accountUser,
-        id: client.id,
       })
       .set('authorization', `Bearer ${newToken}`)
       .end((err, res) => {
-        expect(res).to.have.status(403);
-        expect(res.body).to.include.key('error');
-        expect(res.body.error).to.equal('Token and user mismatch');
+        expect(res).to.have.status(201);
+        expect(res.body).to.include.key('data');
         expect(err).to.be.null;
       });
   });
@@ -329,7 +309,7 @@ describe('GET accounts', () => {
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body.data[0]).to.have.all.keys(
-          'owner_id',
+          'owner',
           'account_number',
           'status',
           'account_type',
@@ -349,7 +329,7 @@ describe('GET accounts', () => {
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body.data[0]).to.have.all.keys(
-          'owner_id',
+          'owner',
           'account_number',
           'status',
           'account_type',
@@ -427,7 +407,7 @@ describe('PATCH accounts', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.includes('"status" is required');
+          .that.includes('status is required');
         done();
       });
   });
@@ -556,11 +536,12 @@ describe('DELETE Account', () => {
 
   it('should delete account if valid admin token is provided', (done) => {
     let deletedAccount;
+    const token = generateToken({ id: 1 });
     chai
       .request(server)
       .delete(`/api/v1/accounts/${account2.id}`)
       .send()
-      .set('Authorization', `Bearer ${adminToken}`)
+      .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         Accounts.findOne(account2.id).then((item) => {
           deletedAccount = item;

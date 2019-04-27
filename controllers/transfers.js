@@ -76,7 +76,7 @@ const validateSender = async (req, res) => {
     return setServerResponse(res, 404, { error: 'Sender account not found' });
   }
   const { tokenOwner } = res.locals;
-  if (tokenOwner.id !== senderAccount.owner_id) {
+  if (tokenOwner.id !== senderAccount.owner) {
     return setServerResponse(res, 403, { error: 'Token and user mismatch' });
   }
   if (senderAccount.status !== 'active') {

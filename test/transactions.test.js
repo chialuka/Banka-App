@@ -139,15 +139,15 @@ describe('POST transactions and Transfers', () => {
   });
 
   it('should return 200 if admin token and valid details are provided', (done) => {
+    const token = generateToken({ id: 1 });
     chai
       .request(server)
       .post('/api/v1/transactions')
       .send({
         ...debitTransaction,
         accountNumber,
-        cashierId: createAdmin.id,
       })
-      .set('Authorization', `Bearer ${adminToken}`)
+      .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         expect(res).to.have.status(201);
         expect(res.body).to.be.an('object');
@@ -185,16 +185,16 @@ describe('POST transactions and Transfers', () => {
   });
 
   it('should fail if debit amount is greater than account balance', (done) => {
+    const token = generateToken({ id: 1 });
     chai
       .request(server)
       .post('/api/v1/transactions')
       .send({
         ...debitTransaction,
         amount: 200000000,
-        accountNumber,
-        cashierId: createAdmin.id,
+        accountNumber
       })
-      .set('Authorization', `Bearer ${adminToken}`)
+      .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         expect(res).to.have.status(400);
         expect(res.body).to.include.key('error');
@@ -234,7 +234,7 @@ describe('POST transactions and Transfers', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.contains('"amount" is required');
+          .that.contains('amount is required');
         done();
       });
   });
@@ -250,7 +250,7 @@ describe('POST transactions and Transfers', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.contains('"transactionType" is required');
+          .that.contains('transactionType is required');
         done();
       });
   });
@@ -266,7 +266,7 @@ describe('POST transactions and Transfers', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.contains('"accountNumber" is required');
+          .that.contains('accountNumber is required');
         done();
       });
   });
@@ -308,7 +308,7 @@ describe('POST transactions and Transfers', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.contains('"cashierId" is required');
+          .that.contains('cashierId is required');
         done();
       });
   });
@@ -324,7 +324,7 @@ describe('POST transactions and Transfers', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.includes('"amount" must be a number');
+          .that.includes('amount must be a number');
         done();
       });
   });
@@ -340,7 +340,7 @@ describe('POST transactions and Transfers', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.includes('"accountNumber" must be a number');
+          .that.includes('accountNumber must be a number');
         done();
       });
   });
@@ -356,12 +356,13 @@ describe('POST transactions and Transfers', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.includes('"cashierId" must be a number');
+          .that.includes('cashierId must be a number');
         done();
       });
   });
 
   it('should return an error if staff making request cannot be found', (done) => {
+    const token = generateToken({ id: 1 });
     chai
       .request(server)
       .post('/api/v1/transactions/')
@@ -370,7 +371,7 @@ describe('POST transactions and Transfers', () => {
         accountNumber,
         cashierId: 100000,
       })
-      .set('authorization', `Bearer ${adminToken}`)
+      .set('authorization', `Bearer ${token}`)
       .end((_, res) => {
         expect(res).to.have.status(404);
         expect(res.body).to.include.key('error');
@@ -389,7 +390,7 @@ describe('POST transactions and Transfers', () => {
         expect(res).to.have.status(400);
         expect(res.body).to.include.key('errors');
         expect(res.body.errors).to.include(
-          '"accountNumber" must be larger than or equal to 5000000000',
+          'accountNumber must be larger than or equal to 5000000000',
         );
         done();
       });
@@ -403,6 +404,23 @@ describe('POST Airtime', () => {
       .returns('Airtime purchase successful');
     expect(checkValidNumber(0)).to.equal('Airtime purchase successful');
     done();
+  });
+
+  it('should not purchase airtime if phone number valid', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/airtime')
+      .set('Authorization', `Bearer ${clientToken}`)
+      .send({
+        accountNumber,
+        phoneNumber: '2347034639805',
+        amount: 200,
+      })
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(err).to.be.null;
+        done();
+      });
   });
 
   it('should not purchase airtime if phone number is invalid', (done) => {
@@ -493,7 +511,7 @@ describe('POST transfers', () => {
         senderAccount: accountNumberCredited,
         receiverAccount: accountNumber,
         description: 'Bride price',
-        amount: 0,
+        amount: 1,
       })
       .set('Authorization', `Bearer ${receiverToken}`)
       .end((_, res) => {
@@ -511,7 +529,7 @@ describe('POST transfers', () => {
         senderAccount: accountNumber,
         receiverAccount: accountNumberCredited,
         description: 'Bride price',
-        amount: 0,
+        amount: 1,
       })
       .set('Authorization', `Bearer ${clientToken}`)
       .end((_, res) => {
@@ -529,7 +547,7 @@ describe('POST transfers', () => {
         senderAccount: unknownSender,
         receiverAccount: accountNumberCredited,
         description: 'Bride price',
-        amount: 0,
+        amount: 10,
       })
       .set('Authorization', `Bearer ${clientToken}`)
       .end((_, res) => {
@@ -547,7 +565,7 @@ describe('POST transfers', () => {
         senderAccount: accountNumber,
         receiverAccount: unknownSender,
         description: 'Bride price',
-        amount: 0,
+        amount: 10,
       })
       .set('Authorization', `Bearer ${clientToken}`)
       .end((_, res) => {
@@ -590,13 +608,13 @@ describe('POST transfers', () => {
         receiverAccount: Number(newNumber),
         senderAccount: Number(unknownSender),
         description: 'bride price',
-        amount: 0,
+        amount: 10,
       })
       .set('authorization', `Bearer ${clientToken}`)
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body).to.include.key('Message');
-        expect(res.body.Message).to.equal(`Transfer of N${0} successful`);
+        expect(res.body.Message).to.equal(`Transfer of N${10} successful`);
         expect(err).to.be.null;
       });
   });
@@ -609,7 +627,7 @@ describe('POST transfers', () => {
         senderAccount: accountNumber,
         receiverAccount: accountNumberCredited,
         description: 'bride price',
-        amount: 0,
+        amount: 10,
       })
       .set('authorization', `Bearer ${receiverToken}`)
       .end((err, res) => {
@@ -746,7 +764,7 @@ describe('Test Number check function', () => {
   it('should return an error for an invalid number', (done) => {
     const number = '23480346398099';
     const network = checkPhoneNetwork(number);
-    assert.equal(network, 'Invalid number');
+    assert.equal(network, 'Network not found');
     done();
   });
 });
