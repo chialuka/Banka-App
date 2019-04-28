@@ -27,7 +27,7 @@ const postTransaction = async (postingDetails) => {
   if (reqBody.senderAccount || reqBody.receiverAccount || reqBody.phoneNumber) {
     return null;
   }
-  Mailer.sendTransactionEmail(account.email, user.first_name, transactionData);
+  Mailer.sendTransactionEmail(user.email, user.first_name, transactionData);
   return setServerResponse(res, 201, { data: [{ ...newTransaction }] });
 };
 
