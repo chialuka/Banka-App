@@ -1,5 +1,5 @@
 const email = localStorage.getItem('loggedInUser');
-const users = JSON.parse(localStorage.getItem('clientToken')) || [];
+const users = JSON.parse(localStorage.getItem('clientsToken')) || [];
 const findUser = users.find(item => item['Email'] === email);
 
 (function() {

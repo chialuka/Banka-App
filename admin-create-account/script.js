@@ -11,13 +11,13 @@ function validateForm() {
     return null;
   }
 
-  const staffToken = JSON.parse(localStorage.getItem('staffToken')) || [];
+  const staffToken = JSON.parse(localStorage.getItem('staffsToken')) || [];
   const staff = {};
   staff.name = name;
   staff.email = email;
   staff.role = role;
   staffToken.push(staff);
-  localStorage.setItem('staffToken', JSON.stringify(staffToken));
+  localStorage.setItem('staffsToken', JSON.stringify(staffToken));
   localStorage.setItem('loggedInStaff', email);
 
   window.location.href = '../staff-dashboard/index.html';

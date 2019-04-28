@@ -34,7 +34,7 @@ function validateSignUpForm() {
     return null;
   }
 
-  const clientToken = JSON.parse(localStorage.getItem('clientToken')) || [];
+  const clientToken = JSON.parse(localStorage.getItem('clientsToken')) || [];
   if (clientToken.some(item => item['Email'] === email)) {
     error.innerHTML = 'Email is already registered';
     return null;
@@ -47,7 +47,7 @@ function validateSignUpForm() {
   client['Token'] = token;
   clientToken.push(client);
   localStorage.setItem('loggedInUser', email);
-  localStorage.setItem('clientToken', JSON.stringify(clientToken));
+  localStorage.setItem('clientsToken', JSON.stringify(clientToken));
 
   window.location.href = '../client-dashboard/index.html';
 }
@@ -66,26 +66,26 @@ function validateLoginForm() {
   }
 
   if (role === 'Staff' || role === 'Admin') {
-    const staffToken = JSON.parse(localStorage.getItem('staffToken')) || [];
+    const staffToken = JSON.parse(localStorage.getItem('staffsToken')) || [];
     const staff = {};
     staff.email = email;
     staff.role = role;
     staffToken.push(staff);
-    localStorage.setItem('staffToken', JSON.stringify(staffToken));
+    localStorage.setItem('staffsToken', JSON.stringify(staffToken));
     localStorage.setItem('loggedInStaff', email);
 
     window.location.href = '../staff-dashboard/index.html';
   }
 
   if (role === 'Client') {
-    const clientToken = JSON.parse(localStorage.getItem('clientToken')) || [];
+    const clientToken = JSON.parse(localStorage.getItem('clientsToken')) || [];
     if (clientToken.some(item => item['Email'] === email)) {
       if (clientToken.find(item => item['Password'] === password)) {
         const client = clientToken.find(x => x['Email'] === email);
         const token = Math.floor(Math.random() * 100);
         client['Token'] = token;
         localStorage.setItem('loggedInUser', email);
-        localStorage.setItem('clientToken', JSON.stringify(clientToken));
+        localStorage.setItem('clientsToken', JSON.stringify(clientToken));
         window.location.href = '../client-dashboard/index.html';
       } else {
         error.innerHTML = 'Incorrect password';

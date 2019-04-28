@@ -1,4 +1,4 @@
-const clientArray = JSON.parse(localStorage.getItem('clientToken'));
+const clientArray = JSON.parse(localStorage.getItem('clientsToken'));
 const email = localStorage.getItem('loggedInUser');
 const client = clientArray.find(item => item['Email'] === email);
 const error = document.querySelectorAll('.form-error');
@@ -52,7 +52,7 @@ function resetPassword() {
   }
 
   client['Password'] = password;
-  localStorage.setItem('clientToken', JSON.stringify(clientArray));
+  localStorage.setItem('clientsToken', JSON.stringify(clientArray));
 
   success[1].innerHTML = 'Your password has been reset';
 }

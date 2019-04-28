@@ -1,6 +1,6 @@
 const record = JSON.parse(localStorage.getItem('acc'));
-const clientsArray = JSON.parse(localStorage.getItem('clientToken')) || [];
-const staffArray = JSON.parse(localStorage.getItem('staffToken')) || [];
+const clientsArray = JSON.parse(localStorage.getItem('clientsToken')) || [];
+const staffArray = JSON.parse(localStorage.getItem('staffsToken')) || [];
 const staffEmail = localStorage.getItem('loggedInStaff');
 const client = clientsArray.find(x => x['Account Number'] === record);
 const staff = staffArray.find(x => x.email === staffEmail);
@@ -62,7 +62,7 @@ function creditAccount() {
   history['Description'] = description;
   transacts.push(history);
   localStorage.setItem('accountHistory', JSON.stringify(transacts));
-  localStorage.setItem('clientToken', JSON.stringify(clientsArray));
+  localStorage.setItem('clientsToken', JSON.stringify(clientsArray));
   amount.value = '';
   location.reload();
 }
@@ -92,14 +92,14 @@ function debitAccount() {
   history['Description'] = description;
   transacts.push(history);
   localStorage.setItem('accountHistory', JSON.stringify(transacts));
-  localStorage.setItem('clientToken', JSON.stringify(clientsArray));
+  localStorage.setItem('clientsToken', JSON.stringify(clientsArray));
   amount.value = '';
   location.reload();
 }
 
 function deleteAccount() {
   client['Account Number'] = '';
-  localStorage.setItem('clientToken', JSON.stringify(clientsArray));
+  localStorage.setItem('clientsToken', JSON.stringify(clientsArray));
   window.location.href = '../staff-dashboard/index.html';
 }
 
@@ -109,6 +109,6 @@ function activateAccount() {
   } else {
     client['Activation Status'] = true;
   }
-  localStorage.setItem('clientToken', JSON.stringify(clientsArray));
+  localStorage.setItem('clientsToken', JSON.stringify(clientsArray));
   location.reload();
 }

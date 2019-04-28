@@ -1,6 +1,6 @@
 (function() {
   const email = localStorage.getItem('loggedInUser');
-  const userArray = JSON.parse(localStorage.getItem('clientToken')) || [];
+  const userArray = JSON.parse(localStorage.getItem('clientsToken')) || [];
   const user = userArray.find(item => item['Email'] === email);
   const accNumber = user['Account Number'];
 

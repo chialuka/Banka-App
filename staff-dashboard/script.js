@@ -1,6 +1,6 @@
 (function() {
   const accounts = document.getElementById('accounts');
-  const staff = JSON.parse(localStorage.getItem('staffToken')) || [];
+  const staff = JSON.parse(localStorage.getItem('staffsToken')) || [];
   const admin = document.getElementById('admin');
   const email = localStorage.getItem('loggedInStaff');
 
@@ -13,7 +13,7 @@
     admin.style.display = 'block';
   }
 
-  const clients = JSON.parse(localStorage.getItem('clientToken')) || [];
+  const clients = JSON.parse(localStorage.getItem('clientsToken')) || [];
   clients.map(function(item) {
     const ul = document.createElement('ul');
     ul.setAttribute('class', 'list');

@@ -1,6 +1,6 @@
 :root {
-  --red: #f00f00;
-  --blue: #2c1fe2;
+  --red: #f76b34;
+  --blue: #f7cd34;
   --white: #d3d2e9;
   --black: #272727;
 }
@@ -16,8 +16,8 @@ body {
   font-family: 'Roboto', sans-serif;
   color: var(--black);
   background:   linear-gradient(
-    rgba(255, 255, 255, 0.7), 
-    rgba(247, 247, 247, 0.7)
+    rgba(255, 255, 255, 0.9), 
+    rgba(247, 247, 247, 0.9)
   ), url('../images/banking.jpg') no-repeat;
 }
 
@@ -54,6 +54,7 @@ main {
 .buttons {
   display: flex;
   flex-direction: row;
+  justify-content: center
 }
 
 #account {
@@ -68,10 +69,11 @@ main {
 .list {
   padding: 10px;
   margin: 10px;
+  border-radius: 5px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  background-color: rgba(185, 185, 184, 0.8);
+  box-shadow: 0px 8px 16px 0px rgba(10, 10, 10, 0.2);
+  background-color: #f79c34;
   list-style-type: none;
   font-family: 'Monteserrat', sans-serif;
 }
@@ -85,7 +87,7 @@ input {
   padding: 15px;
   margin: 10px 0 10px 0;
   display: inline-block;
-  border: none;
+  border: 1px solid black;
   background: var(--white);
   width: 40%;
 }
@@ -103,7 +105,7 @@ button {
   border: none;
   border-radius: 4px;
   font-weight: bold;
-  color: var(--white);
+  color: var(--black);
 }
 
 button:hover,
@@ -169,16 +171,13 @@ footer a {
     flex-direction: row;
     justify-content: space-evenly;
   }
-  .buttons {
-    flex-direction: column;
-  }
   #activate {
-    width: 100%;
+    width: 20%;
     font-size: 15px;
   }
   .delete {
-    width: 100%;
-    font-size: 1.1em;
+    width: 20%;
+    font-size: 15px;
   }
   #account-details {
     display: flex;

@@ -1,4 +1,4 @@
-const clientToken = JSON.parse(localStorage.getItem('clientToken')) || [];
+const clientToken = JSON.parse(localStorage.getItem('clientsToken')) || [];
 
 (function() {
   const email = localStorage.getItem('loggedInUser');
@@ -47,7 +47,7 @@ function validateForm() {
       client['Account Type'] = account;
       client['Card Type'] = atm;
       client['Activation Status'] = false;
-      localStorage.setItem('clientToken', JSON.stringify(clientToken));
+      localStorage.setItem('clientsToken', JSON.stringify(clientToken));
     }
   }
   window.location.href = '../client-dashboard/index.html';
