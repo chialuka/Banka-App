@@ -8,15 +8,15 @@ import Joi from 'joi';
 const validateBodyPayload = schema => async (req, res, next) => {
   try {
     const payload = await Joi.validate(req.body, schema, {
-      abortEarly: false,
+      abortEarly: true
     });
     req.body = payload;
     next();
   } catch (error) {
-    const errors = error.details.map(item => item.message.replace(/([\\"])/g, ''));
+    const errors = error.details.map(x => x.message.replace(/([\\"])/g, ''));
     res.status(400).json({
       status: 400,
-      errors,
+      errors
     });
   }
 };
@@ -30,11 +30,11 @@ const validateBodyPayload = schema => async (req, res, next) => {
  * @returns {Function} next() to call the next middleware
  */
 const validateIdParams = (req, res, next) => {
-  const isInvalid = (/[^\d]/g).test(req.params.id);
+  const isInvalid = /[^\d]/g.test(req.params.id);
   if (isInvalid) {
     return res.status(400).json({
       status: 400,
-      error: 'Provided id is invalid. Please provide a positive integer',
+      error: 'Provided id is invalid. Please provide a positive integer'
     });
   }
   return next();

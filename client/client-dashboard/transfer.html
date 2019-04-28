@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Banka Client Login</title>
+    <title>Banka Money Transfer</title>
     <link rel="stylesheet" href="../public-css/styles.css" />
     <link
       href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Roboto|Source+Sans+Pro"
@@ -18,54 +18,44 @@
     <meta name="author" content="Chukwualuka Chiama" />
     <meta
       name="description"
-      content="The Client Login page of the Banka App houses a form that allows Clients login to their accounts"
+      content="The money transfer page allows clients tranfer funds to other Banka accounts"
     />
   </head>
   <body>
-    <div class="navbar">
-        <div class="col-2 logo"><a href="../index.html">Banka</a></div>
-        <div class="menu-icon col-2" onclick="menuFunction(this)">
-        <div class="bar1"></div>
-        <div class="bar2"></div>
-        <div class="bar3"></div>
-      </div>
-      <div class="menu-items">
-        <div class="col-4">
-          <a href="../about/index.html">About</a>
-          <a href="../contact/index.html">Contact Us</a>
-          <a href="../client-signup/index.html">Sign Up</a>
-        </div>
-      </div>
-    </div>
+    <header>
+      <h1 class="logo"><a href="../client-dashboard/index.html">Banka</a></h1>
+    </header>
     <main class="content-wrapper">
-      <form id="login-client" onsubmit="return validateLoginForm()" method="POST">
+      <form id="transfer-funds" onsubmit="return transferFunds()" method="POST">
         <div class="form-header">
-          <h1 class="title">Login</h1>
+          <h1 class="title">Transfer</h1>
         </div>
         <div class="form-body">
           <div class="col-75">
             <input
-              type="text"
-              name="email"
-              placeholder="Email Address"
+              type="number"
+              name="receiver"
+              placeholder="Receiver's Account Number"
               required
             />
           </div>
           <div class="col-75">
+            <input type="number" name="amount" placeholder="Amount" required />
+          </div>
+          <div class="col-75">
             <input
-              type="password"
-              name="password"
-              placeholder="Password"
+              type="text"
+              name="description"
+              placeholder="Description"
               required
             />
           </div>
           <div id="form-error"></div>
           <div class="row">
-            <button type="submit" class="submit">Login</button>
+            <button type="submit" class="submit">Transfer</button>
           </div>
           <p class="link">
-            Don't have an account?
-            <a href="../client-signup/index.html">signup here</a>
+            <a href="../client-dashboard/index.html">Back to DashBoard</a>
           </p>
         </div>
       </form>
@@ -73,7 +63,7 @@
     <footer class="footer">
       <p class="footer-item">&copy;Banka Nig Plc 2019</p>
     </footer>
-    <script src="../script.js"></script>
+    <script src="./script.js"></script>
     <script src="../utils.js"></script>
   </body>
 </html>

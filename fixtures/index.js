@@ -32,12 +32,12 @@ const adminUser = {
 };
 
 const accountUser = {
-  accountType: 'savings',
+  accountType: 'Savings',
   openingBalance: '1000',
 };
 
 const noIdAccount = {
-  accountType: 'current',
+  accountType: 'Current',
   openingBalance: '100000',
 };
 
@@ -46,11 +46,11 @@ const noTypeAccount = {
 };
 
 const noBalanceAccount = {
-  accountType: 'current',
+  accountType: 'Current',
 };
 
 const stringOpeningBalance = {
-  accountType: 'savings',
+  accountType: 'Savings',
   openingBalance: 'hello world',
 };
 

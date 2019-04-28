@@ -81,6 +81,7 @@ const formatReturnedUser = (user) => {
   return user;
 };
 
+
 export {
   capitalize,
   hashPassword,
@@ -88,5 +89,5 @@ export {
   comparePassword,
   setServerResponse,
   generateAccountNumber,
-  formatReturnedUser
+  formatReturnedUser,
 };

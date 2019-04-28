@@ -1,21 +1,22 @@
 import Joi from 'joi';
+import cors from 'cors';
 import {
   createAccount,
   patchAccount,
   deleteAccount,
   getAccountDetails,
   getAllAccounts,
-  getAccountTransactions,
+  getAccountTransactions
 } from '../controllers/accounts';
 import {
   validateBodyPayload,
-  validateIdParams,
+  validateIdParams
 } from '../middlewares/validators';
 import {
   authorizeClient,
   authorizeAdmin,
   authorizeStaff,
-  authenticateLogin,
+  authenticateLogin
 } from '../middlewares/auth';
 
 export default (router) => {
@@ -24,26 +25,29 @@ export default (router) => {
     .post(
       validateBodyPayload({
         accountType: Joi.string()
-          .valid('savings', 'current')
+          .valid('Savings', 'Current')
           .required(),
-        openingBalance: Joi.number().positive().integer().required(),
+        openingBalance: Joi.number()
+          .positive()
+          .integer()
+          .required()
       }),
       authorizeClient,
-      createAccount,
+      createAccount
     )
     .get(authorizeStaff, getAllAccounts);
 
   router
-    .route('/accounts/:id')
-    .patch(
+    .route('/accounts/:id', cors())
+    .put(
       validateBodyPayload({
         status: Joi.string()
           .valid('dormant', 'active')
-          .required(),
+          .required()
       }),
       validateIdParams,
       authorizeAdmin,
-      patchAccount,
+      patchAccount
     )
     .delete(validateIdParams, authorizeStaff, deleteAccount)
     .get(validateIdParams, authenticateLogin, getAccountDetails);
