@@ -1,141 +1,113 @@
-/* eslint-disable require-jsdoc */
-/* eslint-disable func-names */
-const record = JSON.parse(localStorage.getItem('account'));
-const staff = JSON.parse(localStorage.getItem('staff'));
-const activateAccountButton = document.getElementById('activate');
-const error = document.getElementById('error');
+const record = JSON.parse(localStorage.getItem("acc"));
+const clientsArray = JSON.parse(localStorage.getItem("clientToken")) || [];
+const staffArray = JSON.parse(localStorage.getItem("staffToken")) || [];
+const staffEmail = localStorage.getItem("loggedInStaff");
+const client = clientsArray.find(x => x["Account Number"] === record);
+const staff = staffArray.find(x => x.email === staffEmail);
+const activateAccountButton = document.getElementById("activate");
 let creditButton;
 let debitButton;
 
-(function () {
-  const account = document.getElementById('account');
-  account.innerHTML = `Account number: ${
-    record.account_number
-  }`;
-  [creditButton, ...rest] = document.getElementsByClassName('credit');
-  [debitButton, ...rest] = document.getElementsByClassName('debit');
+(function() {
+  const account = document.getElementById("account");
+  account.innerHTML = "Account record for client account number: " + record;
+  const activateAccountButton = document.getElementById("activate");
+  creditButton = document.getElementsByClassName("credit")[0];
+  debitButton = document.getElementsByClassName("debit")[0];
 
-  if (staff.is_admin) {
-    activateAccountButton.style.display = 'block';
-    if (record.status === 'dormant') {
+  if (staff.role === "Admin") {
+    activateAccountButton.style.display = "block";
+    if (client["Activation Status"] === false) {
       creditButton.disabled = true;
       debitButton.disabled = true;
-      activateAccountButton.innerHTML = 'Activate Account';
+      activateAccountButton.innerHTML = "Activate Account";
     } else {
       creditButton.disabled = false;
       debitButton.disabled = false;
-      activateAccountButton.innerHTML = 'Deactivate Account';
+      activateAccountButton.innerHTML = "Deactivate Account";
     }
   }
 
-  const accountDetails = document.getElementById('account-details');
-  const ul = document.createElement('ul');
-  ul.setAttribute('class', 'list');
+  const accountDetails = document.getElementById("account-details");
+  const ul = document.createElement("ul");
+  ul.setAttribute("class", "list");
   accountDetails.appendChild(ul);
-  Object.entries(record).forEach(([key, value]) => {
-    const li = document.createElement('li');
+  Object.entries(client).forEach(function([key, value]) {
+    const li = document.createElement("li");
     li.innerHTML = `${key}: ${value}`;
-    li.setAttribute('class', 'item');
+    li.setAttribute("class", "item");
     ul.appendChild(li);
   });
-}());
+})();
 
-const setAccountToStorage = async () => {
-  const accountUrl = `http://localhost:2800/api/v1/accounts/${record.id}`;
-  const account = await request(accountUrl, {
-    method: 'get',
-    headers: {
-      'content-type': 'application/json',
-      Authorization: `Bearer ${staff.token}`
-    }
-  });
-  localStorage.setItem('account', JSON.stringify(account.data[0]));
-  location.reload();
-};
-
-const options = {
-  method: 'post',
-  headers: {
-    'content-type': 'application/json; charset = utf-8',
-    Authorization: `Bearer ${staff.token}`
-  }
-};
-
-const url = 'http://localhost:2800/api/v1/transactions';
-
-const makeCharge = async (data) => {
-  const transactionData = {
-    accountNumber: record.account_number,
-    amount: Number(data.amount),
-    description: data.description,
-    transactionType: data.type,
-    cashierId: staff.id
-  };
-  const strData = JSON.stringify(transactionData);
-  options.body = strData;
-  const jsonRes = (await fetch(url, options)).json();
-  const response = await jsonRes;
-  if (response.status === 201) {
-    setAccountToStorage();
-  } else {
-    error.innerHTML = response.error ? response.error : response.errors;
-  }
-};
-
+/**
+ * @name creditAccount
+ * @returns {}
+ */
 function creditAccount() {
-  const amount = document.getElementById('amount').value;
-  const description = document.getElementById('description').value;
+  const amount = document.getElementById("amount").value;
+  const description = document.getElementById("description").value;
+  const date = new Date();
 
-  const data = {
-    amount,
-    description,
-    type: 'credit'
-  };
-  makeCharge(data);
+  client["Account Balance"] =
+    Number(client["Account Balance"]) + Number(amount);
+  let balance = client["Account Balance"];
+  const transacts = JSON.parse(localStorage.getItem("accountHistory")) || [];
+  const history = {};
+  history["Account Number"] = record;
+  history["Type"] = "credit";
+  history["Amount"] = amount;
+  history["Balance"] = balance;
+  history["Date"] = date.toDateString();
+  history["Description"] = description;
+  transacts.push(history);
+  localStorage.setItem("accountHistory", JSON.stringify(transacts));
+  localStorage.setItem("clientToken", JSON.stringify(clientsArray));
+  amount.value = "";
+  location.reload();
 }
 
 function debitAccount() {
-  const amount = document.getElementById('amount').value;
-  const description = document.getElementById('description').value;
+  const error = document.getElementById("error");
 
-  const data = {
-    amount,
-    description,
-    type: 'debit'
-  };
-  makeCharge(data);
+  const amount = document.getElementById("amount").value;
+  const description = document.getElementById("description").value;
+  const date = new Date();
+
+  if (client["Account Balance"] <= 0 || client["Account Balance"] < amount) {
+    error.innerHTML = "Balance is too small for this. Ask customer to credit account";
+    return null;
+  }
+  client["Account Balance"] =
+    Number(client["Account Balance"]) - Number(amount);
+  let balance = client["Account Balance"];
+  const transacts = JSON.parse(localStorage.getItem("accountHistory")) || [];
+  const history = {};
+  history["Account Number"] = record;
+  history["Type"] = "debit";
+  history["Amount"] = amount;
+  history["Balance"] = balance;
+  history["Date"] = date.toDateString();
+  history["Description"] = description;
+  transacts.push(history);
+  localStorage.setItem("accountHistory", JSON.stringify(transacts));
+  localStorage.setItem("clientToken", JSON.stringify(clientsArray));
+  amount.value = "";
+  location.reload();
 }
 
-async function deleteAccount() {
-  const deleteUrl = `http://localhost:2800/api/v1/accounts/${Number(
-    record.id
-  )}`;
-  const deleteOptions = {
-    method: 'delete',
-    headers: {
-      'content-type': 'application/json; charset= utf-8',
-      Authorization: `Bearer ${staff.token}`
-    }
-  };
-  const requestDelete = await fetch(deleteUrl, deleteOptions);
-  const deletedAccount = await requestDelete;
-  localStorage.removeItem('account');
-  window.location.href = '../staff-dashboard/index.html';
+function deleteAccount() {
+  client["Account Number"] = "";
+  localStorage.setItem("clientToken", JSON.stringify(clientsArray));
+  window.location.href = "../staff-dashboard/index.html";
 }
 
-async function activateAccount() {
-  const payload = {};
-  payload.status = record.status === 'dormant' ? 'active' : 'dormant';
-  const patchUrl = `http://localhost:2800/api/v1/accounts/${record.id}`;
-  const patchOptions = {
-    method: 'put',
-    headers: {
-      'content-type': 'application/json',
-      Authorization: `Bearer ${staff.token}`
-    },
-    body: JSON.stringify(payload)
-  };
-  await request(patchUrl, patchOptions);
-  setAccountToStorage();
+function activateAccount() {
+  if (client["Activation Status"] === true) {
+    client["Activation Status"] = false;
+  } else {
+    client["Activation Status"] = true;
+  }
+  localStorage.setItem("clientToken", JSON.stringify(clientsArray));
   location.reload();
 }

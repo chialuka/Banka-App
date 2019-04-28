@@ -1,5 +1,4 @@
 import express, { Router } from 'express';
-import cors from 'cors';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import swaggerJSDoc from 'swagger-jsdoc';
@@ -15,49 +14,36 @@ const app = express();
 
 const router = Router();
 
-router.options('/', cors());
-
-app.use(cors());
-
-app.options(
-  '*',
-  cors({
-    origin: true,
-    methods: 'GET,HEAD,POST,PUT,PATCH,DELETE',
-    preflightContinue: true
-  })
-);
-
 routes(router);
 
 const swaggerDefinition = {
   info: {
     title: 'Banka Swagger API',
     version: '1.0.0',
-    description: 'Documentation for the Banka App'
+    description: 'Documentation for the Banka App',
   },
   securityDefinitions: {
     bearerAuth: {
       type: 'apiKey',
       name: 'Authorization',
       scheme: 'bearer',
-      in: 'header'
-    }
-  }
+      in: 'header',
+    },
+  },
 };
 
 const options = {
   swaggerDefinition,
-  apis: ['./docs/*.yaml']
+  apis: ['./docs/*.yaml'],
 };
 
 const swaggerData = swaggerJSDoc(options);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerData));
 
-app.use(bodyParser.json());
-
 app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(bodyParser.json());
 
 app.use(morgan('dev'));
 
