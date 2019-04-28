@@ -613,8 +613,8 @@ describe('POST transfers', () => {
       .set('authorization', `Bearer ${clientToken}`)
       .end((err, res) => {
         expect(res).to.have.status(200);
-        expect(res.body).to.include.key('Message');
-        expect(res.body.Message).to.equal(`Transfer of N${10} successful`);
+        expect(res.body).to.include.key('message');
+        expect(res.body.message).to.equal(`Transfer of N${10} successful`);
         expect(err).to.be.null;
       });
   });

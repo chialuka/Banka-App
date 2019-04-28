@@ -354,7 +354,7 @@ describe('GET accounts', () => {
   });
 });
 
-describe('PATCH accounts', () => {
+xdescribe('PATCH accounts', () => {
   before(async () => {
     admin = await Users.create(adminUser);
     adminToken = generateToken({ id: admin.id });
@@ -514,7 +514,7 @@ describe('DELETE Account', () => {
       });
   });
 
-  it('should delete account if valid staff token is provided', (done) => {
+  xit('should delete account if valid staff token is provided', (done) => {
     let deletedAccount;
     chai
       .request(server)
@@ -555,7 +555,7 @@ describe('DELETE Account', () => {
       });
   });
 
-  it('should return error if client token is provided', (done) => {
+  xit('should return error if client token is provided', (done) => {
     chai
       .request(server)
       .delete(`/api/v1/accounts/${account.id}`)

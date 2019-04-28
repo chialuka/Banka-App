@@ -1,11 +1,15 @@
 /* eslint-disable require-jsdoc */
 /* eslint-disable func-names */
-const token = localStorage.getItem('token');
+const token = localStorage.getItem('clientToken');
 const client = JSON.parse(localStorage.getItem('client'));
+const error = document.getElementById('form-error');
 
 const checkAccount = async () => {
   const account = document.getElementById('account');
   const accountHeading = document.getElementById('accountHeading');
+  const transfer = document.getElementById('transfer');
+  const airtime = document.getElementById('airtime');
+  const newAccount = document.getElementById('new-account');
 
   if (!token) {
     window.location.href = '../index.html';
@@ -28,6 +32,8 @@ const checkAccount = async () => {
   const accounts = await response;
 
   if (!accounts.data.length) {
+    transfer.style.display = 'none';
+    airtime.style.display = 'none';
     const link = document.createElement('a');
     link.setAttribute('href', '../client-create-account/index.html');
     link.setAttribute('class', 'link');
@@ -35,9 +41,10 @@ const checkAccount = async () => {
     link.innerHTML = ' Click here to open one.';
     account.appendChild(link);
   } else {
+    newAccount.style.display = 'none';
     const ul = document.createElement('ul');
     ul.setAttribute('class', 'list');
-    account.appendChild(ul); 
+    account.appendChild(ul);
     accounts.data.map((item) => {
       Object.entries(item).forEach(([key, value]) => {
         const li = document.createElement('li');
@@ -45,6 +52,8 @@ const checkAccount = async () => {
         li.setAttribute('class', 'item');
         ul.appendChild(li);
       });
+      const senderAccount = item.account_number;
+      localStorage.setItem('senderAccount', senderAccount);
     });
     accountHeading.innerHTML = 'Your account details:';
     const history = document.getElementById('history');
@@ -77,6 +86,61 @@ const checkAccount = async () => {
 }());
 
 function logOut() {
-  localStorage.removeItem('token');
+  localStorage.removeItem('clientToken');
   location.reload();
+}
+
+async function sendData(url, data) {
+  const options = {
+    method: 'post',
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+      Authorization: `Bearer ${client.token}`
+    },
+    body: JSON.stringify(data)
+  };
+
+  const transfer = await request(url, options);
+  console.log(transfer);
+  if (transfer.status === 200) {
+    error.innerHTML = transfer.message;
+  } else {
+    error.innerHTML = transfer.error || transfer.errors;
+  }
+}
+
+async function transferFunds() {
+  event.preventDefault();
+  const receiverAccount = document.forms['transfer-funds'].receiver.value;
+  const amount = document.forms['transfer-funds'].amount.value;
+  const description = document.forms['transfer-funds'].description.value;
+  const senderAccount = Number(localStorage.getItem('senderAccount'));
+
+  const data = {
+    receiverAccount,
+    amount,
+    description,
+    senderAccount
+  };
+
+  const url = 'http://localhost:2800/api/v1/transfers';
+
+  return sendData(url, data);
+}
+
+async function purchaseAirtime() {
+  event.preventDefault();
+  const phoneNumber = document.forms['buy-airtime'].phone.value;
+  const amount = document.forms['buy-airtime'].amount.value;
+  const senderAccount = Number(localStorage.getItem('senderAccount'));
+
+  const data = {
+    amount,
+    phoneNumber,
+    accountNumber: senderAccount
+  };
+
+  const url = 'http://localhost:2800/api/v1/airtime';
+
+  return sendData(url, data);
 }

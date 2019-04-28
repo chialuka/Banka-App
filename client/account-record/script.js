@@ -9,7 +9,7 @@ let debitButton;
 
 (function () {
   const account = document.getElementById('account');
-  account.innerHTML = `Account record for client account number: ${
+  account.innerHTML = `Account number: ${
     record.account_number
   }`;
   [creditButton, ...rest] = document.getElementsByClassName('credit');
@@ -124,18 +124,18 @@ async function deleteAccount() {
 }
 
 async function activateAccount() {
-  const payload = {
-    status: 'active'
-  };
+  const payload = {};
+  payload.status = record.status === 'dormant' ? 'active' : 'dormant';
   const patchUrl = `http://localhost:2800/api/v1/accounts/${record.id}`;
   const patchOptions = {
-    method: 'patch',
+    method: 'put',
     headers: {
       'content-type': 'application/json',
       Authorization: `Bearer ${staff.token}`
     },
     body: JSON.stringify(payload)
   };
-  const jsonResp = await request(patchUrl, patchOptions);
+  await request(patchUrl, patchOptions);
+  setAccountToStorage();
   location.reload();
 }

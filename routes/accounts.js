@@ -39,7 +39,7 @@ export default (router) => {
 
   router
     .route('/accounts/:id', cors())
-    .patch(
+    .put(
       validateBodyPayload({
         status: Joi.string()
           .valid('dormant', 'active')

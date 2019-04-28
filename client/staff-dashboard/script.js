@@ -1,6 +1,6 @@
 /* eslint-disable require-jsdoc */
 /* eslint-disable func-names */
-const token = localStorage.getItem('token');
+const token = localStorage.getItem('staffToken');
 
 const options = {
   method: 'get',
@@ -41,7 +41,7 @@ const displayAccounts = async () => {
   const admin = document.getElementById('admin');
 
   if (!token) {
-    window.location.href = '../client-login/index.html';
+    window.location.href = '../index.html';
   }
   if (staff.is_admin) {
     admin.style.display = 'block';
@@ -51,6 +51,6 @@ const displayAccounts = async () => {
 }());
 
 function logOut() {
-  localStorage.removeItem('token');
+  localStorage.removeItem('staffToken');
   location.reload();
 }

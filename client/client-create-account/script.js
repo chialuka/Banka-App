@@ -3,7 +3,7 @@
 const client = JSON.parse(localStorage.getItem('client'));
 
 (function () {
-  const email = localStorage.getItem('token');
+  const email = localStorage.getItem('clientToken');
   if (!email) {
     window.location.href = '../index.html';
   }
