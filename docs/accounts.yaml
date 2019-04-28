@@ -132,13 +132,9 @@ definitions:
   Account:
     type: object
     required:
-    - id
     - accountType
     - openingBalance
     properties:
-      id:
-        type: integer
-        example: 5
       accountType:
         type: string
         example: savings
