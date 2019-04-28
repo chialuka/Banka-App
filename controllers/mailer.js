@@ -17,13 +17,13 @@ const sendAirtimeEmail = (account, reqBody, user, carrier) => {
   const composeMail = {
     to: user.email,
     subject: 'Banka Aitime alert',
-    message: `<h3>Banka Transaction Service<h3>
+    message: `<h3>Banka Transaction Service</h3>
     <p>Dear ${capitalize(user.first_name)}, </p>
     <p>Your airtime purchase of NGN ${reqBody.amount}
     on your ${account.account_type} account for 
     the ${carrier} number- 
-    ${reqBody.phoneNumber} was successful</p>
-    <p>Thank you for choosing Banka</p>
+    ${reqBody.phoneNumber} was successful.</p>
+    <p>Thank you for choosing Banka.</p>
     <p>Best wishes</p>`
   };
   sendMail(composeMail);

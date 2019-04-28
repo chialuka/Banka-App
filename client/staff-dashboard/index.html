@@ -3,7 +3,10 @@
   <head>
     <title>Staff/Admin Dashboard</title>
     <link rel="stylesheet" href="styles.css" />
-    <link href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Roboto" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Roboto"
+      rel="stylesheet"
+    />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="Chukwualuka Chiama" />
@@ -18,13 +21,15 @@
       <h2 id="user"></h2>
     </header>
     <main>
-      <h4 id="admin">
-        <a href="../admin-create-account/index.html"
-          >Create Admin/Staff</a
-        >
-      </h4>
+      <div class="top">
+        <h4 id="admin">
+          <a href="../admin-create-account/index.html"
+            >Create Admin/Staff Account</a
+          >
+        </h4>
+        <button id="logout" onclick="logOut()">Log out</button>
+      </div>
       <h3>Client Bank Accounts:</h3>
-      <button id="logout" onclick="logOut()">Log out</button>
       <div>
         <div id="accounts"></div>
       </div>

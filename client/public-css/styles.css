@@ -12,8 +12,8 @@ body {
   font-family: 'Montserrat', 'Source Sans Pro', sans-serif, 'Roboto', Arial,
     Helvetica, sans-serif;
   background: linear-gradient(
-      rgba(255, 255, 255, 0.7),
-      rgba(247, 247, 247, 0.7)
+      rgba(255, 255, 255, 0.85),
+      rgba(247, 247, 247, 0.85)
     ),
     url('../images/banking.jpg') no-repeat;
   color: rgb(0, 0, 0);
@@ -187,7 +187,8 @@ select {
 
 #form-error {
   font-size: 20px;
-  color: rgba(33, 103, 253, 0.9);
+  color: rgba(13, 26, 209, 0.9);
+  font-weight: bold;
 }
 
 p {
