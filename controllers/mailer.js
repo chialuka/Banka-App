@@ -17,14 +17,14 @@ const sendAirtimeEmail = (account, reqBody, user, carrier) => {
   const composeMail = {
     to: user.email,
     subject: 'Banka Aitime alert',
-    message: `<h3>Banka Transaction Service<h3>
+    message: `<h3>Banka Transaction Service</h3>
     <p>Dear ${capitalize(user.first_name)}, </p>
-    <p>Your airtime purchase of ${reqBody.amount}
+    <p>Your airtime purchase of NGN ${reqBody.amount}
     on your ${account.account_type} account for 
     the ${carrier} number- 
-    ${reqBody.phoneNumber} was successful</p>
-    <p>Thank you for choosing Banka</p>
-    <p>Best wishes</p>`
+    ${reqBody.phoneNumber} was successful.</p>
+    <p>Thank you for choosing Banka.</p>
+    <p>Best wishes.</p>`
   };
   sendMail(composeMail);
 };
@@ -50,11 +50,11 @@ const sendTransactionEmail = (email, firstname, data) => {
     <ul>
     <li>Account Number: ${data.accountNumber}</li>
     <li>Description: ${data.description}</li>
-    <li>Transaction Amount: ${data.amount}</li>
+    <li>Transaction Amount: NGN ${data.amount}</li>
     <li>Transaction Date: ${data.date}</li>
     <li>Account Balance: NGN${data.newBalance}</li>
     </ul>
-    <p>Thank you for choosing Banka</p>
+    <p>Thank you for choosing Banka.</p>
     <p>Best wishes.</p>`
   };
   sendMail(composeEmail);
@@ -76,7 +76,7 @@ const sendNewAccountMail = (user, accObj) => {
     <p>Hi ${user.first_name},</p>
     <p>This is to inform you that your new ${accObj.accountType} account with
     account number: ${Number(accObj.accountNumber)}
-    and opening balance: N${accObj.openingBalance}
+    and opening balance: NGN ${accObj.openingBalance}
     has been successfully opened with Banka.</p>
     <p>Thank you for choosing Banka.</p>
     <p> Best wishes.</p>`

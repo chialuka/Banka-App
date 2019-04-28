@@ -31,7 +31,7 @@ const checkValidNumber = async (res, account, reqBody) => {
     const carrier = network !== 'Emerging' ? network : 'Etisalat';
     const user = await Users.findOneById(account.owner);
     await chargeAccount(res, account, reqBody);
-    Mailer.sendAirtimeEmail(account, reqBody, user, validNumber);
+    Mailer.sendAirtimeEmail(account, reqBody, user, carrier);
     return setServerResponse(res, 200, {
       message: `${carrier} airtime purchase of ${reqBody.amount} successful`
     });
