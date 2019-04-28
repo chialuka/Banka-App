@@ -37,12 +37,13 @@ const serverRequest = async (url, data) => {
     return null;
   }
   localStorage.setItem('token', response.data[0].token);
-  if (response.data[0].is_staff) {
+  if (!response.data[0].is_staff) {
+    localStorage.setItem('client', JSON.stringify(response.data[0]));
+    window.location.href = '../client-dashboard/index.html';
+  } else {
     localStorage.setItem('staff', JSON.stringify(response.data[0]));
     window.location.href = '../staff-dashboard/index.html';
   }
-  localStorage.setItem('client', JSON.stringify(response.data[0]));
-  window.location.href = '../client-dashboard/index.html';
 };
 
 const validateSignUpForm = () => {

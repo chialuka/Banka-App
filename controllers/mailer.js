@@ -19,7 +19,7 @@ const sendAirtimeEmail = (account, reqBody, user, carrier) => {
     subject: 'Banka Aitime alert',
     message: `<h3>Banka Transaction Service<h3>
     <p>Dear ${capitalize(user.first_name)}, </p>
-    <p>Your airtime purchase of ${reqBody.amount}
+    <p>Your airtime purchase of NGN ${reqBody.amount}
     on your ${account.account_type} account for 
     the ${carrier} number- 
     ${reqBody.phoneNumber} was successful</p>
@@ -50,7 +50,7 @@ const sendTransactionEmail = (email, firstname, data) => {
     <ul>
     <li>Account Number: ${data.accountNumber}</li>
     <li>Description: ${data.description}</li>
-    <li>Transaction Amount: ${data.amount}</li>
+    <li>Transaction Amount: NGN ${data.amount}</li>
     <li>Transaction Date: ${data.date}</li>
     <li>Account Balance: NGN${data.newBalance}</li>
     </ul>

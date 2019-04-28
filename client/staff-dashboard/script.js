@@ -1,32 +1,56 @@
-(function() {
-  const accounts = document.getElementById('accounts');
-  const staff = JSON.parse(localStorage.getItem('staffToken')) || [];
-  const admin = document.getElementById('admin');
-  const email = localStorage.getItem('loggedInStaff');
+/* eslint-disable require-jsdoc */
+/* eslint-disable func-names */
+const token = localStorage.getItem('token');
 
-  if (!email) {
-    window.location.href = '../staff-login/index.html';
+const options = {
+  method: 'get',
+  headers: {
+    'content-type': 'application/json; charset=utf-8',
+    Authorization: `Bearer ${token}`
   }
+};
 
-  const user = staff.find(x => x.email === email);
-  if (user.role === 'Admin') {
+const url = 'http://localhost:2800/api/v1/accounts';
+
+const displayAccounts = async () => {
+  const accounts = document.getElementById('accounts');
+  const response = (await fetch(url, options)).json();
+  const allAccounts = await response;
+  allAccounts.data.map((item) => {
+    const ul = document.createElement('ul');
+    ul.setAttribute('class', 'list');
+    accounts.appendChild(ul);
+    const li = document.createElement('li');
+    li.setAttribute('class', 'item');
+    li.setAttribute('id', `'${item.id}'`);
+    li.innerHTML = item.account_number;
+    ul.appendChild(li);
+    li.onclick = async function () {
+      const clicked = document.getElementById(`${li.id}`);
+      const id = Number(clicked.innerHTML);
+      const accUrl = `http://localhost:2800/api/v1/accounts/${id}`;
+      const account = await request(accUrl, options);
+      localStorage.setItem('account', JSON.stringify(account.data[0]));
+      window.location.href = '../account-record/index.html';
+    };
+  });
+};
+
+(function () {
+  const staff = JSON.parse(localStorage.getItem('staff')) || [];
+  const admin = document.getElementById('admin');
+
+  if (!token) {
+    window.location.href = '../client-login/index.html';
+  }
+  if (staff.is_admin) {
     admin.style.display = 'block';
   }
 
-  const clients = JSON.parse(localStorage.getItem('clientToken')) || [];
-  clients.map(function(item) {
-    const ul = document.createElement('ul');
-    ul.setAttribute('class', 'list');
-    if (item['Account Number'] && item['Account Number'].length > 1) {
-      accounts.appendChild(ul);
-      const li = document.createElement('li');
-      li.setAttribute('class', 'item');
-      li.innerHTML = item['Account Number'];
-      ul.appendChild(li);
-      li.onclick = function() {
-        localStorage.setItem('acc', JSON.stringify(item['Account Number']));
-        window.location.href = '../account-record/index.html';
-      };
-    }
-  });
-})();
+  displayAccounts();
+}());
+
+function logOut() {
+  localStorage.removeItem('token');
+  location.reload();
+}

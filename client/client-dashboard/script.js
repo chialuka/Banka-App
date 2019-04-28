@@ -3,8 +3,6 @@
 const token = localStorage.getItem('token');
 const client = JSON.parse(localStorage.getItem('client'));
 
-console.log(client);
-
 const checkAccount = async () => {
   const account = document.getElementById('account');
   const accountHeading = document.getElementById('accountHeading');
