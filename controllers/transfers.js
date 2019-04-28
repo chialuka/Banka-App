@@ -29,7 +29,7 @@ const makeCharges = async (req, res, senderAccount, receiverAccount) => {
     await chargeAccount(res, senderAccount, debitClient);
     await chargeAccount(res, receiverAccount, creditClient);
     return setServerResponse(res, 200, {
-      message: `Transfer of N${req.body.amount} successful`,
+      Message: `Transfer of N${req.body.amount} successful`,
     });
   } catch (error) {
     return setServerResponse(res, 500, { error });

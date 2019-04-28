@@ -3,10 +3,6 @@
   <head>
     <title>Admin Create Account</title>
     <link rel="stylesheet" href="../public-css/styles.css" />
-    <link
-      href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Roboto|Source+Sans+Pro"
-      rel="stylesheet"
-    />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="Chukwualuka Chiama" />
@@ -20,37 +16,23 @@
       <h1 class="logo"><a href="../staff-dashboard/index.html">Banka</a></h1>
     </header>
     <main class="content-wrapper">
-        <form id="login-staff" onsubmit="return validateForm()" method="POST">
+      <form id="login-staff" onsubmit="return validateForm()" method="POST">
         <div class="form-header">
           <h1>Create New Account- Admin/Staff</h1>
         </div>
         <div class="form-body">
           <div class="col-75">
-            <input type="text" name="firstname" placeholder="First Name" required />
+            <input type="text" name="name" placeholder="Enter Name" required/>
           </div>
           <div class="col-75">
-            <input type="text" name="lastname" placeholder="Last Name" required />
+            <input type="text" name="email" placeholder="Enter Email" required/>
           </div>
           <div class="col-75">
-            <input
-              type="text"
-              name="email"
-              placeholder="Enter Email"
-              required
-            />
-          </div>
-          <div class="col-75">
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              required
-              minlength="6"
-            />
+            <input type="password" name="password" placeholder="Password" required minlength="6"/>
           </div>
           <div>
-            <select name="roles" required>
-              <option selected name disabled value=""> Select Role </option>
+            <select name="roles">
+              <option selected name disabled > Select Role </option>
               <option> Staff </option>
               <option> Admin </option>
             </select>
