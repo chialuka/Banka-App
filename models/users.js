@@ -127,9 +127,50 @@ const findOneAndDelete = async (id) => {
  */
 const deleteAll = async () => {
   await db.query('DELETE FROM accounts');
-  await db.query('DELETE FROM users WHERE email <> $1', [
-    `${USER_NAME}`
-  ]);
+  await db.query('DELETE FROM users WHERE email <> $1', [`${USER_NAME}`]);
+  return true;
+};
+
+/**
+ * Save OTP in the DB table against user's details
+ * @name saveOTP
+ * @async
+ * @param {Object} data
+ * @returns {Object} details saved in the DB table
+ */
+const saveOTP = async (data) => {
+  const {
+    email, id, otp, time
+  } = data;
+  const result = await db.query(
+    `INSERT INTO password (email, user_id, otp, time) 
+    VALUES ($1, $2, $3, $4) RETURNING *`,
+    [email, id, otp, time]
+  );
+  return result.rows[0];
+};
+
+/**
+ * Find the user with the given OTP
+ * @name findOTP
+ * @async
+ * @param {Number} otp
+ * @returns {Array} DB entry with the provided OTP, if it exists
+ */
+const findOTP = async (otp) => {
+  const result = await db.query('SELECT * FROM password WHERE otp = $1', [otp]);
+  return result.rows[0];
+};
+
+/**
+ * Delete OTP after it has been used
+ * @name deleteOTP
+ * @async
+ * @param {Number} otp
+ * @return {Boolean} true when OTP is deleted
+ */
+const deleteOTP = async (otp) => {
+  await db.query('DELETE FROM password WHERE otp = $1', [otp]);
   return true;
 };
 
@@ -141,5 +182,8 @@ export {
   findUserAccounts,
   findOneAndUpdate,
   findOneAndDelete,
-  deleteAll
+  deleteAll,
+  saveOTP,
+  findOTP,
+  deleteOTP
 };

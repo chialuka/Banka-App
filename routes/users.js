@@ -7,16 +7,18 @@ import {
   deleteUser,
   loginUser,
   getUserAccounts,
+  resetPassword,
+  changePassword
 } from '../controllers/users';
 import {
   validateBodyPayload,
-  validateIdParams,
+  validateIdParams
 } from '../middlewares/validators';
 import {
   authorizeClient,
   authorizeStaff,
   authorizeAdmin,
-  authenticateLogin,
+  authenticateLogin
 } from '../middlewares/auth';
 
 export default (router) => {
@@ -31,9 +33,9 @@ export default (router) => {
         .required(),
       password: Joi.string()
         .min(6)
-        .required(),
+        .required()
     }),
-    createUser,
+    createUser
   );
 
   router.route('/staff/auth/signup').post(
@@ -46,10 +48,10 @@ export default (router) => {
       password: Joi.string()
         .min(6)
         .required(),
-      isAdmin: Joi.boolean().required(),
+      isAdmin: Joi.boolean().required()
     }),
     authorizeAdmin,
-    createUser,
+    createUser
   );
 
   router.route('/users/auth/signin').post(
@@ -59,9 +61,9 @@ export default (router) => {
         .required(),
       password: Joi.string()
         .min(6)
-        .required(),
+        .required()
     }),
-    loginUser,
+    loginUser
   );
 
   router
@@ -76,11 +78,32 @@ export default (router) => {
         email: Joi.string().email({ minDomainAtoms: 2 }),
         firstname: Joi.string(),
         lastname: Joi.string(),
-        password: Joi.string().min(6),
+        password: Joi.string().min(6)
       }),
       validateIdParams,
       authorizeClient,
-      updateUser,
+      updateUser
     )
     .delete(validateIdParams, authorizeStaff, deleteUser);
+
+  router.route('/users/resetpassword').post(
+    validateBodyPayload({
+      email: Joi.string()
+        .email({ minDomainAtoms: 2 })
+        .required()
+    }),
+    resetPassword
+  );
+
+  router.route('/users/changepassword').post(
+    validateBodyPayload({
+      password: Joi.string()
+        .min(6)
+        .required(),
+      otp: Joi.number()
+        .positive()
+        .required()
+    }),
+    changePassword
+  );
 };
