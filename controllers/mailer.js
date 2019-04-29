@@ -2,6 +2,29 @@ import { capitalize } from '../utils';
 import sendMail from '../lib/mail';
 
 /**
+ * Send email with OTP to user for resetting their password
+ * @name sendResetPasswordMail
+ * @param {Object} user
+ * @param {Number} otp
+ * @returns {Function} Function that sends password reset email to the user
+ */
+const sendResetPasswordMail = (user, otp) => {
+  const mail = {
+    to: user.email,
+    subject: 'Password Reset',
+    message: `<h4> Password Reset </h4>
+    <p>Dear ${capitalize(user.first_name)}, </p>
+    <p>You made a request to reset your password.
+    Please provide this OTP: ${otp} alongside your
+    new password.</p>
+    <p>The OTP expires in ten minutes.</p>
+    <p>Thank you for choosing Banka.</p>
+    <p>Best wishes</p>`
+  };
+  sendMail(mail);
+};
+
+/**
  * Send email informing client of the debit transaction that occured
  * on their account and the purpose of the debit
  * @name sendAirtimeEmail
@@ -109,7 +132,6 @@ const sendDeactivationMail = (email, account) => {
   sendMail(deactivationEmail);
 };
 
-
 /**
  * send email to client whose account was activated
  * @name sendActivationMail
@@ -133,7 +155,6 @@ const sendActivationMail = (email, account) => {
   };
   sendMail(activatedAccountEmail);
 };
-
 
 /**
  * send email to customer whose account was deleted
@@ -165,5 +186,6 @@ export {
   sendNewAccountMail,
   sendDeactivationMail,
   sendActivationMail,
-  sendDeleteAccountMail
+  sendDeleteAccountMail,
+  sendResetPasswordMail
 };

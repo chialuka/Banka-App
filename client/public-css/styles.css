@@ -185,8 +185,8 @@ select {
   width: 100%;
 }
 
-#form-error {
-  font-size: 20px;
+#form-error, #form-success {
+  font-size: 18px;
   color: rgba(13, 26, 209, 0.9);
   font-weight: bold;
 }

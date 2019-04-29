@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Banka Client Login</title>
+    <title>Change Password</title>
     <link rel="stylesheet" href="../public-css/styles.css" />
     <link
       href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Roboto|Source+Sans+Pro"
@@ -18,7 +18,7 @@
     <meta name="author" content="Chukwualuka Chiama" />
     <meta
       name="description"
-      content="The Client Login page of the Banka App houses a form that allows Clients login to their accounts"
+      content="The Change Password page of the Banka App houses a form that allows users change their passwords after rese"
     />
   </head>
   <body>
@@ -30,31 +30,24 @@
         <div class="bar3"></div>
       </div>
       <div class="menu-items">
-        <div class="col-4">
+        <div class="col-4 mobile-menu">
           <a href="../about/index.html">About</a>
           <a href="../contact/index.html">Contact Us</a>
+          <a href="../client-login/index.html">Login</a>
           <a href="../client-signup/index.html">Sign Up</a>
         </div>
       </div>
     </div>
     <main class="content-wrapper">
       <form
-        id="login-client"
-        onsubmit="return validateLoginForm()"
+        id="change-password"
+        onsubmit="return changePassword()"
         method="POST"
       >
         <div class="form-header">
-          <h1 class="title">Login</h1>
+          <h1 class="title">Change Password</h1>
         </div>
         <div class="form-body">
-          <div class="col-75">
-            <input
-              type="text"
-              name="email"
-              placeholder="Email Address"
-              required
-            />
-          </div>
           <div class="col-75">
             <input
               type="password"
@@ -63,17 +56,22 @@
               required
             />
           </div>
-          <div id="form-error"></div>
-          <div class="row">
-            <button type="submit" class="submit">Login</button>
+          <div class="col-75">
+            <input
+              type="password"
+              name="password2"
+              placeholder="Confirm Password"
+              required
+            />
           </div>
-          <p class="link">
-            Don't have an account?
-            <a href="../client-signup/index.html">signup here</a>
-          </p>
-          <p class="link">
-            <a href="../reset-password/index.html">Forgot Password?</a>
-          </p>
+          <div class="col-75">
+            <input type="text" name="otp" placeholder="Enter OTP" required />
+          </div>
+          <div id="form-error"></div>
+          <div id="form-success"></div>
+          <div class="row">
+            <button type="submit" class="submit">Change Password</button>
+          </div>
         </div>
       </form>
     </main>

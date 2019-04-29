@@ -376,24 +376,6 @@ describe('PUT/ User', () => {
         done();
       });
   });
-
-  it('should not update if there is a token mismatch', (done) => {
-    chai
-      .request(server)
-      .put(`/api/v1/users/${staff.id}`)
-      .set('Authorization', `Bearer ${token}`)
-      .send({
-        firstname: 'Omo',
-        email: 'ncha_bu_omo@gmail.com'
-      })
-      .end((err, res) => {
-        expect(res).to.have.status(403);
-        expect(res.body).to.include.key('error');
-        expect(res.body.error).to.equal('User and token mismatch');
-        expect(err).to.be.null;
-        done();
-      });
-  });
 });
 
 describe('DELETE/ User', () => {
