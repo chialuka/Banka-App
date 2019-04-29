@@ -73,7 +73,8 @@ a {
   box-shadow: 0 8px 8px 0 rgba(0,0,0,0.2);
   transition: 0.3s;
   font-family: 'Montserrat', sans-serif;
-  background-color: #34e4f7;
+  background-color: #f79c34;
+  font-weight: bold;
   color: #131212;
 }
 
