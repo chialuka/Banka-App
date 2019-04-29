@@ -37,7 +37,7 @@ main {
 .history {
   list-style-type: none;
   padding: 15px;
-  background-color: rgba(185, 185, 184, 0.9);
+  background-color: #f79c34;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   border-radius: 5px;
   font-weight: bold;

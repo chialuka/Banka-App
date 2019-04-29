@@ -47,10 +47,12 @@ const checkAccount = async () => {
     account.appendChild(ul);
     accounts.data.map((item) => {
       Object.entries(item).forEach(([key, value]) => {
-        const li = document.createElement('li');
-        li.innerHTML = `${key}: ${value}`;
-        li.setAttribute('class', 'item');
-        ul.appendChild(li);
+        if (key !== 'id' && key !== 'owner' && key !== 'created_on') {
+          const li = document.createElement('li');
+          li.innerHTML = `${key}: ${value}`;
+          li.setAttribute('class', 'item');
+          ul.appendChild(li);
+        }
       });
       const senderAccount = item.account_number;
       localStorage.setItem('senderAccount', senderAccount);

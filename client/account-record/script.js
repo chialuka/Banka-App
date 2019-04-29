@@ -9,9 +9,7 @@ let debitButton;
 
 (function () {
   const account = document.getElementById('account');
-  account.innerHTML = `Account number: ${
-    record.account_number
-  }`;
+  account.innerHTML = `Account number: ${record.account_number}`;
   [creditButton, ...rest] = document.getElementsByClassName('credit');
   [debitButton, ...rest] = document.getElementsByClassName('debit');
 
@@ -33,10 +31,12 @@ let debitButton;
   ul.setAttribute('class', 'list');
   accountDetails.appendChild(ul);
   Object.entries(record).forEach(([key, value]) => {
-    const li = document.createElement('li');
-    li.innerHTML = `${key}: ${value}`;
-    li.setAttribute('class', 'item');
-    ul.appendChild(li);
+    if (key !== 'id' && key !== 'owner' && key !== 'created_on') {
+      const li = document.createElement('li');
+      li.innerHTML = `${key}: ${value}`;
+      li.setAttribute('class', 'item');
+      ul.appendChild(li);
+    }
   });
 }());
 
