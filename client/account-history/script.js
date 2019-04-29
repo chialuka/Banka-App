@@ -26,7 +26,7 @@
     const ul = document.createElement('ul');
     history.appendChild(ul);
     Object.entries(item).forEach(([key, value]) => {
-      if (key !== 'id' && key !== 'created_on') {
+      if (key !== 'id') {
         ul.setAttribute('class', 'history');
         const li = document.createElement('li');
         li.innerHTML = `${key}: ${value}`;
