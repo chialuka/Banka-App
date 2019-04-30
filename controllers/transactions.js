@@ -4,7 +4,6 @@ import * as Users from '../models/users';
 import * as Mailer from './mailer';
 import { setServerResponse } from '../utils';
 
-
 /**
  * Post transaction to the database with transaction details
  * @name postTransaction
@@ -14,7 +13,7 @@ import { setServerResponse } from '../utils';
  */
 const postTransaction = async (postingDetails) => {
   const {
-    res, transactionData, oldBalance, reqBody, account,
+    res, transactionData, oldBalance, reqBody, account
   } = postingDetails;
   const user = await Users.findOneById(account.owner);
   if (!user) {
@@ -22,7 +21,7 @@ const postTransaction = async (postingDetails) => {
   }
   const newTransaction = await Transactions.create({
     ...transactionData,
-    oldBalance,
+    oldBalance
   });
   Mailer.sendTransactionEmail(user.email, user.first_name, transactionData);
   if (reqBody.senderAccount || reqBody.receiverAccount || reqBody.phoneNumber) {
@@ -52,7 +51,7 @@ const chargeAccount = async (res, account, reqBody) => {
   const transactionData = {
     ...reqBody,
     newBalance,
-    date: new Date().toDateString(),
+    date: new Date().toDateString()
   };
   const accountData = { account_balance: newBalance, id: account.id };
   await Accounts.findOneAndUpdate(accountData);
@@ -61,7 +60,7 @@ const chargeAccount = async (res, account, reqBody) => {
     transactionData,
     oldBalance,
     reqBody,
-    account,
+    account
   };
   return postTransaction(postingDetails);
 };
@@ -156,5 +155,5 @@ export {
   createTransaction,
   chargeAccount,
   getTransactionDetails,
-  getAllTransactions,
+  getAllTransactions
 };

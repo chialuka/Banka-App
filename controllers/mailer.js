@@ -47,7 +47,7 @@ const sendAirtimeEmail = (account, reqBody, user, carrier) => {
     the ${carrier} number- 
     ${reqBody.phoneNumber} was successful.</p>
     <p>Thank you for choosing Banka.</p>
-    <p>Best wishes</p>`
+    <p>Best wishes.</p>`
   };
   sendMail(composeMail);
 };
@@ -77,7 +77,7 @@ const sendTransactionEmail = (email, firstname, data) => {
     <li>Transaction Date: ${data.date}</li>
     <li>Account Balance: NGN${data.newBalance}</li>
     </ul>
-    <p>Thank you for choosing Banka</p>
+    <p>Thank you for choosing Banka.</p>
     <p>Best wishes.</p>`
   };
   sendMail(composeEmail);
@@ -99,7 +99,7 @@ const sendNewAccountMail = (user, accObj) => {
     <p>Hi ${user.first_name},</p>
     <p>This is to inform you that your new ${accObj.accountType} account with
     account number: ${Number(accObj.accountNumber)}
-    and opening balance: N${accObj.openingBalance}
+    and opening balance: NGN ${accObj.openingBalance}
     has been successfully opened with Banka.</p>
     <p>Thank you for choosing Banka.</p>
     <p> Best wishes.</p>`
