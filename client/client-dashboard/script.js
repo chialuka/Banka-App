@@ -95,7 +95,7 @@ const checkAccount = async () => {
     }
   };
 
-  const url = `http://localhost:2800/api/v1/users/accounts/${id}`;
+  const url = `https://banka-platform.herokuapp.com/api/v1/users/accounts/${id}`;
 
   const response = (await fetch(url, options)).json();
 
@@ -169,7 +169,7 @@ const transferFunds = async () => {
     senderAccount
   };
 
-  const url = 'http://localhost:2800/api/v1/transfers';
+  const url = 'https://banka-platform.herokuapp.com/api/v1/transfers';
 
   return sendData(url, data);
 };
@@ -187,7 +187,7 @@ const purchaseAirtime = async () => {
     accountNumber: senderAccount
   };
 
-  const url = 'http://localhost:2800/api/v1/airtime';
+  const url = 'https://banka-platform.herokuapp.com/api/v1/airtime';
 
   return sendData(url, data);
 };
@@ -198,7 +198,7 @@ const getHistory = async () => {
   const accNumber = JSON.parse(localStorage.getItem('account')) || [];
   accHead.innerHTML = `Account History for: ${accNumber[0].account_number}`;
 
-  const url = `http://localhost:2800/api/v1/accounts/transactions/${Number(
+  const url = `https://banka-platform.herokuapp.com/api/v1/accounts/transactions/${Number(
     accNumber[0].id
   )}`;
 
@@ -247,7 +247,7 @@ const changeDetails = async (data) => {
     body: JSON.stringify(data)
   };
 
-  const url = `http://localhost:2800/api/v1/users/${client.id}`;
+  const url = `https://banka-platform.herokuapp.com/api/v1/users/${client.id}`;
 
   const resPromise = (await fetch(url, options)).json();
   const response = await resPromise;

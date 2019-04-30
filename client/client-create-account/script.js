@@ -21,7 +21,7 @@ const validateForm = async () => {
   const data = { openingBalance, accountType };
   const strData = JSON.stringify(data);
 
-  const url = 'http://localhost:2800/api/v1/accounts'
+  const url = 'https://banka-platform.herokuapp.com/api/v1/accounts';
   const options = {
     method: 'post',
     headers: {

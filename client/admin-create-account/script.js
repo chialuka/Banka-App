@@ -21,7 +21,7 @@ async function validateForm() {
 
   const staff = JSON.parse(localStorage.getItem('staff')) || [];
 
-  const url = 'http://localhost:2800/api/v1/staff/auth/signup';
+  const url = 'https://banka-platform.herokuapp.com/api/v1/staff/auth/signup';
 
   const options = {
     method: 'post',

@@ -10,7 +10,7 @@ const options = {
   }
 };
 
-const url = 'http://localhost:2800/api/v1/accounts';
+const url = 'https://banka-platform.herokuapp.com/api/v1/accounts';
 
 const displayAccounts = async () => {
   const accounts = document.getElementById('accounts');
@@ -28,7 +28,7 @@ const displayAccounts = async () => {
     li.onclick = async function () {
       const clicked = document.getElementById(`${li.id}`);
       const id = Number(clicked.innerHTML);
-      const accUrl = `http://localhost:2800/api/v1/accounts/${id}`;
+      const accUrl = `https://banka-platform.herokuapp.com/api/v1/accounts/${id}`;
       const account = await request(accUrl, options);
       localStorage.setItem('account', JSON.stringify(account.data[0]));
       window.location.href = '../account-record/index.html';

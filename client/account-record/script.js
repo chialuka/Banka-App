@@ -41,7 +41,7 @@ let debitButton;
 }());
 
 const setAccountToStorage = async () => {
-  const accountUrl = `http://localhost:2800/api/v1/accounts/${record.id}`;
+  const accountUrl = `https://banka-platform.herokuapp.com/api/v1/accounts/${record.id}`;
   const account = await request(accountUrl, {
     method: 'get',
     headers: {
@@ -61,7 +61,7 @@ const options = {
   }
 };
 
-const url = 'http://localhost:2800/api/v1/transactions';
+const url = 'https://banka-platform.herokuapp.com/api/v1/transactions';
 
 const makeCharge = async (data) => {
   const transactionData = {
@@ -107,7 +107,7 @@ function debitAccount() {
 }
 
 async function deleteAccount() {
-  const deleteUrl = `http://localhost:2800/api/v1/accounts/${Number(
+  const deleteUrl = `https://banka-platform.herokuapp.com/api/v1/accounts/${Number(
     record.id
   )}`;
   const deleteOptions = {
@@ -126,7 +126,7 @@ async function deleteAccount() {
 async function activateAccount() {
   const payload = {};
   payload.status = record.status === 'dormant' ? 'active' : 'dormant';
-  const patchUrl = `http://localhost:2800/api/v1/accounts/${record.id}`;
+  const patchUrl = `https://banka-platform.herokuapp.com/api/v1/accounts/${record.id}`;
   const patchOptions = {
     method: 'put',
     headers: {

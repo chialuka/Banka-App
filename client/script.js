@@ -64,7 +64,7 @@ const validateSignUpForm = () => {
     email,
     password
   };
-  const url = 'http://localhost:2800/api/v1/users/auth/signup';
+  const url = 'https://banka-platform.herokuapp.com/api/v1/users/auth/signup';
   return serverRequest(url, formData);
 };
 
@@ -78,7 +78,7 @@ function validateLoginForm() {
     password
   };
 
-  const url = 'http://localhost:2800/api/v1/users/auth/signin';
+  const url = 'https://banka-platform.herokuapp.com/api/v1/users/auth/signin';
 
   return serverRequest(url, data);
 }
@@ -91,7 +91,7 @@ const validateResetForm = async () => {
     email
   };
 
-  const url = 'http://localhost:2800/api/v1/users/resetpassword';
+  const url = 'https://banka-platform.herokuapp.com/api/v1/users/resetpassword';
 
   const options = {
     method: 'post',
@@ -136,7 +136,7 @@ const changePassword = async () => {
     body: JSON.stringify(data)
   };
 
-  const url = 'http://localhost:2800/api/v1/users/changepassword';
+  const url = 'https://banka-platform.herokuapp.com/api/v1/users/changepassword';
 
   const response = await request(url, options);
   if (response.status === 200) {
