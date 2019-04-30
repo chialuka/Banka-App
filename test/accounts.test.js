@@ -354,7 +354,7 @@ describe('GET accounts', () => {
   });
 });
 
-xdescribe('PATCH accounts', () => {
+describe('PATCH accounts', () => {
   before(async () => {
     admin = await Users.create(adminUser);
     adminToken = generateToken({ id: admin.id });
@@ -371,7 +371,7 @@ xdescribe('PATCH accounts', () => {
   it('should return an error if account ID params is not given', (done) => {
     chai
       .request(server)
-      .patch('/api/v1/accounts/')
+      .put('/api/v1/accounts/')
       .send({ status: 'active' })
       .end((_, res) => {
         expect(res).to.have.status(404);
@@ -384,7 +384,7 @@ xdescribe('PATCH accounts', () => {
   it('should return error on entering invalid params', (done) => {
     chai
       .request(server)
-      .patch('/api/v1/accounts/firstname')
+      .put('/api/v1/accounts/firstname')
       .send({ status: 'active' })
       .end((_, res) => {
         expect(res).to.have.status(400);
@@ -400,7 +400,7 @@ xdescribe('PATCH accounts', () => {
   it('should return an error if status is not provided', (done) => {
     chai
       .request(server)
-      .patch('/api/v1/accounts/1')
+      .put('/api/v1/accounts/1')
       .send({ name: 'active' })
       .end((_, res) => {
         expect(res).to.have.status(400);
@@ -415,7 +415,7 @@ xdescribe('PATCH accounts', () => {
   it('should fail if client token is used to make request', (done) => {
     chai
       .request(server)
-      .patch(`/api/v1/accounts/${account.id}`)
+      .put(`/api/v1/accounts/${account.id}`)
       .send({ status: 'active' })
       .set('authorization', `Bearer ${clientToken}`)
       .end((err, res) => {
@@ -430,7 +430,7 @@ xdescribe('PATCH accounts', () => {
   it('should fail if non-admin staff token is used to make request', (done) => {
     chai
       .request(server)
-      .patch(`/api/v1/accounts/${account.id}`)
+      .put(`/api/v1/accounts/${account.id}`)
       .send({ status: 'dormant' })
       .set('authorization', `Bearer ${staffToken}`)
       .end((err, res) => {
@@ -445,7 +445,7 @@ xdescribe('PATCH accounts', () => {
   it('should activate account if valid admin token and account id are provided', (done) => {
     chai
       .request(server)
-      .patch(`/api/v1/accounts/${account.id}`)
+      .put(`/api/v1/accounts/${account.id}`)
       .send({ status: 'active' })
       .set('authorization', `Bearer ${adminToken}`)
       .end((err, res) => {
@@ -461,7 +461,7 @@ xdescribe('PATCH accounts', () => {
   it('should deactivate account if valid admin token and account id are provided', (done) => {
     chai
       .request(server)
-      .patch(`/api/v1/accounts/${account.id}`)
+      .put(`/api/v1/accounts/${account.id}`)
       .send({ status: 'dormant' })
       .set('authorization', `Bearer ${adminToken}`)
       .end((err, res) => {
@@ -477,7 +477,7 @@ xdescribe('PATCH accounts', () => {
   it('should fail if non-existent user is provided', (done) => {
     chai
       .request(server)
-      .patch('/api/v1/accounts/10000000')
+      .put('/api/v1/accounts/10000000')
       .send({ status: 'dormant' })
       .set('authorization', `Bearer ${adminToken}`)
       .end((err, res) => {
@@ -514,7 +514,7 @@ describe('DELETE Account', () => {
       });
   });
 
-  xit('should delete account if valid staff token is provided', (done) => {
+  it('should delete account if valid staff token is provided', (done) => {
     let deletedAccount;
     chai
       .request(server)
@@ -555,7 +555,7 @@ describe('DELETE Account', () => {
       });
   });
 
-  xit('should return error if client token is provided', (done) => {
+  it('should return error if client token is provided', (done) => {
     chai
       .request(server)
       .delete(`/api/v1/accounts/${account.id}`)
