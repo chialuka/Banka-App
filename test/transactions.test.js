@@ -54,7 +54,7 @@ describe('POST transactions and Transfers', () => {
     accountNumberCredited = Number(generateAccountNumber());
     clientAccount = await Accounts.create({
       id: createClient.id,
-      accountType: 'current',
+      accountType: 'Current',
       openingBalance: 10000,
       status: 'draft',
       createdOn: new Date().toGMTString(),
@@ -63,7 +63,7 @@ describe('POST transactions and Transfers', () => {
 
     accountToBeCredited = await Accounts.create({
       id: userToBeCredited.id,
-      accountType: 'savings',
+      accountType: 'Savings',
       openingBalance: 5000,
       status: 'draft',
       createdOn: new Date().toGMTString(),
@@ -250,7 +250,7 @@ describe('POST transactions and Transfers', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.contains('transactionType is required');
+          .that.contains('accountNumber is required');
         done();
       });
   });
@@ -275,7 +275,7 @@ describe('POST transactions and Transfers', () => {
     const newAccountNumber = Number(generateAccountNumber());
     const inActiveAccount = await Accounts.create({
       id: createClient.id,
-      accountType: 'current',
+      accountType: 'Current',
       openingBalance: 5000,
       status: 'draft',
       createdOn: new Date().toGMTString(),
@@ -308,7 +308,7 @@ describe('POST transactions and Transfers', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.contains('cashierId is required');
+          .that.contains('accountNumber is required');
         done();
       });
   });
@@ -356,7 +356,7 @@ describe('POST transactions and Transfers', () => {
         expect(res.body).to.include.key('errors');
         expect(res.body.errors)
           .to.be.an('array')
-          .that.includes('cashierId must be a number');
+          .that.includes('accountNumber is required');
         done();
       });
   });
@@ -578,7 +578,7 @@ describe('POST transfers', () => {
   it('should transfer between active client accounts', async () => {
     const activeAccount = await Accounts.create({
       id: createClient.id,
-      accountType: 'current',
+      accountType: 'Current',
       openingBalance: 5000,
       status: 'draft',
       createdOn: new Date().toGMTString(),
@@ -591,7 +591,7 @@ describe('POST transfers', () => {
     const newNumber = Number(generateAccountNumber());
     await Accounts.create({
       id: createClient.id,
-      accountType: 'current',
+      accountType: 'Current',
       openingBalance: 5000,
       status: 'active',
       createdOn: new Date().toGMTString(),
@@ -613,8 +613,8 @@ describe('POST transfers', () => {
       .set('authorization', `Bearer ${clientToken}`)
       .end((err, res) => {
         expect(res).to.have.status(200);
-        expect(res.body).to.include.key('Message');
-        expect(res.body.Message).to.equal(`Transfer of N${10} successful`);
+        expect(res.body).to.include.key('message');
+        expect(res.body.message).to.equal(`Transfer of N${10} successful`);
         expect(err).to.be.null;
       });
   });

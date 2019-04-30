@@ -1,33 +1,55 @@
-(function() {
-  const accounts = document.getElementById("accounts");
-  const staff = JSON.parse(localStorage.getItem("staffToken")) || [];
-  const admin = document.getElementById("admin");
-  const email = localStorage.getItem("loggedInStaff");
+/* eslint-disable require-jsdoc */
+/* eslint-disable func-names */
+const staff = JSON.parse(localStorage.getItem('staff')) || [];
 
-  if (!email) {
-    window.location.href = "../staff-login/index.html";
+const options = {
+  method: 'get',
+  headers: {
+    'content-type': 'application/json; charset=utf-8',
+    Authorization: `Bearer ${staff.token}`
   }
+};
 
-  const user = staff.find(x => x.email === email);
-  if (user.role === "Admin") {
-    admin.style.display = "block";
-  }
+const url = 'https://banka-platform.herokuapp.com/api/v1/accounts';
 
-  const clients = JSON.parse(localStorage.getItem("clientToken")) || [];
-  clients.map(function(item) {
-    const ul = document.createElement("ul");
-    ul.setAttribute("class", "list");
+const displayAccounts = async () => {
+  const accounts = document.getElementById('accounts');
+  const response = (await fetch(url, options)).json();
+  const allAccounts = await response;
+  allAccounts.data.map((item) => {
+    const ul = document.createElement('ul');
+    ul.setAttribute('class', 'list');
     accounts.appendChild(ul);
-    if (item["Account Number"]) {
-      const li = document.createElement("li");
-      li.setAttribute("class", "item");
-      li.innerHTML = item["Account Number"];
-      ul.appendChild(li);
-
-      li.onclick = function() {
-        localStorage.setItem("acc", JSON.stringify(item["Account Number"]));
-        window.location.href = "../account-record/index.html";
-      };
-    }
+    const li = document.createElement('li');
+    li.setAttribute('class', 'item');
+    li.setAttribute('id', `'${item.id}'`);
+    li.innerHTML = item.account_number;
+    ul.appendChild(li);
+    li.onclick = async function () {
+      const clicked = document.getElementById(`${li.id}`);
+      const id = Number(clicked.innerHTML);
+      const accUrl = `https://banka-platform.herokuapp.com/api/v1/accounts/${id}`;
+      const account = await request(accUrl, options);
+      localStorage.setItem('account', JSON.stringify(account.data[0]));
+      window.location.href = '../account-record/index.html';
+    };
   });
-})();
+};
+
+(function () {
+  const admin = document.getElementById('admin');
+
+  if (!staff.token) {
+    window.location.href = '../index.html';
+  }
+  if (staff.is_admin) {
+    admin.style.display = 'block';
+  }
+
+  displayAccounts();
+}());
+
+function logOut() {
+  localStorage.removeItem('staff');
+  location.reload();
+}

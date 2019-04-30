@@ -13,7 +13,7 @@
   </head>
   <body>
     <header>
-      <h1 class="logo"><a href="../client-dashboard/index.html">Banka</a></h1>
+      <h1 class="logo"><a href="./index.html">Banka</a></h1>
     </header>
     <main class="content-wrapper">
       <form id="edit-details" onsubmit="return editProfile()">
@@ -22,31 +22,24 @@
         </div>
         <div class="form-body">
           <div class="col-75">
-            <input type="text" name="name" placeholder="Full Name" disabled />
+            <input
+              type="text"
+              name="firstname"
+              placeholder="First Name"
+            />
+          </div>
+          <div class="col-75">
+            <input
+              type="text"
+              name="lastname"
+              placeholder="Last Name"
+            />
           </div>
           <div class="col-75">
             <input
               type="text"
               name="email"
               placeholder="Email Address"
-              disabled
-            />
-          </div>
-          <div class="col-75">
-            <input
-              type="text"
-              name="address"
-              placeholder="Permanent address"
-              required
-            />
-          </div>
-          <div class="col-75">
-            <input
-              type="text"
-              name="phone"
-              placeholder="Phone Number"
-              required
-              minlength="9"
             />
           </div>
           <div class="form-error"></div>
@@ -56,9 +49,9 @@
           </div>
         </div>
       </form>
-      <form id="reset-password" onsubmit="return resetPassword()" method="POST">
+      <form id="change-password" onsubmit="return changePassword()" method="POST">
         <div class="form-header">
-          <h1>Reset Password</h1>
+          <h1>Change Password</h1>
         </div>
         <div class="form-body">
           <div class="col-75">
@@ -82,11 +75,13 @@
           <div class="form-error"></div>
           <div class="form-success"></div>
           <div class="submit-button">
-            <button type="submit" class="submit">Reset Password</button>
+            <button type="submit" class="submit">Change Password</button>
           </div>
         </div>
       </form>
-      <p class="back"><a href="../client-dashboard/index.html">Back to Dashboard</a></p>
+      <p class="back">
+        <a href="./index.html">Back to Dashboard</a>
+      </p>
     </main>
     <footer class="footer">
       <p class="footer-item">&copy;Banka Nig Plc 2019</p>

@@ -1,11 +1,13 @@
 import dotenv from 'dotenv';
 import * as Users from '../models/users';
+import * as Mailer from './mailer';
 import {
   hashPassword,
   comparePassword,
   generateToken,
   setServerResponse,
-  formatReturnedUser
+  formatReturnedUser,
+  generateAccountNumber
 } from '../utils';
 
 dotenv.config();
@@ -165,10 +167,6 @@ const updateUser = async (req, res) => {
     if (!user) {
       return setServerResponse(res, 404, { error: 'Cannot find user' });
     }
-    const { tokenOwner } = res.locals;
-    if (tokenOwner.email !== user.email) {
-      return setServerResponse(res, 403, { error: 'User and token mismatch' });
-    }
     const {
       password, firstname, lastname, email
     } = req.body;
@@ -180,6 +178,9 @@ const updateUser = async (req, res) => {
     };
     const updatedUser = await Users.findOneAndUpdate(data);
     const formattedUser = formatReturnedUser(updatedUser);
+    if (req.body.otp) {
+      await Users.deleteOTP(req.body.otp);
+    }
     return setServerResponse(res, 200, { data: [{ ...formattedUser }] });
   } catch (error) {
     return setServerResponse(res, 500, { error: 'A fix is in progress' });
@@ -212,6 +213,62 @@ const deleteUser = async (req, res) => {
   }
 };
 
+/**
+ * Generate and send an OTP to user who wants to reset their password
+ * @name resetPassword
+ * @async
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {JSON} message informing the user if email with OTP has been sent
+ */
+const resetPassword = async (req, res) => {
+  try {
+    const user = await Users.findOneByEmail(req.body.email);
+    if (!user) {
+      return setServerResponse(res, 404, { error: 'User not found' });
+    }
+    const otp = generateAccountNumber();
+    const data = {
+      email: user.email,
+      id: user.id,
+      time: Date.now() / 60000,
+      otp
+    };
+    const db = await Users.saveOTP(data);
+    Mailer.sendResetPasswordMail(user, db.otp);
+    return setServerResponse(res, 200, { message: 'Otp sent' });
+  } catch (error) {
+    return setServerResponse(res, 500, { error });
+  }
+};
+
+/**
+ * Get new details for changing password and pass them to update function
+ * if they aren't invalid
+ * @name changePassword
+ * @async
+ * @param {Object} req
+ * @param {Object} res
+ * @returns {Function} update User function to update user's password
+ */
+const changePassword = async (req, res) => {
+  try {
+    const otp = await Users.findOTP(req.body.otp);
+    if (!otp) {
+      return setServerResponse(res, 404, { error: 'OTP not found' });
+    }
+    if (otp.time + 10 < Date.now() / 60000) {
+      return setServerResponse(res, 400, {
+        error: 'OTP expired. Request another'
+      });
+    }
+    req.params.id = otp.user_id;
+    return updateUser(req, res);
+  } catch (error) {
+    return setServerResponse(res, 500, { error });
+  }
+};
+
 export {
   createUser,
   getUsers,
@@ -219,5 +276,7 @@ export {
   updateUser,
   deleteUser,
   loginUser,
-  getUserAccounts
+  getUserAccounts,
+  resetPassword,
+  changePassword
 };

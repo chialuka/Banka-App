@@ -3,6 +3,10 @@
   <head>
     <title>Account Record</title>
     <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Roboto"
+      rel="stylesheet"
+    />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="Chukwualuka Chiama" />
@@ -17,30 +21,39 @@
       <h2 id="user"></h2>
     </header>
     <main>
-      <div class="top-buttons">
-        <button id="activate" onclick="activateAccount()"></button>
-        <button class="delete" onclick="deleteAccount()">Delete Account</button>
-      </div>
-      <h5 id="account"></h5>
-      <div id="account-details"></div>
-      <hr />
       <div>
+        <div class="account-body">
+          <h5 id="account"></h5>
+          <div id="account-details"></div>
+          <div class="buttons">
+            <button id="activate" onclick="activateAccount()"></button>
+            <button class="delete" onclick="deleteAccount()">
+              Delete Account
+            </button>
+          </div>
+          <hr />
+        </div>
+      </div>
+      <div class="bottom">
         <div class="amount-inputs">
           <label for="amount">Amount:</label>
           <input type="number" name="amount" id="amount" />
           <label for="description">Description:</label>
           <input type="text" name="description" id="description" />
+          <div id="error"></div>
         </div>
-        <div id="error"></div>
-      </div>
-      <div>
-        <button class="credit" onclick="creditAccount()">Credit Account</button>
-        <button class="debit" onclick="debitAccount()">Debit Account</button>
+        <div class="bottom-buttons">
+          <button class="credit" onclick="creditAccount()">
+            Credit Account
+          </button>
+          <button class="debit" onclick="debitAccount()">Debit Account</button>
+        </div>
       </div>
     </main>
     <footer class="footer">
       <p class="footer-item">&copy;Banka Nig Plc 2019</p>
     </footer>
     <script src="script.js"></script>
+    <script src="../utils.js"></script>
   </body>
 </html>

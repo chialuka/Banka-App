@@ -47,7 +47,7 @@ const generateToken = (data) => {
  * @returns {Number} account number generated
  */
 const generateAccountNumber = () => {
-  const accNum = `5${Math.floor(Math.random() * 10 ** 12)}`;
+  const accNum = `5${Math.floor(Math.random() * (10 ** 12))}`;
   return accNum.slice(0, 10);
 };
 
@@ -88,5 +88,5 @@ export {
   comparePassword,
   setServerResponse,
   generateAccountNumber,
-  formatReturnedUser
+  formatReturnedUser,
 };
