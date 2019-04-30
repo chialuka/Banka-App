@@ -1,10 +1,9 @@
 /* eslint-disable func-names */
 /* eslint-disable require-jsdoc */
-const client = JSON.parse(localStorage.getItem('client'));
+const client = JSON.parse(localStorage.getItem('client')) || [];
 
 (function () {
-  const email = localStorage.getItem('clientToken');
-  if (!email) {
+  if (!client.token) {
     window.location.href = '../index.html';
   }
   document.forms['create-account'].email.value = client.email;

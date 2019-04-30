@@ -22,7 +22,7 @@
     <main>
       <div class="buttons-class">
         <button class="edit-profile">
-          <a href="../edit-profile/index.html">Edit Profile</a>
+          <a href="./edit.html">Edit Profile</a>
         </button>
         <button id="new-account">
           <a href="../client-create-account/index.html">Open Account</a>
@@ -33,13 +33,17 @@
         <button id="airtime">
           <a href="./airtime.html">Buy Airtime</a>
         </button>
-        <button id="history"></button>
+        <button id="history" onclick="accountHistory()"></button>
         <button id="logout" onclick="logOut()">Logout</button>
       </div>
       <div class="account-details">
         <p id="user"></p>
         <div id="accountHeading"></div>
-        <div id="account"></div>
+        <div id='all-accounts'>
+          <div id="previous">&#8249;</div>
+          <div id="account"></div>
+          <div id="next">&#8250;</div>
+        </div>
       </div>
     </main>
     <footer class="footer">

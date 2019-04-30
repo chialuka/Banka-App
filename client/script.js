@@ -38,11 +38,9 @@ const serverRequest = async (url, data) => {
     return null;
   }
   if (!response.data[0].is_staff) {
-    localStorage.setItem('clientToken', response.data[0].token);
     localStorage.setItem('client', JSON.stringify(response.data[0]));
     window.location.href = '../client-dashboard/index.html';
   } else {
-    localStorage.setItem('staffToken', response.data[0].token);
     localStorage.setItem('staff', JSON.stringify(response.data[0]));
     window.location.href = '../staff-dashboard/index.html';
   }

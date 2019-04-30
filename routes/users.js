@@ -75,10 +75,10 @@ export default (router) => {
     .get(validateIdParams, authorizeStaff, getUser)
     .put(
       validateBodyPayload({
-        email: Joi.string().email({ minDomainAtoms: 2 }),
-        firstname: Joi.string(),
-        lastname: Joi.string(),
-        password: Joi.string().min(6)
+        email: Joi.string().email({ minDomainAtoms: 2 }).allow('', null),
+        firstname: Joi.string().allow('', null),
+        lastname: Joi.string().allow('', null),
+        password: Joi.string().min(6).allow('', null)
       }),
       validateIdParams,
       authorizeClient,

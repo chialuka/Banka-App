@@ -19,7 +19,7 @@ async function validateForm() {
     isAdmin
   };
 
-  const token = localStorage.getItem('staffToken');
+  const staff = JSON.parse(localStorage.getItem('staff')) || [];
 
   const url = 'http://localhost:2800/api/v1/staff/auth/signup';
 
@@ -27,7 +27,7 @@ async function validateForm() {
     method: 'post',
     headers: {
       'Content-type': 'application/json; charset=utf-8',
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${staff.token}`
     },
     body: JSON.stringify(newStaff)
   };

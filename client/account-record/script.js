@@ -1,7 +1,7 @@
 /* eslint-disable require-jsdoc */
 /* eslint-disable func-names */
-const record = JSON.parse(localStorage.getItem('account'));
-const staff = JSON.parse(localStorage.getItem('staff'));
+const record = JSON.parse(localStorage.getItem('account')) || [];
+const staff = JSON.parse(localStorage.getItem('staff')) || [];
 const activateAccountButton = document.getElementById('activate');
 const error = document.getElementById('error');
 let creditButton;
@@ -50,7 +50,7 @@ const setAccountToStorage = async () => {
     }
   });
   localStorage.setItem('account', JSON.stringify(account.data[0]));
-  location.reload();
+  window.location.reload();
 };
 
 const options = {

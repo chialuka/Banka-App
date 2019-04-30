@@ -1,12 +1,12 @@
 /* eslint-disable require-jsdoc */
 /* eslint-disable func-names */
-const token = localStorage.getItem('staffToken');
+const staff = JSON.parse(localStorage.getItem('staff')) || [];
 
 const options = {
   method: 'get',
   headers: {
     'content-type': 'application/json; charset=utf-8',
-    Authorization: `Bearer ${token}`
+    Authorization: `Bearer ${staff.token}`
   }
 };
 
@@ -37,10 +37,9 @@ const displayAccounts = async () => {
 };
 
 (function () {
-  const staff = JSON.parse(localStorage.getItem('staff')) || [];
   const admin = document.getElementById('admin');
 
-  if (!token) {
+  if (!staff.token) {
     window.location.href = '../index.html';
   }
   if (staff.is_admin) {
@@ -51,6 +50,6 @@ const displayAccounts = async () => {
 }());
 
 function logOut() {
-  localStorage.removeItem('staffToken');
+  localStorage.removeItem('staff');
   location.reload();
 }

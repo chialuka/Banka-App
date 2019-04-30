@@ -63,8 +63,9 @@ const findByStatus = async (status) => {
 const findByTransaction = async (params) => {
   const results = await db.query(
     `SELECT transactions.id, transactions.created_on, 
-    transactions.transaction_type, accounts.account_number, 
-    transactions.old_balance, transactions.new_balance, transactions.amount 
+    accounts.account_number, transactions.transaction_type,
+    transactions.description, transactions.amount,
+    transactions.old_balance, transactions.new_balance
     FROM transactions INNER JOIN accounts 
       ON transactions.account_number = accounts.account_number 
       WHERE transactions.account_number = $1`,
