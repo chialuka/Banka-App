@@ -44,6 +44,16 @@ const transactionTableQuery = `
   )
 `;
 
+const passwordTableQuery = `
+  CREATE TABLE IF NOT EXISTS password(
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    email TEXT NOT NULL,
+    otp BIGINT NOT NULL,
+    time DOUBLE PRECISION NOT NULL
+  )
+`
+
 const tableNames = [
   {
     name: 'users',
@@ -56,6 +66,10 @@ const tableNames = [
   {
     name: 'transactions',
     query: transactionTableQuery
+  },
+  {
+    name: 'password',
+    query: passwordTableQuery
   }
 ];
 
@@ -89,6 +103,7 @@ const createRelation = async () => {
     FOREIGN KEY(owner) REFERENCES users(id)
     ON DELETE CASCADE
   `;
+
   const accountsTransactionsQuery = `
   ALTER TABLE transactions DROP CONSTRAINT IF EXISTS account_id;
 
@@ -97,9 +112,20 @@ const createRelation = async () => {
     FOREIGN KEY(account_number) REFERENCES accounts(account_number)
     ON DELETE CASCADE
 `;
+
+  const passwordUsersQuery = `
+  ALTER TABLE password DROP CONSTRAINT IF EXISTS user_id;
+
+  ALTER TABLE password
+    ADD CONSTRAINT user_id
+    FOREIGN KEY(user_id) REFERENCES users(id)
+    ON DELETE CASCADE
+  `;
+
   try {
     await db.query(usersAccountsQuery);
     await db.query(accountsTransactionsQuery);
+    await db.query(passwordUsersQuery);
     return 'Relations successfully created';
   } catch (error) {
     return 'Error creating relationships';

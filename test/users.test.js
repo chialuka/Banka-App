@@ -359,6 +359,38 @@ describe('PUT/ User', () => {
       });
   });
 
+  it("should not reset user's password if email cannot be found", (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/users/resetpassword')
+      .send({
+        email: 'testingthatemail@testing.com'
+      })
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        expect(res.body).to.include.key('error');
+        expect(res.body.error).to.equal('User not found');
+        expect(err).to.be.null;
+        done();
+      });
+  });
+
+  it("should reset user's password", (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/users/resetpassword')
+      .send({
+        email: 'testingthisemail@testing.com'
+      })
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body).to.include.key('message');
+        expect(res.body.message).to.equal('Otp sent');
+        expect(err).to.be.null;
+        done();
+      });
+  });
+
   it('should not update user if it cannot find user', (done) => {
     chai
       .request(server)
