@@ -61,6 +61,7 @@ Make requests to the following endpoints:
 | GET             | Get a particular transaction | /api/v1/transactions/:id | [/api/v1/transactions/:id](https://documenter.getpostman.com/view/5824922/S1ENyyag#bd2ff9dc-7f2b-414c-9ce2-91209ef40647)
 | POST            | Make a transfer             | /api/v1/transfers   | [/api/v1/transfers](https://documenter.getpostman.com/view/5824922/S1ENyyag#39a5fc0e-6aad-4f5a-b722-0deecef0f2c3)
 | POST            | Make an airtime purchase    | /api/v1/airtime     | [/api/v1/airtime](https://documenter.getpostman.com/view/5824922/S1ENyyag#4d0e5413-6418-4d13-b470-b447f36ef679)
+| POST            | Reset user password         | /api/v1/users/resetpassword | [/api/v1/users/resetpassword](https://documenter.getpostman.com/view/5824922/S1ENyyag#6695289e-9e25-4941-9384-599b113f3f34)
 
 
 
