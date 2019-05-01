@@ -75,7 +75,8 @@ const makeCharge = async (data) => {
   const jsonRes = (await fetch(url, options)).json();
   const response = await jsonRes;
   if (response.status === 201) {
-    setAccountToStorage();
+    await setAccountToStorage();
+    window.location.reload();
   } else {
     error.innerHTML = response.error ? response.error : response.errors;
   }
