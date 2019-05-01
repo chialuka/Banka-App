@@ -1,9 +1,9 @@
+/* eslint-disable require-jsdoc */
 const slides = document.querySelectorAll('.slider .slide');
 let currentSlide = 0;
-const menuItems = document.querySelector('.menu-items');
-if (slides.length > 0) {
-  carousel();
-}
+const item = document.querySelector('.menu-items');
+const error = document.getElementById('form-error');
+const success = document.getElementById('form-success');
 
 function carousel() {
   slides[currentSlide].className = 'slide';
@@ -12,86 +12,138 @@ function carousel() {
   setTimeout(carousel, 3000);
 }
 
+if (slides.length > 0) {
+  carousel();
+}
 function menuFunction(menu) {
   menu.classList.toggle('change');
-  menuItems.style.display =
-    menuItems.style.display === '' || menuItems.style.display === 'none'
-      ? 'block'
-      : 'none';
+  item.style.display = item.style.display === '' || item.style.display === 'none'
+    ? 'block'
+    : 'none';
 }
 
-function validateSignUpForm() {
-  event.preventDefault();
-  const name = document.forms['register-client']['name'].value;
-  const email = document.forms['register-client']['email'].value;
-  const password = document.forms['register-client']['password'].value;
-  const password2 = document.forms['register-client']['password2'].value;
+const serverRequest = async (url, data) => {
+  const stringifiedData = JSON.stringify(data);
+  const options = {
+    method: 'post',
+    headers: {
+      'content-type': 'application/json; charset=utf-8'
+    },
+    body: stringifiedData
+  };
 
-  const error = document.getElementById('form-error');
+  const response = await request(url, options);
+  if (response.status !== 201 && response.status !== 200) {
+    error.innerHTML = response.error ? response.error : response.errors;
+    return null;
+  }
+  if (!response.data[0].is_staff) {
+    localStorage.setItem('client', JSON.stringify(response.data[0]));
+    window.location.href = '../client-dashboard/index.html';
+  } else {
+    localStorage.setItem('staff', JSON.stringify(response.data[0]));
+    window.location.href = '../staff-dashboard/index.html';
+  }
+};
+
+const validateSignUpForm = () => {
+  event.preventDefault();
+  const firstname = document.forms['register-client'].firstname.value;
+  const lastname = document.forms['register-client'].lastname.value;
+  const email = document.forms['register-client'].email.value;
+  const password = document.forms['register-client'].password.value;
+  const password2 = document.forms['register-client'].password2.value;
 
   if (password !== password2) {
     error.innerHTML = 'Passwords do not match';
     return null;
   }
-
-  const clientToken = JSON.parse(localStorage.getItem('clientsToken')) || [];
-  if (clientToken.some(item => item['Email'] === email)) {
-    error.innerHTML = 'Email is already registered';
-    return null;
-  }
-  const client = {};
-  const token = Math.floor(Math.random() * 100);
-  client['Name'] = name;
-  client['Email'] = email;
-  client['Password'] = password;
-  client['Token'] = token;
-  clientToken.push(client);
-  localStorage.setItem('loggedInUser', email);
-  localStorage.setItem('clientsToken', JSON.stringify(clientToken));
-
-  window.location.href = '../client-dashboard/index.html';
-}
+  const formData = {
+    firstname,
+    lastname,
+    email,
+    password
+  };
+  const url = 'https://banka-platform.herokuapp.com/api/v1/users/auth/signup';
+  return serverRequest(url, formData);
+};
 
 function validateLoginForm() {
   event.preventDefault();
-  const email = document.forms['login-client']['email'].value;
-  const password = document.forms['login-client']['password'].value;
-  const role = document.forms['login-client']['roles'].value;
+  const email = document.forms['login-client'].email.value;
+  const password = document.forms['login-client'].password.value;
 
-  const error = document.getElementById('form-error');
+  const data = {
+    email,
+    password
+  };
 
-  if (role === 'Select Role') {
-    error.innerHTML = 'Please select your role';
-    return null;
-  }
+  const url = 'https://banka-platform.herokuapp.com/api/v1/users/auth/signin';
 
-  if (role === 'Staff' || role === 'Admin') {
-    const staffToken = JSON.parse(localStorage.getItem('staffsToken')) || [];
-    const staff = {};
-    staff.email = email;
-    staff.role = role;
-    staffToken.push(staff);
-    localStorage.setItem('staffsToken', JSON.stringify(staffToken));
-    localStorage.setItem('loggedInStaff', email);
-
-    window.location.href = '../staff-dashboard/index.html';
-  }
-
-  if (role === 'Client') {
-    const clientToken = JSON.parse(localStorage.getItem('clientsToken')) || [];
-    if (clientToken.some(item => item['Email'] === email)) {
-      if (clientToken.find(item => item['Password'] === password)) {
-        const client = clientToken.find(x => x['Email'] === email);
-        const token = Math.floor(Math.random() * 100);
-        client['Token'] = token;
-        localStorage.setItem('loggedInUser', email);
-        localStorage.setItem('clientsToken', JSON.stringify(clientToken));
-        window.location.href = '../client-dashboard/index.html';
-      } else {
-        error.innerHTML = 'Incorrect password';
-      }
-    } else {
-      error.innerHTML = 'User does not exist. Do you mean to sign up?';
-    }
-  }
+  return serverRequest(url, data);
 }
+
+const validateResetForm = async () => {
+  event.preventDefault();
+  const email = document.forms['reset-password'].email.value;
+
+  const data = {
+    email
+  };
+
+  const url = 'https://banka-platform.herokuapp.com/api/v1/users/resetpassword';
+
+  const options = {
+    method: 'post',
+    headers: {
+      'content-type': 'application/json; charset=utf-8'
+    },
+    body: JSON.stringify(data)
+  };
+
+  const response = await request(url, options);
+  if (response.status === 200) {
+    const link = document.createElement('a');
+    link.setAttribute('href', './change.html');
+    link.setAttribute('class', 'reset');
+    success.innerHTML = 'An OTP has been sent to your email.';
+    link.innerHTML = ' Click here to change password';
+    success.appendChild(link);
+  } else {
+    error.innerHTML = response.error;
+  }
+  return null;
+};
+
+const changePassword = async () => {
+  event.preventDefault();
+  const password = document.forms['change-password'].password.value;
+  const password2 = document.forms['change-password'].password2.value;
+  const otp = document.forms['change-password'].otp.value;
+
+  if (password !== password2) {
+    error.innerHTML = 'Passwords do not match';
+  }
+  const data = {
+    otp,
+    password
+  };
+  const options = {
+    method: 'post',
+    headers: {
+      'content-type': 'application/json; charset=utf-8'
+    },
+    body: JSON.stringify(data)
+  };
+
+  const url = 'https://banka-platform.herokuapp.com/api/v1/users/changepassword';
+
+  const response = await request(url, options);
+  if (response.status === 200) {
+    success.innerHTML = `Password change successful.
+    Please head over to the login page to login.`;
+  } else {
+    error.innerHTML = response.error || response.error;
+  }
+  return null;
+};

@@ -1,24 +1,44 @@
-function validateForm() {
+/* eslint-disable require-jsdoc */
+async function validateForm() {
   event.preventDefault();
-  const name = document.forms['login-staff']['name'].value;
-  const email = document.forms['login-staff']['email'].value;
-  const role = document.forms['login-staff']['roles'].value;
+  const firstname = document.forms['login-staff'].firstname.value;
+  const lastname = document.forms['login-staff'].lastname.value;
+  const email = document.forms['login-staff'].email.value;
+  const password = document.forms['login-staff'].password.value;
+  const role = document.forms['login-staff'].roles.value;
 
   const error = document.getElementById('form-error');
 
-  if (role === 'Select Role') {
-    error.innerHTML = 'Please select role';
-    return null;
+  const isAdmin = role !== 'Staff';
+
+  const newStaff = {
+    firstname,
+    lastname,
+    email,
+    password,
+    isAdmin
+  };
+
+  const staff = JSON.parse(localStorage.getItem('staff')) || [];
+
+  const url = 'https://banka-platform.herokuapp.com/api/v1/staff/auth/signup';
+
+  const options = {
+    method: 'post',
+    headers: {
+      'Content-type': 'application/json; charset=utf-8',
+      Authorization: `Bearer ${staff.token}`
+    },
+    body: JSON.stringify(newStaff)
+  };
+
+  const resPromise = (await fetch(url, options)).json();
+  const response = await resPromise;
+
+  if (response.status === 201) {
+    error.innerHTML = 'Creation successful';
+    window.location.href = '../staff-dashboard/index.html';
+  } else {
+    error.innerHTML = response.error || response.errors;
   }
-
-  const staffToken = JSON.parse(localStorage.getItem('staffsToken')) || [];
-  const staff = {};
-  staff.name = name;
-  staff.email = email;
-  staff.role = role;
-  staffToken.push(staff);
-  localStorage.setItem('staffsToken', JSON.stringify(staffToken));
-  localStorage.setItem('loggedInStaff', email);
-
-  window.location.href = '../staff-dashboard/index.html';
 }

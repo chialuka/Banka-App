@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Account History</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Roboto|Source+Sans+Pro"
+      rel="stylesheet"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Chukwualuka Chiama" />
+    <meta
+      name="description"
+      content="The account history page shows history of transactions performed on client's account."
+    />
+  </head>
+  <body onload="getHistory()">
+    <header>
+      <h1><a class="a-logo" href="./index.html">Banka</a></h1>
+    </header>
+    <main class="history-page">
+      <h3 id="account-title"></h3>
+      <div id="account-history"></div>
+      <div id="no-history"></div>
+    </main>
+    <footer class="footer">
+      <p class="footer-item">&copy;Banka Nig Plc 2019</p>
+    </footer>
+    <script src="script.js" async></script>
+  </body>
+</html>

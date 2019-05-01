@@ -172,11 +172,11 @@ footer a {
     justify-content: space-evenly;
   }
   #activate {
-    width: 20%;
+    width: 100%;
     font-size: 15px;
   }
   .delete {
-    width: 20%;
+    width: 100%;
     font-size: 15px;
   }
   #account-details {
