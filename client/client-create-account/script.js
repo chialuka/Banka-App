@@ -31,6 +31,10 @@ const validateForm = async () => {
     body: strData
   };
   const response = await request(url, options);
+  if (response.status === 401) {
+    localStorage.removeItem('client');
+    window.location.href = '../index.html';
+  }
   if (response.status !== 201) {
     error.innerHTML = response.error ? response.error : response.errors;
     return null;

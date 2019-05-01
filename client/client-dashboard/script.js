@@ -154,13 +154,28 @@ const sendData = async (url, data) => {
   }
 };
 
+const dropDown = () => {
+  const select = document.getElementById('select-account');
+  const accounts = JSON.parse(localStorage.getItem('allAccounts'));
+  accounts.map((account) => {
+    Object.entries(account).forEach(([key, value]) => {
+      const option = document.createElement('option');
+      if (key === 'account_number') {
+        console.log(`${value}`);
+        option.innerHTML = `${value}`;
+        select.appendChild(option);
+      }
+    });
+  });
+};
+
 const transferFunds = async () => {
   event.preventDefault();
   const form = document.getElementById('transfer-funds');
   const receiverAccount = form.receiver.value;
   const amount = form.amount.value;
   const description = form.description.value;
-  const senderAccount = accountDetails[0].account_number;
+  const senderAccount = form.sender.value;
 
   const data = {
     receiverAccount,
@@ -171,6 +186,7 @@ const transferFunds = async () => {
 
   const url = 'https://banka-platform.herokuapp.com/api/v1/transfers';
 
+  form.reset();
   return sendData(url, data);
 };
 
@@ -179,7 +195,8 @@ const purchaseAirtime = async () => {
   const form = document.getElementById('buy-airtime');
   const phoneNumber = form.phone.value;
   const amount = form.amount.value;
-  const senderAccount = accountDetails[0].account_number;
+  const senderAccount = form.sender.value;
+
 
   const data = {
     amount,
@@ -189,6 +206,7 @@ const purchaseAirtime = async () => {
 
   const url = 'https://banka-platform.herokuapp.com/api/v1/airtime';
 
+  form.reset();
   return sendData(url, data);
 };
 

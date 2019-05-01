@@ -21,7 +21,7 @@
       content="The money transfer page allows clients tranfer funds to other Banka accounts"
     />
   </head>
-  <body>
+  <body onload="dropDown()">
     <header>
       <h1 class="logo"><a href="../client-dashboard/index.html">Banka</a></h1>
     </header>
@@ -31,6 +31,11 @@
           <h1 class="title">Transfer</h1>
         </div>
         <div class="form-body">
+          <div class="col-75">
+            <select id="select-account" name="sender" required>
+              <option selected name disabled value=""> Account Number </option>
+            </select>
+          </div>
           <div class="col-75">
             <input
               type="number"

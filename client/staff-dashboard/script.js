@@ -12,10 +12,19 @@ const options = {
 
 const url = 'https://banka-platform.herokuapp.com/api/v1/accounts';
 
+function logOut() {
+  localStorage.removeItem('staff');
+  window.location.reload();
+}
+
 const displayAccounts = async () => {
   const accounts = document.getElementById('accounts');
   const response = (await fetch(url, options)).json();
   const allAccounts = await response;
+
+  if (allAccounts.status === 401) {
+    logOut();
+  }
   allAccounts.data.map((item) => {
     const ul = document.createElement('ul');
     ul.setAttribute('class', 'list');
@@ -49,7 +58,3 @@ const displayAccounts = async () => {
   displayAccounts();
 }());
 
-function logOut() {
-  localStorage.removeItem('staff');
-  location.reload();
-}

@@ -50,7 +50,6 @@ const setAccountToStorage = async () => {
     }
   });
   localStorage.setItem('account', JSON.stringify(account.data[0]));
-  window.location.reload();
 };
 
 const options = {
@@ -136,6 +135,6 @@ async function activateAccount() {
     body: JSON.stringify(payload)
   };
   await request(patchUrl, patchOptions);
-  setAccountToStorage();
-  location.reload();
+  await setAccountToStorage();
+  window.location.reload();
 }
