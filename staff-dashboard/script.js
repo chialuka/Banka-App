@@ -30,10 +30,16 @@ const displayAccounts = async () => {
     ul.setAttribute('class', 'list');
     accounts.appendChild(ul);
     const li = document.createElement('li');
+    const p1 = document.createElement('p');
+    const p2 = document.createElement('p')
     li.setAttribute('class', 'item');
     li.setAttribute('id', `'${item.id}'`);
     li.innerHTML = item.account_number;
+    p1.innerHTML = `N${item.account_balance}`;
+    p2.innerHTML = item.status;
     ul.appendChild(li);
+    ul.appendChild(p1);
+    ul.appendChild(p2);
     li.onclick = async function () {
       const clicked = document.getElementById(`${li.id}`);
       const id = Number(clicked.innerHTML);
