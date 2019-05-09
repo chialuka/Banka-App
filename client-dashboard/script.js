@@ -4,7 +4,6 @@ const client = JSON.parse(localStorage.getItem('client')) || [];
 const userAccounts = JSON.parse(localStorage.getItem('allAccounts')) || [];
 const error = document.getElementById('form-error');
 const success = document.querySelectorAll('.form-success');
-const accountDetails = [];
 
 function logOut() {
   localStorage.removeItem('client');
@@ -16,24 +15,37 @@ const mapAccountArray = (account, oneAccount) => {
   if (node) {
     node.parentNode.removeChild(node);
   }
-  accountDetails.push(oneAccount);
   localStorage.setItem('account', JSON.stringify(oneAccount));
   const ul = document.createElement('ul');
   ul.setAttribute('class', 'list');
   account.appendChild(ul);
-  ul.onclick = function () {
+  ul.onclick = function() {
     accountHistory();
   };
-  oneAccount.map((item) => {
-    Object.entries(item).forEach(([key, value]) => {
-      if (key !== 'id' && key !== 'owner' && key !== 'created_on') {
-        const li = document.createElement('li');
-        li.innerHTML = `${key}: ${value}`;
-        li.setAttribute('class', 'item');
-        ul.appendChild(li);
+  const accountDetails = `
+  ${Object.entries(oneAccount[0])
+    .map(
+      ([key, value]) => `
+      ${
+        key === 'account_number'
+          ? `<li class="item">Account Number: ${value}</li>`
+          : ''
       }
-    });
-  });
+      ${
+        key === 'account_type'
+          ? `<li class="item">Account Type: ${value}</li>`
+          : ''
+      }
+      ${
+        key === 'account_balance'
+          ? `<li class="item">Account Balance: N${value}</li>`
+          : ''
+      }
+      ${key === 'status' ? `<li class="item">Status: ${value}</li>` : ''}
+    `
+    )
+    .join('')}`;
+  ul.innerHTML = accountDetails;
 };
 
 const displayMultiple = (account, accounts) => {
@@ -45,12 +57,12 @@ const displayMultiple = (account, accounts) => {
   const next = document.getElementById('next');
   previous.style.display = 'block';
   next.style.display = 'block';
-  previous.onclick = function () {
+  previous.onclick = function() {
     counter = counter === 0 ? accounts.data.length - 1 : counter - 1;
     accArr.splice(0, 1, accounts.data[counter]);
     mapAccountArray(account, accArr);
   };
-  next.onclick = function () {
+  next.onclick = function() {
     counter = counter === accounts.data.length - 1 ? 0 : counter + 1;
     accArr.splice(0, 1, accounts.data[counter]);
     mapAccountArray(account, accArr);
@@ -61,7 +73,7 @@ const displayOneAccount = (account, accounts) => {
   mapAccountArray(account, accounts.data);
 };
 
-const displayAccounts = async (accounts) => {
+const displayAccounts = async accounts => {
   const account = document.getElementById('account');
   const transfer = document.getElementById('transfer');
   const airtime = document.getElementById('airtime');
@@ -69,12 +81,12 @@ const displayAccounts = async (accounts) => {
   if (!accounts.data.length) {
     transfer.style.display = 'none';
     airtime.style.display = 'none';
-    const link = document.createElement('a');
-    link.setAttribute('href', '../client-create-account/index.html');
-    link.setAttribute('class', 'link');
-    account.innerHTML = "You haven't opened a bank account yet.";
-    link.innerHTML = ' Click here to open one.';
-    account.appendChild(link);
+    const link = `
+    <a class="link" href="../client-create-account/index.html">
+    Click here to open one.
+    </a>
+    `;
+    account.innerHTML = `You haven't opened a bank account yet. ${link}`;
   }
   if (accounts.data.length === 1) {
     displayOneAccount(account, accounts);
@@ -110,7 +122,7 @@ const checkAccount = async () => {
   displayAccounts(accounts);
 };
 
-(function () {
+(function() {
   const firstName = client.first_name;
   const user = document.getElementById('user');
   const date = new Date();
@@ -134,7 +146,7 @@ const checkAccount = async () => {
     }
     checkAccount();
   }
-}());
+})();
 
 const sendData = async (url, data) => {
   const options = {
@@ -157,7 +169,7 @@ const sendData = async (url, data) => {
 const dropDown = () => {
   const select = document.getElementById('select-account');
   const accounts = JSON.parse(localStorage.getItem('allAccounts'));
-  accounts.map((account) => {
+  accounts.map(account => {
     Object.entries(account).forEach(([key, value]) => {
       const option = document.createElement('option');
       if (key === 'account_number') {
@@ -196,7 +208,6 @@ const purchaseAirtime = async () => {
   const amount = form.amount.value;
   const senderAccount = form.sender.value;
 
-
   const data = {
     amount,
     phoneNumber,
@@ -232,7 +243,7 @@ const getHistory = async () => {
   if (transactions.status === 401) {
     logOut();
   }
-  transactions.data.map((item) => {
+  transactions.data.map(item => {
     const ul = document.createElement('ul');
     history.appendChild(ul);
     Object.entries(item).forEach(([key, value]) => {
@@ -254,7 +265,7 @@ const accountHistory = async () => {
   window.location.href = './history.html';
 };
 
-const changeDetails = async (data) => {
+const changeDetails = async data => {
   const options = {
     method: 'put',
     headers: {
