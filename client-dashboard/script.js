@@ -161,7 +161,6 @@ const dropDown = () => {
     Object.entries(account).forEach(([key, value]) => {
       const option = document.createElement('option');
       if (key === 'account_number') {
-        console.log(`${value}`);
         option.innerHTML = `${value}`;
         select.appendChild(option);
       }

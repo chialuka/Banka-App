@@ -63,7 +63,7 @@ button {
   background-color: #f76b34;
 }
 
-#active,
+#all, #active,
 #dormant {
   background-color: #3e34f7;
 }
