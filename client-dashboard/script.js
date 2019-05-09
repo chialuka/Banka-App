@@ -15,7 +15,7 @@ const mapAccountArray = (account, oneAccount) => {
   if (node) {
     node.parentNode.removeChild(node);
   }
-  localStorage.setItem('account', JSON.stringify(oneAccount));
+  localStorage.setItem('accountNumber', oneAccount[0].account_number);
   const ul = document.createElement('ul');
   ul.setAttribute('class', 'list');
   account.appendChild(ul);
@@ -220,11 +220,11 @@ const purchaseAirtime = async () => {
 const getHistory = async () => {
   const accHead = document.getElementById('account-title');
   const history = document.getElementById('account-history');
-  const accNumber = JSON.parse(localStorage.getItem('account')) || [];
-  accHead.innerHTML = `Account History for: ${accNumber[0].account_number}`;
+  const accNumber = localStorage.getItem('accountNumber') || '';
+  accHead.innerHTML = `Account History for: ${accNumber}`;
 
   const url = `https://banka-platform.herokuapp.com/api/v1/accounts/transactions/${Number(
-    accNumber[0].id
+    accNumber
   )}`;
 
   const options = {
