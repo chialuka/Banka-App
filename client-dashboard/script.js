@@ -108,16 +108,13 @@ const checkAccount = async () => {
   };
 
   const url = `https://banka-platform.herokuapp.com/api/v1/users/accounts/${id}`;
-
   const response = (await fetch(url, options)).json();
-
   const accounts = await response;
-
-  localStorage.setItem('allAccounts', JSON.stringify(accounts.data));
 
   if (accounts.status === 401) {
     logOut();
   }
+  localStorage.setItem('allAccounts', JSON.stringify(accounts.data));
 
   displayAccounts(accounts);
 };
@@ -243,18 +240,17 @@ const getHistory = async () => {
   if (transactions.status === 401) {
     logOut();
   }
-  transactions.data.map(item => {
-    const ul = document.createElement('ul');
-    history.appendChild(ul);
-    Object.entries(item).forEach(([key, value]) => {
-      if (key !== 'id') {
-        ul.setAttribute('class', 'history');
-        const li = document.createElement('li');
-        li.innerHTML = `${key}: ${value}`;
-        ul.appendChild(li);
-      }
-    });
-  });
+
+  const transactionDetails = `
+    ${transactions.data.map(item => 
+    `<ul class="history">
+    ${Object.entries(item).map(([key, value]) =>
+      `${key !== 'id' ? `<li>${key}: ${value}</li>` : ''}`
+    ).join('')}
+    </ul>`
+    ).join('')}`;
+  history.innerHTML= transactionDetails;
+
   if (transactions.data.length === 0) {
     const noHistory = document.getElementById('no-history');
     noHistory.innerHTML = "You don't have any transactions yet.";
