@@ -113,10 +113,10 @@ const checkAccount = async () => {
 
   if (accounts.status === 401) {
     logOut();
+  } else {
+    localStorage.setItem('allAccounts', JSON.stringify(accounts.data));
+    displayAccounts(accounts);
   }
-  localStorage.setItem('allAccounts', JSON.stringify(accounts.data));
-
-  displayAccounts(accounts);
 };
 
 (function() {
