@@ -51,7 +51,7 @@ const getHistory = async (token) => {
 
   if (transactions.data.length === 0) {
     const noHistory = document.getElementById('no-history');
-    noHistory.innerHTML = "You don't have any transactions yet.";
+    noHistory.innerHTML = "No transactions yet.";
   }
 };
 
