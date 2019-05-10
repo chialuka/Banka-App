@@ -7,7 +7,7 @@ const success = document.querySelectorAll('.form-success');
 
 function logOut() {
   localStorage.removeItem('client');
-  window.location.reload();
+  window.location.href = '../index.html';
 }
 
 const mapAccountArray = (account, oneAccount) => {
@@ -15,14 +15,16 @@ const mapAccountArray = (account, oneAccount) => {
   if (node) {
     node.parentNode.removeChild(node);
   }
-  localStorage.setItem('accountNumber', oneAccount[0].account_number);
-  const ul = document.createElement('ul');
-  ul.setAttribute('class', 'list');
-  account.appendChild(ul);
-  ul.onclick = function() {
-    accountHistory();
-  };
+  const referrer = [
+    {
+      clientToken: client.token,
+      accountNumber: oneAccount[0].account_number
+    }
+  ]
+  localStorage.setItem('referrer', JSON.stringify(referrer));
+
   const accountDetails = `
+  <a href="../account-history/index.html"><ul class="list">
   ${Object.entries(oneAccount[0])
     .map(
       ([key, value]) => `
@@ -44,8 +46,9 @@ const mapAccountArray = (account, oneAccount) => {
       ${key === 'status' ? `<li class="item">Status: ${value}</li>` : ''}
     `
     )
-    .join('')}`;
-  ul.innerHTML = accountDetails;
+    .join('')}
+    </ul></a>`;
+  account.innerHTML = accountDetails;
 };
 
 const displayMultiple = (account, accounts) => {
@@ -217,49 +220,6 @@ const purchaseAirtime = async () => {
   return sendData(url, data);
 };
 
-const getHistory = async () => {
-  const accHead = document.getElementById('account-title');
-  const history = document.getElementById('account-history');
-  const accNumber = localStorage.getItem('accountNumber') || '';
-  accHead.innerHTML = `Account History for: ${accNumber}`;
-
-  const url = `https://banka-platform.herokuapp.com/api/v1/accounts/transactions/${Number(
-    accNumber
-  )}`;
-
-  const options = {
-    method: 'get',
-    headers: {
-      'content-type': 'application/json; charset:utf-8',
-      Authorization: `Bearer ${client.token}`
-    }
-  };
-  const response = (await fetch(url, options)).json();
-  const transactions = await response;
-
-  if (transactions.status === 401) {
-    logOut();
-  }
-
-  const transactionDetails = `
-    ${transactions.data.map(item => 
-    `<ul class="history">
-    ${Object.entries(item).map(([key, value]) =>
-      `${key !== 'id' ? `<li>${key}: ${value}</li>` : ''}`
-    ).join('')}
-    </ul>`
-    ).join('')}`;
-  history.innerHTML= transactionDetails;
-
-  if (transactions.data.length === 0) {
-    const noHistory = document.getElementById('no-history');
-    noHistory.innerHTML = "You don't have any transactions yet.";
-  }
-};
-
-const accountHistory = async () => {
-  window.location.href = './history.html';
-};
 
 const changeDetails = async data => {
   const options = {

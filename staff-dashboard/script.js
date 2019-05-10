@@ -21,6 +21,10 @@ const displayAccounts = async allAccounts => {
   window.viewRecord = async id => {
     const accUrl = `https://banka-platform.herokuapp.com/api/v1/accounts/${id}`;
     const account = await request(accUrl, options);
+    if (account.status === 401) {
+      logOut();
+      return;
+    }
     localStorage.setItem('account', JSON.stringify(account.data[0]));
     window.location.href = '../account-record/index.html';
   };

@@ -30,6 +30,16 @@ let debitButton;
   const ul = document.createElement('ul');
   ul.setAttribute('class', 'list');
   accountDetails.appendChild(ul);
+  ul.onclick = function () {
+    const referrer = [
+      {
+        staffToken: staff.token,
+        accountNumber: record.account_number,
+      }
+    ];
+    localStorage.setItem('referrer', JSON.stringify(referrer));
+    window.location.href = '../account-history/index.html';
+  };
   Object.entries(record).forEach(([key, value]) => {
     if (key !== 'id' && key !== 'owner' && key !== 'created_on') {
       const li = document.createElement('li');

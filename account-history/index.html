@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>Account History</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="../client-dashboard/styles.css" />
     <link
       href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Roboto|Source+Sans+Pro"
       rel="stylesheet"
@@ -15,9 +15,9 @@
       content="The account history page shows history of transactions performed on client's account."
     />
   </head>
-  <body onload="getHistory()">
+  <body onload="getRequestDetails()">
     <header>
-      <h1><a class="a-logo" href="./index.html">Banka</a></h1>
+      <h1><a class="a-logo">Banka</a></h1>
     </header>
     <main class="history-page">
       <h3 id="account-title"></h3>
@@ -27,6 +27,6 @@
     <footer class="footer">
       <p class="footer-item">&copy;Banka Nig Plc 2019</p>
     </footer>
-    <script src="script.js" async></script>
+    <script src="script.js"></script>
   </body>
 </html>

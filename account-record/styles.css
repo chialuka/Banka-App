@@ -76,6 +76,7 @@ main {
   background-color: #f7cd34;
   list-style-type: none;
   font-family: 'Monteserrat', sans-serif;
+  cursor: pointer;
 }
 
 .item {
