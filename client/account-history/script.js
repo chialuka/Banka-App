@@ -1,3 +1,4 @@
+/* eslint-disable require-jsdoc */
 const referrer = JSON.parse(localStorage.getItem('referrer')) || [];
 const accHead = document.getElementById('account-title');
 const history = document.getElementById('account-history');
@@ -18,7 +19,8 @@ function logOut(token) {
   localStorage.removeItem(token);
   window.location.href = '../index.html';
 }
-const getHistory = async token => {
+
+const getHistory = async (token) => {
   const accNumber = referrer[0].accountNumber;
   accHead.innerHTML = `Account History for: ${accNumber}`;
 
@@ -49,16 +51,15 @@ const getHistory = async token => {
 
   const transactionDetails = `
     ${transactions.data
-      .map(
-        item =>
-          `<ul class="history">
+    .map(
+      item => `<ul class="history">
     ${Object.entries(item)
-      .map(
-        ([key, value]) => `${key !== 'id' ? `<li>${key}: ${value}</li>` : ''}`
-      )
-      .join('')}
+    .map(
+      ([key, value]) => `${key !== 'id' ? `<li>${key}: ${value}</li>` : ''}`
+    )
+    .join('')}
     </ul>`
-      )
-      .join('')}`;
+    )
+    .join('')}`;
   history.innerHTML = transactionDetails;
 };
