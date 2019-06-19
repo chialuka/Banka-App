@@ -4,11 +4,10 @@ const client = JSON.parse(localStorage.getItem('client')) || [];
 const userAccounts = JSON.parse(localStorage.getItem('allAccounts')) || [];
 const error = document.getElementById('form-error');
 const success = document.querySelectorAll('.form-success');
-const accountDetails = [];
 
 function logOut() {
   localStorage.removeItem('client');
-  window.location.reload();
+  window.location.href = '../index.html';
 }
 
 const mapAccountArray = (account, oneAccount) => {
@@ -16,24 +15,40 @@ const mapAccountArray = (account, oneAccount) => {
   if (node) {
     node.parentNode.removeChild(node);
   }
-  accountDetails.push(oneAccount);
-  localStorage.setItem('account', JSON.stringify(oneAccount));
-  const ul = document.createElement('ul');
-  ul.setAttribute('class', 'list');
-  account.appendChild(ul);
-  ul.onclick = function () {
-    accountHistory();
-  };
-  oneAccount.map((item) => {
-    Object.entries(item).forEach(([key, value]) => {
-      if (key !== 'id' && key !== 'owner' && key !== 'created_on') {
-        const li = document.createElement('li');
-        li.innerHTML = `${key}: ${value}`;
-        li.setAttribute('class', 'item');
-        ul.appendChild(li);
-      }
-    });
-  });
+  const referrer = [
+    {
+      clientToken: client.token,
+      accountNumber: oneAccount[0].account_number
+    }
+  ];
+  localStorage.setItem('referrer', JSON.stringify(referrer));
+
+  const accountDetails = `
+  <a href="../account-history/index.html"><ul class="list">
+  ${Object.entries(oneAccount[0])
+    .map(
+      ([key, value]) => `
+      ${
+  key === 'account_number'
+    ? `<li class="item">Account Number: ${value}</li>`
+    : ''
+}
+      ${
+  key === 'account_type'
+    ? `<li class="item">Account Type: ${value}</li>`
+    : ''
+}
+      ${
+  key === 'account_balance'
+    ? `<li class="item">Account Balance: N${value}</li>`
+    : ''
+}
+      ${key === 'status' ? `<li class="item">Status: ${value}</li>` : ''}
+    `
+    )
+    .join('')}
+    </ul></a>`;
+  account.innerHTML = accountDetails;
 };
 
 const displayMultiple = (account, accounts) => {
@@ -69,12 +84,12 @@ const displayAccounts = async (accounts) => {
   if (!accounts.data.length) {
     transfer.style.display = 'none';
     airtime.style.display = 'none';
-    const link = document.createElement('a');
-    link.setAttribute('href', '../client-create-account/index.html');
-    link.setAttribute('class', 'link');
-    account.innerHTML = "You haven't opened a bank account yet.";
-    link.innerHTML = ' Click here to open one.';
-    account.appendChild(link);
+    const link = `
+    <a class="link" href="../client-create-account/index.html">
+    Click here to open one.
+    </a>
+    `;
+    account.innerHTML = `You haven't opened a bank account yet. ${link}`;
   }
   if (accounts.data.length === 1) {
     displayOneAccount(account, accounts);
@@ -96,18 +111,15 @@ const checkAccount = async () => {
   };
 
   const url = `https://banka-platform.herokuapp.com/api/v1/users/accounts/${id}`;
-
   const response = (await fetch(url, options)).json();
-
   const accounts = await response;
-
-  localStorage.setItem('allAccounts', JSON.stringify(accounts.data));
 
   if (accounts.status === 401) {
     logOut();
+  } else {
+    localStorage.setItem('allAccounts', JSON.stringify(accounts.data));
+    displayAccounts(accounts);
   }
-
-  displayAccounts(accounts);
 };
 
 (function () {
@@ -161,7 +173,6 @@ const dropDown = () => {
     Object.entries(account).forEach(([key, value]) => {
       const option = document.createElement('option');
       if (key === 'account_number') {
-        console.log(`${value}`);
         option.innerHTML = `${value}`;
         select.appendChild(option);
       }
@@ -197,7 +208,6 @@ const purchaseAirtime = async () => {
   const amount = form.amount.value;
   const senderAccount = form.sender.value;
 
-
   const data = {
     amount,
     phoneNumber,
@@ -208,51 +218,6 @@ const purchaseAirtime = async () => {
 
   form.reset();
   return sendData(url, data);
-};
-
-const getHistory = async () => {
-  const accHead = document.getElementById('account-title');
-  const history = document.getElementById('account-history');
-  const accNumber = JSON.parse(localStorage.getItem('account')) || [];
-  accHead.innerHTML = `Account History for: ${accNumber[0].account_number}`;
-
-  const url = `https://banka-platform.herokuapp.com/api/v1/accounts/transactions/${Number(
-    accNumber[0].id
-  )}`;
-
-  const options = {
-    method: 'get',
-    headers: {
-      'content-type': 'application/json; charset:utf-8',
-      Authorization: `Bearer ${client.token}`
-    }
-  };
-  const response = (await fetch(url, options)).json();
-  const transactions = await response;
-
-  if (transactions.status === 401) {
-    logOut();
-  }
-  transactions.data.map((item) => {
-    const ul = document.createElement('ul');
-    history.appendChild(ul);
-    Object.entries(item).forEach(([key, value]) => {
-      if (key !== 'id') {
-        ul.setAttribute('class', 'history');
-        const li = document.createElement('li');
-        li.innerHTML = `${key}: ${value}`;
-        ul.appendChild(li);
-      }
-    });
-  });
-  if (transactions.data.length === 0) {
-    const noHistory = document.getElementById('no-history');
-    noHistory.innerHTML = "You don't have any transactions yet.";
-  }
-};
-
-const accountHistory = async () => {
-  window.location.href = './history.html';
 };
 
 const changeDetails = async (data) => {

@@ -5,10 +5,11 @@ html {
 body {
   margin: 0;
   font-family: 'Montserrat', sans-serif, 'Roboto', sans-serif;
-  background:   linear-gradient(
-    rgba(255, 255, 255, 0.9), 
-    rgba(247, 247, 247, 0.9)
-  ), url('../images/banking.jpg');
+  background: linear-gradient(
+      rgba(255, 255, 255, 0.9),
+      rgba(247, 247, 247, 0.9)
+    ),
+    url('../images/banking.jpg');
 }
 
 #logo {
@@ -20,7 +21,7 @@ body {
 
 header {
   height: 80px;
-  text-align: center
+  text-align: center;
 }
 
 main {
@@ -31,39 +32,45 @@ main {
   align-items: center;
 }
 
-#admin {
-  display: none;
-  cursor: pointer;
-  margin-right: 20px;
-}
-
 .top {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: center;
 }
 
-#logout {
-  margin: 5px;
-  border-radius: 8px;
-  padding: 10px;
-  background-color: #f76b34;
-  color: white;
+#admin {
+  display: none;
   cursor: pointer;
-  font-size: 1em;
+  background-color: #3e34f7;
 }
 
 a {
   text-decoration: none;
-  background-color: #3e34f7;
-  padding: 15px;
   color: whitesmoke;
-  border-radius: 5px;
+}
+
+button {
+  color: whitesmoke;
+  cursor: pointer;
+  font-size: 0.6rem;
+  margin: 5px;
+  border-radius: 8px;
+  padding: 10px;
+  width: 20%;
+}
+
+#logout {
+  background-color: #f76b34;
+}
+
+#all, #active,
+#dormant {
+  background-color: #3e34f7;
 }
 
 .list {
   padding: 10px;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   background-color: #f7cd34;
   border: 20px;
   border-radius: 5px;
@@ -72,7 +79,7 @@ a {
 }
 
 .list:hover {
-  box-shadow: 4px 4px 8px 4px rgba(0,0,0,0.2);
+  box-shadow: 4px 4px 8px 4px rgba(0, 0, 0, 0.2);
 }
 
 .item {
@@ -98,8 +105,10 @@ footer a {
   padding: 10px;
 }
 
-
 @media screen and (min-width: 425px) {
+  button {
+    font-size: 0.8rem;
+  }
   .footer {
     font-size: 10px;
   }
@@ -123,6 +132,9 @@ footer a {
 @media (min-width: 1024px) {
   body {
     background-size: cover;
+  }
+  button {
+    font-size: 1rem;
   }
   #logo {
     font-size: 2.5em;

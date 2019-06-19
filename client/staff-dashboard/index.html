@@ -22,12 +22,13 @@
     </header>
     <main>
       <div class="top">
-        <h4 id="admin">
-          <a href="../admin-create-account/index.html"
-            >Create Admin/Staff Account</a
-          >
-        </h4>
-        <button id="logout" onclick="logOut()">Log out</button>
+        <button id="admin">
+          <a href="../admin-create-account/index.html">Create Staff/Admin</a>
+        </button>
+        <button id="all" onclick="getAllAccounts()">All Accounts</button>
+        <button id="active" onclick="getActive()">Active Accounts</button>
+        <button id="dormant" onclick="getDormant()">Dormant Accounts</button>
+        <button id="logout" onclick="logOut()">Logout</button>
       </div>
       <h3>Client Bank Accounts:</h3>
       <div>

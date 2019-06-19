@@ -7,6 +7,11 @@ const error = document.getElementById('error');
 let creditButton;
 let debitButton;
 
+function logOut () {
+  localStorage.removeItem('staff');
+  window.location.href = '../index.html';
+}
+
 (function () {
   const account = document.getElementById('account');
   account.innerHTML = `Account number: ${record.account_number}`;
@@ -30,6 +35,16 @@ let debitButton;
   const ul = document.createElement('ul');
   ul.setAttribute('class', 'list');
   accountDetails.appendChild(ul);
+  ul.onclick = function () {
+    const referrer = [
+      {
+        staffToken: staff.token,
+        accountNumber: record.account_number,
+      }
+    ];
+    localStorage.setItem('referrer', JSON.stringify(referrer));
+    window.location.href = '../account-history/index.html';
+  };
   Object.entries(record).forEach(([key, value]) => {
     if (key !== 'id' && key !== 'owner' && key !== 'created_on') {
       const li = document.createElement('li');
@@ -49,6 +64,10 @@ const setAccountToStorage = async () => {
       Authorization: `Bearer ${staff.token}`
     }
   });
+  if (account.status === 401) {
+    logOut();
+    return;
+  }
   localStorage.setItem('account', JSON.stringify(account.data[0]));
 };
 
@@ -77,6 +96,8 @@ const makeCharge = async (data) => {
   if (response.status === 201) {
     await setAccountToStorage();
     window.location.reload();
+  } else if (response.status === 401) {
+    logOut();
   } else {
     error.innerHTML = response.error ? response.error : response.errors;
   }
@@ -119,6 +140,10 @@ async function deleteAccount() {
   };
   const requestDelete = await fetch(deleteUrl, deleteOptions);
   const deletedAccount = await requestDelete;
+  if (deletedAccount.status === 401) {
+    logOut();
+    return;
+  }
   localStorage.removeItem('account');
   window.location.href = '../staff-dashboard/index.html';
 }
@@ -135,7 +160,11 @@ async function activateAccount() {
     },
     body: JSON.stringify(payload)
   };
-  await request(patchUrl, patchOptions);
+  const patchedAccount = await request(patchUrl, patchOptions);
+  if (patchedAccount.status === 401) {
+    logOut();
+    return;
+  }
   await setAccountToStorage();
   window.location.reload();
 }

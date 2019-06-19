@@ -1,6 +1,6 @@
 :root {
   --red: #f76b34;
-  --blue: #f7cd34;
+  --blue: #f79c34;;
   --white: #d3d2e9;
   --black: #272727;
 }
@@ -73,9 +73,10 @@ main {
   display: flex;
   flex-direction: column;
   box-shadow: 0px 8px 16px 0px rgba(10, 10, 10, 0.2);
-  background-color: #f79c34;
+  background-color: #f7cd34;
   list-style-type: none;
   font-family: 'Monteserrat', sans-serif;
+  cursor: pointer;
 }
 
 .item {
