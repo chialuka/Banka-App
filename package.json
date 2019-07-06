@@ -24,7 +24,9 @@
     "start": "babel-node index.js",
     "lint": "eslint --fix",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "buildtable": "babel-node ./config/db-tablesetup.js"
+    "buildtable": "babel-node ./config/db-tablesetup.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "author": "Chukwualuka Chiama",
   "license": "MIT",
@@ -65,11 +67,13 @@
     "nodemailer": "^6.1.0",
     "pg": "^7.9.0",
     "swagger-jsdoc": "^3.2.9",
-    "swagger-ui-express": "^4.0.2"
+    "swagger-ui-express": "^4.0.2",
+    "snyk": "^1.189.0"
   },
   "nodemonConfig": {
     "ignore": [
       "data/*.json"
     ]
-  }
+  },
+  "snyk": true
 }
