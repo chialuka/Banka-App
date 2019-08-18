@@ -52,7 +52,7 @@ const passwordTableQuery = `
     otp BIGINT NOT NULL,
     time DOUBLE PRECISION NOT NULL
   )
-`
+`;
 
 const tableNames = [
   {
