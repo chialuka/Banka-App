@@ -527,4 +527,22 @@ describe('500 error', () => {
         done();
       });
   });
+
+  it('should throw if it encounters an error on OTP', (done) => {
+    const stub = sinon.stub(Users, 'findOTP');
+    const error = new Error('A fix is in progress');
+    stub.yields(error);
+    chai
+      .request(server)
+      .post('/api/v1/users/changepassword')
+      .send({
+        password: 'monkey',
+        otp: 12345678
+      })
+      .end((err, res) => {
+        expect(res).to.have.status(500);
+        expect(res.body).to.include.key('error');
+        done();
+      });
+  });
 });
