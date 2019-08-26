@@ -7,13 +7,10 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { userReducer, errorReducer } from '../../reducers';
 
-const Register = () => {
+const Login = () => {
   const [userDetails, setUserDetails] = useState({
-    firstname: '',
-    lastname: '',
     email: '',
-    password: '',
-    confirmPassword: ''
+    password: ''
   });
 
   const [user, dispatchSubmit] = useReducer(userReducer, {});
@@ -21,7 +18,6 @@ const Register = () => {
   const [errors, dispatchError] = useReducer(errorReducer, {});
 
   const validate = (e, data) => {
-
     if (data) {
       for (let [key, value] of Object.entries(data)) {
         if (!value) {
@@ -36,14 +32,8 @@ const Register = () => {
         !/.+@.+\.[A-Za-z]+$/.test(e.target.value)
       ) {
         dispatchError({ type: 'ERROR', key: email });
-      } else if (
-        e.target.name == 'confirmPassword' &&
-        e.target.value !== password
-      ) {
-        dispatchError({ type: 'ERROR', key: confirmPassword });
       }
     }
-
   };
 
   const handleChange = e => {
@@ -53,60 +43,30 @@ const Register = () => {
     });
   };
 
-  const createUser = async () => {
+  const login = async () => {
     try {
       validate(null, userDetails);
       if (Object.keys(errors).length) return null;
       dispatchSubmit({ type: 'SUBMITTING' });
-      const { confirmPassword, ...user } = userDetails;
       const {
         data: { data }
-      } = await axios.post('/users/auth/signup', user);
+      } = await axios.post('/users/auth/signin', userDetails);
       dispatchSubmit({ type: 'SUCCESS', data });
     } catch (error) {
       dispatchSubmit({ type: 'FAILURE', error });
     }
   };
 
-  const { firstname, lastname, email, password, confirmPassword } = userDetails;
+  const { email, password } = userDetails;
 
   return (
     <div className="registration-page">
       {user.loading && <p>We are currently loading at the Niger</p>}
       <Paper elevation={6} className="paper">
         <Typography variant="h5" component="h3" className="register-heading">
-          Register
+          Login
         </Typography>
         {user.error && <p className="registration-error">{user.error}</p>}
-        <TextField
-          required
-          type="text"
-          label="First Name"
-          name="firstname"
-          value={firstname}
-          onChange={handleChange}
-          onBlur={validate}
-          fullWidth
-          margin="normal"
-          variant="outlined"
-        />
-        {errors.firstname && (
-          <p className="registration-error">Please enter your first name</p>
-        )}
-        <TextField
-          required
-          label="Last Name"
-          name="lastname"
-          value={lastname}
-          onChange={handleChange}
-          onBlur={validate}
-          fullWidth
-          margin="normal"
-          variant="outlined"
-        />
-        {errors.lastname && (
-          <p className="registration-error">Please enter your last name</p>
-        )}
         <TextField
           required
           type="email"
@@ -139,31 +99,14 @@ const Register = () => {
         {errors.password && (
           <p className="registration-error">Please enter your password</p>
         )}
-        <TextField
-          required
-          type="password"
-          label="Confirm Password"
-          name="confirmPassword"
-          value={confirmPassword}
-          onChange={handleChange}
-          onBlur={validate}
-          fullWidth
-          margin="normal"
-          variant="outlined"
-        />
-        {errors.confirmPassword && (
-          <p className="registration-error">
-            Confirm password must match password
-          </p>
-        )}
-        <Button variant="contained" onClick={createUser} style={{ margin: 15 }}>
+        <Button variant="contained" onClick={login} style={{ margin: 15 }}>
           Sign Up
         </Button>
         <div className="login-link">
-          Have an account?
-          <Link to="/login" className="link">
+          Don't have an account?
+          <Link to="/register" className="link">
             {' '}
-            Login here
+            Register here
           </Link>
         </div>
       </Paper>
@@ -171,4 +114,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Login;
