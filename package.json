@@ -20,7 +20,7 @@
     "start": "babel-node server/index.js",
     "lint": "eslint --fix",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "buildtable": "babel-node server/config/db:migration.js",
+    "buildtable": "babel-node server/config/db.migration.js",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect"
   },

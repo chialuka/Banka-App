@@ -97,7 +97,6 @@ const createTable = async (name, query) => {
 const createRelation = async () => {
   const usersAccountsQuery = `
   ALTER TABLE accounts DROP CONSTRAINT IF EXISTS owner;
-
   ALTER TABLE accounts
     ADD CONSTRAINT owner
     FOREIGN KEY(owner) REFERENCES users(id)
@@ -106,7 +105,6 @@ const createRelation = async () => {
 
   const accountsTransactionsQuery = `
   ALTER TABLE transactions DROP CONSTRAINT IF EXISTS account_id;
-
   ALTER TABLE transactions
     ADD CONSTRAINT account_number
     FOREIGN KEY(account_number) REFERENCES accounts(account_number)
@@ -115,7 +113,6 @@ const createRelation = async () => {
 
   const passwordUsersQuery = `
   ALTER TABLE password DROP CONSTRAINT IF EXISTS user_id;
-
   ALTER TABLE password
     ADD CONSTRAINT user_id
     FOREIGN KEY(user_id) REFERENCES users(id)
