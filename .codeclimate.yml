@@ -12,13 +12,13 @@ plugins:
     enabled: true
 exclude_patterns:
 - dist/**/*
-- config/
+- server/config/
 - db/
 - dist/
 - features/
 - script/
-- test/
-- fixtures/
-- tests/
+- server/test/
+- server/fixtures/
+- server/tests/
 - node_modules/
 - client/
