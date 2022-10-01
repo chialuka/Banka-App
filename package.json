@@ -62,7 +62,7 @@
     "node-fetch": "^3.2.10",
     "nodemailer": "^6.6.1",
     "pg": "^7.12.1",
-    "snyk": "^1.685.0",
+    "snyk": "^1.996.0",
     "swagger-jsdoc": "^3.4.0",
     "swagger-ui-express": "^4.2.0"
   },
