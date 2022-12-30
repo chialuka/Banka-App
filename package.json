@@ -38,7 +38,7 @@
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "faker": "^4.1.0",
-    "mocha": "^6.2.3",
+    "mocha": "^10.2.0",
     "nodemon": "^2.0.20",
     "nyc": "^14.1.1",
     "sinon": "^7.5.0"
